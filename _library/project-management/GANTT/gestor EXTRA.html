@@ -1,0 +1,2313 @@
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  
+  
+  
+
+  <title>Elite Task Manager</title>
+
+    <link rel="canonical" href="https://codepen.io/Rafael-Valle-the-looper/pen/RNRzYgv">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elite Task Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#5D5CDE',
+            primaryDark: '#4A49B0',
+            primaryLight: '#7F7EE7',
+            secondary: '#FF6B6B',
+            accent: '#FFD166',
+            darkBg: '#181818',
+            darkSecondary: '#252525',
+            lightBg: '#FFFFFF',
+            lightSecondary: '#F5F5F5',
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          }
+        }
+      }
+    }
+  </script>
+  
+  
+  
+<style>
+.kanban-column {
+  min-height: 300px;
+}
+
+.task-card {
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.task-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.task-card:active {
+  cursor: grabbing;
+}
+
+.modal {
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.cpu-mode-indicator {
+  transition: all 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.8);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.5);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 85, 99, 0.8);
+}
+
+/* Progress bars */
+.progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-value {
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+/* Gantt chart */
+.gantt-container {
+  overflow-x: auto;
+}
+
+.gantt-row {
+  height: 40px;
+}
+
+.gantt-bar {
+  height: 22px;
+  margin-top: 9px;
+  border-radius: 3px;
+  position: relative;
+}
+</style>
+
+  
+  
+  
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border-width:0}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.inset-y-0{top:0px;bottom:0px}.bottom-4{bottom:1rem}.left-0{left:0px}.right-0{right:0px}.right-4{right:1rem}.top-0{top:0px}.bottom-2{bottom:0.5rem}.right-2{right:0.5rem}.z-10{z-index:10}.z-20{z-index:20}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-1{margin-left:0.25rem}.ml-2{margin-left:0.5rem}.ml-3{margin-left:0.75rem}.mr-1{margin-right:0.25rem}.mr-2{margin-right:0.5rem}.mr-3{margin-right:0.75rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.mt-auto{margin-top:auto}.mb-1{margin-bottom:0.25rem}.mt-6{margin-top:1.5rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-10{height:2.5rem}.h-12{height:3rem}.h-16{height:4rem}.h-2{height:0.5rem}.h-3{height:0.75rem}.h-6{height:1.5rem}.h-60{height:15rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-full{height:100%}.h-2\.5{height:0.625rem}.h-\[600px\]{height:600px}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-12{width:3rem}.w-2{width:0.5rem}.w-24{width:6rem}.w-3{width:0.75rem}.w-6{width:1.5rem}.w-64{width:16rem}.w-7{width:1.75rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-full{width:100%}.w-2\.5{width:0.625rem}.w-20{width:5rem}.min-w-full{min-width:100%}.max-w-7xl{max-width:80rem}.max-w-lg{max-width:32rem}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.flex-grow{flex-grow:1}.translate-x-full{--tw-translate-x:100%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.appearance-none{-webkit-appearance:none;appearance:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-6{gap:1.5rem}.gap-4{gap:1rem}.-space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(-0.5rem * var(--tw-space-x-reverse));margin-left:calc(-0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-x-1 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.25rem * var(--tw-space-x-reverse));margin-left:calc(0.25rem * calc(1 - var(--tw-space-x-reverse)))}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-gray-200 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(229 231 235 / var(--tw-divide-opacity, 1))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-none{border-style:none}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-300{--tw-bg-opacity:1;background-color:rgb(209 213 219 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-green-100{--tw-bg-opacity:1;background-color:rgb(220 252 231 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-indigo-500{--tw-bg-opacity:1;background-color:rgb(99 102 241 / var(--tw-bg-opacity, 1))}.bg-lightBg{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-pink-500{--tw-bg-opacity:1;background-color:rgb(236 72 153 / var(--tw-bg-opacity, 1))}.bg-primary{--tw-bg-opacity:1;background-color:rgb(93 92 222 / var(--tw-bg-opacity, 1))}.bg-purple-100{--tw-bg-opacity:1;background-color:rgb(243 232 255 / var(--tw-bg-opacity, 1))}.bg-purple-500{--tw-bg-opacity:1;background-color:rgb(168 85 247 / var(--tw-bg-opacity, 1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-secondary{--tw-bg-opacity:1;background-color:rgb(255 107 107 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-yellow-100{--tw-bg-opacity:1;background-color:rgb(254 249 195 / var(--tw-bg-opacity, 1))}.bg-yellow-500{--tw-bg-opacity:1;background-color:rgb(234 179 8 / var(--tw-bg-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-gray-500{--tw-bg-opacity:1;background-color:rgb(107 114 128 / var(--tw-bg-opacity, 1))}.bg-orange-500{--tw-bg-opacity:1;background-color:rgb(249 115 22 / var(--tw-bg-opacity, 1))}.bg-teal-500{--tw-bg-opacity:1;background-color:rgb(20 184 166 / var(--tw-bg-opacity, 1))}.bg-opacity-10{--tw-bg-opacity:0.1}.bg-opacity-50{--tw-bg-opacity:0.5}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-1\.5{padding:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pl-10{padding-left:2.5rem}.pl-3{padding-left:0.75rem}.pr-4{padding-right:1rem}.pr-8{padding-right:2rem}.pb-2{padding-bottom:0.5rem}.pl-2{padding-left:0.5rem}.pl-6{padding-left:1.5rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.text-2xl{font-size:1.5rem;line-height:2rem}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.tracking-wider{letter-spacing:0.05em}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-green-500{--tw-text-opacity:1;color:rgb(34 197 94 / var(--tw-text-opacity, 1))}.text-green-600{--tw-text-opacity:1;color:rgb(22 163 74 / var(--tw-text-opacity, 1))}.text-green-800{--tw-text-opacity:1;color:rgb(22 101 52 / var(--tw-text-opacity, 1))}.text-primary{--tw-text-opacity:1;color:rgb(93 92 222 / var(--tw-text-opacity, 1))}.text-purple-500{--tw-text-opacity:1;color:rgb(168 85 247 / var(--tw-text-opacity, 1))}.text-purple-800{--tw-text-opacity:1;color:rgb(107 33 168 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-500{--tw-text-opacity:1;color:rgb(234 179 8 / var(--tw-text-opacity, 1))}.text-yellow-600{--tw-text-opacity:1;color:rgb(202 138 4 / var(--tw-text-opacity, 1))}.text-yellow-800{--tw-text-opacity:1;color:rgb(133 77 14 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-70{opacity:0.7}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.ring-white{--tw-ring-opacity:1;--tw-ring-color:rgb(255 255 255 / var(--tw-ring-opacity, 1))}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-200{transition-duration:200ms}.duration-300{transition-duration:300ms}.after\:absolute::after{content:var(--tw-content);position:absolute}.after\:left-\[2px\]::after{content:var(--tw-content);left:2px}.after\:top-\[2px\]::after{content:var(--tw-content);top:2px}.after\:h-5::after{content:var(--tw-content);height:1.25rem}.after\:w-5::after{content:var(--tw-content);width:1.25rem}.after\:rounded-full::after{content:var(--tw-content);border-radius:9999px}.after\:border::after{content:var(--tw-content);border-width:1px}.after\:border-gray-300::after{content:var(--tw-content);--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.after\:bg-white::after{content:var(--tw-content);--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.after\:transition-all::after{content:var(--tw-content);transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.after\:content-\[\'\'\]::after{--tw-content:'';content:var(--tw-content)}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.hover\:bg-primaryDark:hover{--tw-bg-opacity:1;background-color:rgb(74 73 176 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:bg-primary:hover{--tw-bg-opacity:1;background-color:rgb(93 92 222 / var(--tw-bg-opacity, 1))}.hover\:bg-opacity-10:hover{--tw-bg-opacity:0.1}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.hover\:text-primary:hover{--tw-text-opacity:1;color:rgb(93 92 222 / var(--tw-text-opacity, 1))}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.peer:checked ~ .peer-checked\:bg-primary{--tw-bg-opacity:1;background-color:rgb(93 92 222 / var(--tw-bg-opacity, 1))}.peer:checked ~ .peer-checked\:after\:translate-x-full::after{content:var(--tw-content);--tw-translate-x:100%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.peer:checked ~ .peer-checked\:after\:border-white::after{content:var(--tw-content);--tw-border-opacity:1;border-color:rgb(255 255 255 / var(--tw-border-opacity, 1))}.dark\:block:is(.dark *){display:block}.dark\:hidden:is(.dark *){display:none}.dark\:divide-gray-700:is(.dark *) > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(55 65 81 / var(--tw-divide-opacity, 1))}.dark\:border-gray-600:is(.dark *){--tw-border-opacity:1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1))}.dark\:border-gray-700:is(.dark *){--tw-border-opacity:1;border-color:rgb(55 65 81 / var(--tw-border-opacity, 1))}.dark\:bg-blue-900:is(.dark *){--tw-bg-opacity:1;background-color:rgb(30 58 138 / var(--tw-bg-opacity, 1))}.dark\:bg-darkBg:is(.dark *){--tw-bg-opacity:1;background-color:rgb(24 24 24 / var(--tw-bg-opacity, 1))}.dark\:bg-darkSecondary:is(.dark *){--tw-bg-opacity:1;background-color:rgb(37 37 37 / var(--tw-bg-opacity, 1))}.dark\:bg-gray-700:is(.dark *){--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.dark\:bg-gray-800:is(.dark *){--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.dark\:bg-green-900:is(.dark *){--tw-bg-opacity:1;background-color:rgb(20 83 45 / var(--tw-bg-opacity, 1))}.dark\:bg-purple-900:is(.dark *){--tw-bg-opacity:1;background-color:rgb(88 28 135 / var(--tw-bg-opacity, 1))}.dark\:bg-red-900:is(.dark *){--tw-bg-opacity:1;background-color:rgb(127 29 29 / var(--tw-bg-opacity, 1))}.dark\:bg-yellow-900:is(.dark *){--tw-bg-opacity:1;background-color:rgb(113 63 18 / var(--tw-bg-opacity, 1))}.dark\:bg-gray-600:is(.dark *){--tw-bg-opacity:1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.dark\:text-blue-200:is(.dark *){--tw-text-opacity:1;color:rgb(191 219 254 / var(--tw-text-opacity, 1))}.dark\:text-blue-300:is(.dark *){--tw-text-opacity:1;color:rgb(147 197 253 / var(--tw-text-opacity, 1))}.dark\:text-gray-200:is(.dark *){--tw-text-opacity:1;color:rgb(229 231 235 / var(--tw-text-opacity, 1))}.dark\:text-gray-300:is(.dark *){--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.dark\:text-gray-400:is(.dark *){--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.dark\:text-green-200:is(.dark *){--tw-text-opacity:1;color:rgb(187 247 208 / var(--tw-text-opacity, 1))}.dark\:text-green-300:is(.dark *){--tw-text-opacity:1;color:rgb(134 239 172 / var(--tw-text-opacity, 1))}.dark\:text-green-400:is(.dark *){--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.dark\:text-primaryLight:is(.dark *){--tw-text-opacity:1;color:rgb(127 126 231 / var(--tw-text-opacity, 1))}.dark\:text-purple-200:is(.dark *){--tw-text-opacity:1;color:rgb(233 213 255 / var(--tw-text-opacity, 1))}.dark\:text-purple-300:is(.dark *){--tw-text-opacity:1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.dark\:text-red-300:is(.dark *){--tw-text-opacity:1;color:rgb(252 165 165 / var(--tw-text-opacity, 1))}.dark\:text-red-400:is(.dark *){--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.dark\:text-white:is(.dark *){--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.dark\:text-yellow-200:is(.dark *){--tw-text-opacity:1;color:rgb(254 240 138 / var(--tw-text-opacity, 1))}.dark\:text-yellow-300:is(.dark *){--tw-text-opacity:1;color:rgb(253 224 71 / var(--tw-text-opacity, 1))}.dark\:text-yellow-400:is(.dark *){--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}.dark\:ring-darkSecondary:is(.dark *){--tw-ring-opacity:1;--tw-ring-color:rgb(37 37 37 / var(--tw-ring-opacity, 1))}.dark\:hover\:bg-gray-700:hover:is(.dark *){--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.dark\:hover\:bg-gray-800:hover:is(.dark *){--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.dark\:hover\:text-gray-200:hover:is(.dark *){--tw-text-opacity:1;color:rgb(229 231 235 / var(--tw-text-opacity, 1))}.dark\:hover\:text-gray-300:hover:is(.dark *){--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}@media (min-width: 640px){.sm\:flex-row{flex-direction:row}.sm\:space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.sm\:space-y-0 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0px * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0px * var(--tw-space-y-reverse))}.sm\:p-6{padding:1.5rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}}@media (min-width: 768px){.md\:block{display:block}.md\:hidden{display:none}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}@media (min-width: 1024px){.lg\:col-span-2{grid-column:span 2 / span 2}.lg\:col-span-1{grid-column:span 1 / span 1}.lg\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.lg\:p-8{padding:2rem}.lg\:px-8{padding-left:2rem;padding-right:2rem}}</style></head>
+
+<body class="antialiased bg-lightBg dark:bg-darkBg text-gray-800 dark:text-gray-200 transition-colors duration-200">
+  
+  <div id="app" class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white dark:bg-darkSecondary shadow-sm z-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 flex items-center">
+              <div class="h-10 w-10 bg-primary rounded-lg flex items-center justify-center">
+                <i class="fas fa-tasks text-white"></i>
+              </div>
+              <span class="ml-2 text-xl font-bold text-gray-900 dark:text-white">Elite Task Manager</span>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <!-- Mode Toggle -->
+            <div class="flex items-center">
+              <span class="mr-2 text-sm font-medium">Standard</span>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="modeToggle" class="sr-only peer">
+                <div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+              </label>
+              <span class="ml-2 text-sm font-medium">CPU</span>
+            </div>
+
+            <!-- Dark mode toggle -->
+            <button id="darkModeToggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+              <i class="fas fa-moon dark:hidden"></i>
+              <i class="fas fa-sun hidden dark:block"></i>
+            </button>
+
+            <!-- Notifications -->
+            <button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 relative">
+              <i class="fas fa-bell"></i>
+              <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-secondary"></span>
+            </button>
+
+            <!-- User menu -->
+            <div class="relative">
+              <button id="userMenuButton" class="flex items-center text-sm rounded-full focus:outline-none">
+                <div class="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center">
+                  <span>JD</span>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="flex-1 flex overflow-hidden">
+      <!-- Sidebar navigation -->
+      <nav class="bg-white dark:bg-darkSecondary w-64 shadow-sm hidden md:block transition-all duration-300 z-10">
+        <div class="h-full px-3 py-4 flex flex-col">
+          <ul class="space-y-2">
+            <li>
+              <button data-tab="dashboard" class="tab-btn active-tab w-full flex items-center p-2 text-base font-medium rounded-lg text-primary bg-primary bg-opacity-10">
+                <i class="fas fa-home w-6 text-center"></i>
+                <span class="ml-3">Dashboard</span>
+              </button>
+            </li>
+            <li>
+              <button data-tab="tasks" class="tab-btn w-full flex items-center p-2 text-base font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                <i class="fas fa-tasks w-6 text-center"></i>
+                <span class="ml-3">Task Management</span>
+              </button>
+            </li>
+            <li>
+              <button data-tab="analytics" class="tab-btn w-full flex items-center p-2 text-base font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                <i class="fas fa-chart-bar w-6 text-center"></i>
+                <span class="ml-3">Analytics</span>
+              </button>
+            </li>
+            <li>
+              <button data-tab="resources" class="tab-btn w-full flex items-center p-2 text-base font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                <i class="fas fa-sitemap w-6 text-center"></i>
+                <span class="ml-3">Resource Management</span>
+              </button>
+            </li>
+            <li>
+              <button data-tab="gantt" class="tab-btn w-full flex items-center p-2 text-base font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                <i class="fas fa-chart-gantt w-6 text-center"></i>
+                <span class="ml-3">Gantt Chart</span>
+              </button>
+            </li>
+            <li>
+              <button data-tab="collaboration" class="tab-btn w-full flex items-center p-2 text-base font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                <i class="fas fa-users w-6 text-center"></i>
+                <span class="ml-3">Collaboration</span>
+              </button>
+            </li>
+          </ul>
+          <div class="mt-auto">
+            <div id="cpuModeIndicator" class="cpu-mode-indicator hidden p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+              <div class="flex items-center space-x-2">
+                <i class="fas fa-microchip text-primary"></i>
+                <div class="flex-1">
+                  <div class="text-sm font-medium">CPU Mode Active</div>
+                  <div class="text-xs text-gray-600 dark:text-gray-400">Enhanced performance</div>
+                </div>
+              </div>
+              <div class="mt-2">
+                <div class="h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div id="cpuLoadBar" class="h-full bg-primary rounded-full" style="width: 70%"></div>
+                </div>
+                <div class="flex justify-between text-xs mt-1">
+                  <span>CPU Load</span>
+                  <span id="cpuLoadPercent">70%</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+              <div class="flex items-center space-x-2">
+                <i class="fas fa-robot text-primary"></i>
+                <div>
+                  <div class="text-sm font-medium">AI Assistant</div>
+                  <div class="text-xs text-gray-600 dark:text-gray-400">Ready to help</div>
+                </div>
+              </div>
+              <button id="aiAssistantBtn" class="mt-2 w-full py-1.5 px-3 bg-primary hover:bg-primaryDark text-white rounded-lg text-sm transition-colors duration-200">
+                Ask AI Assistant
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Mobile sidebar toggle -->
+      <div class="md:hidden fixed bottom-4 right-4 z-20">
+        <button id="mobileSidebarToggle" class="h-12 w-12 rounded-full bg-primary text-white shadow-lg flex items-center justify-center">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+
+      <!-- Mobile sidebar -->
+      <div id="mobileSidebar" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-10 hidden">
+        <div class="absolute right-0 top-0 h-full w-64 bg-white dark:bg-darkSecondary transform transition-transform duration-300 translate-x-full">
+          <div class="p-4 flex justify-between items-center border-b dark:border-gray-700">
+            <h2 class="text-lg font-semibold">Menu</h2>
+            <button id="closeMobileSidebar" class="p-2">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="p-4">
+            <ul class="space-y-2">
+              <li>
+                <button data-tab="dashboard" class="mobile-tab-btn w-full flex items-center p-2 text-base font-medium rounded-lg text-primary bg-primary bg-opacity-10 active-tab">
+                  <i class="fas fa-home w-6 text-center"></i>
+                  <span class="ml-3">Dashboard</span>
+                </button>
+              </li>
+              <li>
+                <button data-tab="tasks" class="mobile-tab-btn w-full flex items-center p-2 text-base font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <i class="fas fa-tasks w-6 text-center"></i>
+                  <span class="ml-3">Task Management</span>
+                </button>
+              </li>
+              <li>
+                <button data-tab="analytics" class="mobile-tab-btn w-full flex items-center p-2 text-base font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <i class="fas fa-chart-bar w-6 text-center"></i>
+                  <span class="ml-3">Analytics</span>
+                </button>
+              </li>
+              <li>
+                <button data-tab="resources" class="mobile-tab-btn w-full flex items-center p-2 text-base font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <i class="fas fa-sitemap w-6 text-center"></i>
+                  <span class="ml-3">Resource Management</span>
+                </button>
+              </li>
+              <li>
+                <button data-tab="gantt" class="mobile-tab-btn w-full flex items-center p-2 text-base font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <i class="fas fa-chart-gantt w-6 text-center"></i>
+                  <span class="ml-3">Gantt Chart</span>
+                </button>
+              </li>
+              <li>
+                <button data-tab="collaboration" class="mobile-tab-btn w-full flex items-center p-2 text-base font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                  <i class="fas fa-users w-6 text-center"></i>
+                  <span class="ml-3">Collaboration</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content area -->
+      <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content">
+          <div class="mb-6">
+            <h1 class="text-2xl font-bold">Dashboard</h1>
+            <p class="text-gray-600 dark:text-gray-400">Welcome back, John Doe</p>
+          </div>
+
+          <!-- Status overview cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Tasks in Progress</p>
+                  <p class="text-2xl font-bold mt-1">8</p>
+                </div>
+                <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                  <i class="fas fa-spinner text-blue-500 dark:text-blue-300"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-sm">
+                <span class="text-green-500 flex items-center">
+                  <i class="fas fa-arrow-up mr-1"></i> 12%
+                </span>
+                <span class="text-gray-500 dark:text-gray-400 ml-2">vs last week</span>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Completed Tasks</p>
+                  <p class="text-2xl font-bold mt-1">21</p>
+                </div>
+                <div class="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                  <i class="fas fa-check text-green-500 dark:text-green-300"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-sm">
+                <span class="text-green-500 flex items-center">
+                  <i class="fas fa-arrow-up mr-1"></i> 8%
+                </span>
+                <span class="text-gray-500 dark:text-gray-400 ml-2">vs last week</span>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Team Members</p>
+                  <p class="text-2xl font-bold mt-1">12</p>
+                </div>
+                <div class="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                  <i class="fas fa-users text-purple-500 dark:text-purple-300"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-sm">
+                <span class="text-green-500 flex items-center">
+                  <i class="fas fa-arrow-up mr-1"></i> 2
+                </span>
+                <span class="text-gray-500 dark:text-gray-400 ml-2">new this month</span>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Upcoming Deadlines</p>
+                  <p class="text-2xl font-bold mt-1">5</p>
+                </div>
+                <div class="p-2 bg-red-100 dark:bg-red-900 rounded-lg">
+                  <i class="fas fa-calendar-alt text-red-500 dark:text-red-300"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-sm">
+                <span class="text-red-500 flex items-center">
+                  <i class="fas fa-exclamation-circle mr-1"></i> 2
+                </span>
+                <span class="text-gray-500 dark:text-gray-400 ml-2">urgent (&lt; 2 days)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project progress and activity -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2">
+              <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+                <div class="flex justify-between items-center mb-6">
+                  <h2 class="text-lg font-bold">Project Progress</h2>
+                  <div class="relative">
+                    <select class="appearance-none bg-gray-100 dark:bg-gray-800 border-none rounded-lg py-1 pl-3 pr-8 text-sm">
+                      <option>Last 7 days</option>
+                      <option>Last 30 days</option>
+                      <option>Last 90 days</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                      <i class="fas fa-chevron-down text-xs"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="h-60">
+                  <canvas id="progressChart" width="1168" height="480" style="display: block; box-sizing: border-box; height: 240px; width: 584px;"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+                <div class="flex justify-between items-center mb-6">
+                  <h2 class="text-lg font-bold">Recent Activity</h2>
+                  <button class="text-primary dark:text-primaryLight hover:underline text-sm">View all</button>
+                </div>
+                <div class="space-y-4">
+                  <div class="flex items-start space-x-3">
+                    <div class="h-9 w-9 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center flex-shrink-0">
+                      <i class="fas fa-file-alt text-blue-500 dark:text-blue-300"></i>
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium">Sarah created "Q4 Marketing Plan"</p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400">2 hours ago</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start space-x-3">
+                    <div class="h-9 w-9 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0">
+                      <i class="fas fa-check text-green-500 dark:text-green-300"></i>
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium">Mike completed "Update Documentation"</p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400">3 hours ago</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start space-x-3">
+                    <div class="h-9 w-9 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center flex-shrink-0">
+                      <i class="fas fa-comment text-yellow-500 dark:text-yellow-300"></i>
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium">Jennifer commented on "Website Redesign"</p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400">5 hours ago</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start space-x-3">
+                    <div class="h-9 w-9 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center flex-shrink-0">
+                      <i class="fas fa-user-plus text-purple-500 dark:text-purple-300"></i>
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium">Alex joined "Mobile App Development"</p>
+                      <p class="text-xs text-gray-500 dark:text-gray-400">1 day ago</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Task Management Tab -->
+        <div id="tasks" class="tab-content hidden">
+          <div class="flex justify-between items-center mb-6">
+            <div>
+              <h1 class="text-2xl font-bold">Task Management</h1>
+              <p class="text-gray-600 dark:text-gray-400">Organize and track your tasks</p>
+            </div>
+            <button id="addTaskBtn" class="px-4 py-2 bg-primary hover:bg-primaryDark text-white rounded-lg flex items-center transition-colors duration-200">
+              <i class="fas fa-plus mr-2"></i>
+              <span>Add New Task</span>
+            </button>
+          </div>
+
+          <!-- Search and filter -->
+          <div class="mb-6 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+            <div class="relative flex-grow">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                <i class="fas fa-search text-gray-400"></i>
+              </span>
+              <input type="text" class="w-full pl-10 pr-4 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base" placeholder="Search tasks...">
+            </div>
+            <div class="flex space-x-2">
+              <select class="px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base">
+                <option>All Categories</option>
+                <option>Development</option>
+                <option>Design</option>
+                <option>Marketing</option>
+                <option>Research</option>
+              </select>
+              <select class="px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base">
+                <option>All Priorities</option>
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Kanban board -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 overflow-x-auto">
+            <!-- To Do Column -->
+            <div class="kanban-column bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold flex items-center">
+                  <span class="h-3 w-3 rounded-full bg-blue-500 mr-2"></span>
+                  To Do <span class="ml-2 text-gray-500 dark:text-gray-400 text-sm">(4)</span>
+                </h3>
+                <button class="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                  <i class="fas fa-ellipsis-h"></i>
+                </button>
+              </div>
+              <div class="space-y-3 kanban-tasks" data-column="todo">
+                <div class="task-card bg-white dark:bg-darkSecondary p-4 rounded-lg shadow-sm" draggable="true" data-task-id="1">
+                  <div class="flex justify-between items-start">
+                    <span class="px-2 py-1 text-xs rounded bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">Development</span>
+                    <span class="text-red-500 text-xs font-bold">High</span>
+                  </div>
+                  <h4 class="font-medium mt-2">API Integration</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Integrate payment gateway API with the checkout system</p>
+                  <div class="mt-3 flex justify-between items-center">
+                    <div class="flex -space-x-2">
+                      <div class="h-7 w-7 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs">MJ</div>
+                    </div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Due in 2 days</span>
+                  </div>
+                </div>
+                <div class="task-card bg-white dark:bg-darkSecondary p-4 rounded-lg shadow-sm" draggable="true" data-task-id="2">
+                  <div class="flex justify-between items-start">
+                    <span class="px-2 py-1 text-xs rounded bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">Design</span>
+                    <span class="text-yellow-500 text-xs font-bold">Medium</span>
+                  </div>
+                  <h4 class="font-medium mt-2">Dashboard Mockup</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Create mockups for the analytics dashboard</p>
+                  <div class="mt-3 flex justify-between items-center">
+                    <div class="flex -space-x-2">
+                      <div class="h-7 w-7 rounded-full bg-pink-500 flex items-center justify-center text-white text-xs">AK</div>
+                    </div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Due in 3 days</span>
+                  </div>
+                </div>
+                <div class="task-card bg-white dark:bg-darkSecondary p-4 rounded-lg shadow-sm" draggable="true" data-task-id="3">
+                  <div class="flex justify-between items-start">
+                    <span class="px-2 py-1 text-xs rounded bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">Marketing</span>
+                    <span class="text-green-500 text-xs font-bold">Low</span>
+                  </div>
+                  <h4 class="font-medium mt-2">Email Campaign</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Draft email templates for Q4 product launch</p>
+                  <div class="mt-3 flex justify-between items-center">
+                    <div class="flex -space-x-2">
+                      <div class="h-7 w-7 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs">SL</div>
+                    </div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Due in 5 days</span>
+                  </div>
+                </div>
+                <div class="task-card bg-white dark:bg-darkSecondary p-4 rounded-lg shadow-sm" draggable="true" data-task-id="4">
+                  <div class="flex justify-between items-start">
+                    <span class="px-2 py-1 text-xs rounded bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200">Research</span>
+                    <span class="text-yellow-500 text-xs font-bold">Medium</span>
+                  </div>
+                  <h4 class="font-medium mt-2">Competitor Analysis</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Research competitors' pricing strategies</p>
+                  <div class="mt-3 flex justify-between items-center">
+                    <div class="flex -space-x-2">
+                      <div class="h-7 w-7 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs">TW</div>
+                    </div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Due in 7 days</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- In Progress Column -->
+            <div class="kanban-column bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold flex items-center">
+                  <span class="h-3 w-3 rounded-full bg-yellow-500 mr-2"></span>
+                  In Progress <span class="ml-2 text-gray-500 dark:text-gray-400 text-sm">(3)</span>
+                </h3>
+                <button class="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                  <i class="fas fa-ellipsis-h"></i>
+                </button>
+              </div>
+              <div class="space-y-3 kanban-tasks" data-column="in-progress">
+                <div class="task-card bg-white dark:bg-darkSecondary p-4 rounded-lg shadow-sm" draggable="true" data-task-id="5">
+                  <div class="flex justify-between items-start">
+                    <span class="px-2 py-1 text-xs rounded bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">Development</span>
+                    <span class="text-red-500 text-xs font-bold">High</span>
+                  </div>
+                  <h4 class="font-medium mt-2">User Authentication</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Implement OAuth 2.0 authentication flow</p>
+                  <div class="mt-3 flex justify-between items-center">
+                    <div class="flex -space-x-2">
+                      <div class="h-7 w-7 rounded-full bg-red-500 flex items-center justify-center text-white text-xs">RS</div>
+                    </div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Due tomorrow</span>
+                  </div>
+                </div>
+                <div class="task-card bg-white dark:bg-darkSecondary p-4 rounded-lg shadow-sm" draggable="true" data-task-id="6">
+                  <div class="flex justify-between items-start">
+                    <span class="px-2 py-1 text-xs rounded bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">Design</span>
+                    <span class="text-yellow-500 text-xs font-bold">Medium</span>
+                  </div>
+                  <h4 class="font-medium mt-2">Mobile Responsive Design</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Adjust layout for various mobile devices</p>
+                  <div class="mt-3 flex justify-between items-center">
+                    <div class="flex -space-x-2">
+                      <div class="h-7 w-7 rounded-full bg-pink-500 flex items-center justify-center text-white text-xs">AK</div>
+                    </div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Due in 4 days</span>
+                  </div>
+                </div>
+                <div class="task-card bg-white dark:bg-darkSecondary p-4 rounded-lg shadow-sm" draggable="true" data-task-id="7">
+                  <div class="flex justify-between items-start">
+                    <span class="px-2 py-1 text-xs rounded bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">Development</span>
+                    <span class="text-yellow-500 text-xs font-bold">Medium</span>
+                  </div>
+                  <h4 class="font-medium mt-2">Performance Optimization</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Improve page load times by 30%</p>
+                  <div class="mt-3 flex justify-between items-center">
+                    <div class="flex -space-x-2">
+                      <div class="h-7 w-7 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs">MJ</div>
+                    </div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Due in 3 days</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Completed Column -->
+            <div class="kanban-column bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold flex items-center">
+                  <span class="h-3 w-3 rounded-full bg-green-500 mr-2"></span>
+                  Completed <span class="ml-2 text-gray-500 dark:text-gray-400 text-sm">(3)</span>
+                </h3>
+                <button class="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                  <i class="fas fa-ellipsis-h"></i>
+                </button>
+              </div>
+              <div class="space-y-3 kanban-tasks" data-column="completed">
+                <div class="task-card bg-white dark:bg-darkSecondary p-4 rounded-lg shadow-sm" draggable="true" data-task-id="8">
+                  <div class="flex justify-between items-start">
+                    <span class="px-2 py-1 text-xs rounded bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">Design</span>
+                    <span class="text-red-500 text-xs font-bold">High</span>
+                  </div>
+                  <h4 class="font-medium mt-2">Landing Page Design</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Design new landing page for product launch</p>
+                  <div class="mt-3 flex justify-between items-center">
+                    <div class="flex -space-x-2">
+                      <div class="h-7 w-7 rounded-full bg-pink-500 flex items-center justify-center text-white text-xs">AK</div>
+                    </div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Completed</span>
+                  </div>
+                </div>
+                <div class="task-card bg-white dark:bg-darkSecondary p-4 rounded-lg shadow-sm" draggable="true" data-task-id="9">
+                  <div class="flex justify-between items-start">
+                    <span class="px-2 py-1 text-xs rounded bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">Marketing</span>
+                    <span class="text-green-500 text-xs font-bold">Low</span>
+                  </div>
+                  <h4 class="font-medium mt-2">Social Media Assets</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Create graphics for social media campaign</p>
+                  <div class="mt-3 flex justify-between items-center">
+                    <div class="flex -space-x-2">
+                      <div class="h-7 w-7 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs">SL</div>
+                    </div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Completed</span>
+                  </div>
+                </div>
+                <div class="task-card bg-white dark:bg-darkSecondary p-4 rounded-lg shadow-sm" draggable="true" data-task-id="10">
+                  <div class="flex justify-between items-start">
+                    <span class="px-2 py-1 text-xs rounded bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">Development</span>
+                    <span class="text-yellow-500 text-xs font-bold">Medium</span>
+                  </div>
+                  <h4 class="font-medium mt-2">Database Optimization</h4>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Optimize database queries for better performance</p>
+                  <div class="mt-3 flex justify-between items-center">
+                    <div class="flex -space-x-2">
+                      <div class="h-7 w-7 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs">MJ</div>
+                    </div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">Completed</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content hidden">
+          <div class="mb-6">
+            <h1 class="text-2xl font-bold">Analytics Dashboard</h1>
+            <p class="text-gray-600 dark:text-gray-400">Track your team's performance and project progress</p>
+          </div>
+
+          <!-- Statistics cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Tasks Completed</p>
+                  <p class="text-2xl font-bold mt-1">68%</p>
+                </div>
+                <div class="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                  <i class="fas fa-tasks text-green-500 dark:text-green-300"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="progress-bar bg-gray-200 dark:bg-gray-700">
+                  <div class="progress-value bg-green-500" style="width: 68%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Time Spent</p>
+                  <p class="text-2xl font-bold mt-1">126 hrs</p>
+                </div>
+                <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                  <i class="fas fa-clock text-blue-500 dark:text-blue-300"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-sm">
+                <span class="text-green-500 flex items-center">
+                  <i class="fas fa-arrow-up mr-1"></i> 12%
+                </span>
+                <span class="text-gray-500 dark:text-gray-400 ml-2">vs last month</span>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Team Productivity</p>
+                  <p class="text-2xl font-bold mt-1">85%</p>
+                </div>
+                <div class="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                  <i class="fas fa-chart-line text-purple-500 dark:text-purple-300"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="progress-bar bg-gray-200 dark:bg-gray-700">
+                  <div class="progress-value bg-purple-500" style="width: 85%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Budget Spent</p>
+                  <p class="text-2xl font-bold mt-1">$12,450</p>
+                </div>
+                <div class="p-2 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
+                  <i class="fas fa-dollar-sign text-yellow-500 dark:text-yellow-300"></i>
+                </div>
+              </div>
+              <div class="mt-4 flex items-center text-sm">
+                <span class="text-red-500 flex items-center">
+                  <i class="fas fa-arrow-up mr-1"></i> 8%
+                </span>
+                <span class="text-gray-500 dark:text-gray-400 ml-2">vs projected</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main charts -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-bold">Tasks Completion Rate</h2>
+                <div class="relative">
+                  <select class="appearance-none bg-gray-100 dark:bg-gray-800 border-none rounded-lg py-1 pl-3 pr-8 text-sm">
+                    <option>Last 7 days</option>
+                    <option>Last 30 days</option>
+                    <option>Last 90 days</option>
+                  </select>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                    <i class="fas fa-chevron-down text-xs"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="h-60">
+                <canvas id="tasksCompletionChart" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-bold">Resource Allocation</h2>
+                <div class="relative">
+                  <select class="appearance-none bg-gray-100 dark:bg-gray-800 border-none rounded-lg py-1 pl-3 pr-8 text-sm">
+                    <option>All Projects</option>
+                    <option>Website Redesign</option>
+                    <option>Mobile App</option>
+                    <option>Marketing Campaign</option>
+                  </select>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                    <i class="fas fa-chevron-down text-xs"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="h-60">
+                <canvas id="resourceAllocationChart" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Team performance -->
+          <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6 mb-8">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-lg font-bold">Team Performance</h2>
+              <button class="text-sm text-primary dark:text-primaryLight hover:underline">
+                Export Report <i class="fas fa-download ml-1"></i>
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead>
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Team Member</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tasks Completed</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">On-Time Completion</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Hours Logged</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Productivity Score</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <div class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs mr-3">MJ</div>
+                        <div>
+                          <div class="font-medium">Michael Johnson</div>
+                          <div class="text-gray-500 dark:text-gray-400 text-sm">Developer</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm">42 / 45</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">93%</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-green-600 dark:text-green-400">98%</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      132h
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <div class="text-sm font-medium mr-2">92</div>
+                        <div class="h-2 w-24 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div class="h-full bg-green-500" style="width: 92%"></div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <div class="h-8 w-8 rounded-full bg-pink-500 flex items-center justify-center text-white text-xs mr-3">AK</div>
+                        <div>
+                          <div class="font-medium">Anna Kim</div>
+                          <div class="text-gray-500 dark:text-gray-400 text-sm">Designer</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm">38 / 40</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">95%</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-green-600 dark:text-green-400">94%</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      112h
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <div class="text-sm font-medium mr-2">89</div>
+                        <div class="h-2 w-24 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div class="h-full bg-green-500" style="width: 89%"></div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <div class="h-8 w-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs mr-3">SL</div>
+                        <div>
+                          <div class="font-medium">Sarah Lee</div>
+                          <div class="text-gray-500 dark:text-gray-400 text-sm">Marketing</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm">31 / 35</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">89%</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-yellow-600 dark:text-yellow-400">85%</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      98h
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <div class="text-sm font-medium mr-2">81</div>
+                        <div class="h-2 w-24 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div class="h-full bg-yellow-500" style="width: 81%"></div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <div class="h-8 w-8 rounded-full bg-red-500 flex items-center justify-center text-white text-xs mr-3">RS</div>
+                        <div>
+                          <div class="font-medium">Robert Smith</div>
+                          <div class="text-gray-500 dark:text-gray-400 text-sm">Developer</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm">28 / 38</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">74%</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-red-600 dark:text-red-400">72%</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      128h
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex items-center">
+                        <div class="text-sm font-medium mr-2">68</div>
+                        <div class="h-2 w-24 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div class="h-full bg-red-500" style="width: 68%"></div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resource Management Tab -->
+        <div id="resources" class="tab-content hidden">
+          <div class="mb-6">
+            <h1 class="text-2xl font-bold">Resource Management</h1>
+            <p class="text-gray-600 dark:text-gray-400">Allocate and monitor your resources efficiently</p>
+          </div>
+
+          <!-- Resource allocation -->
+          <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6 mb-8">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="text-lg font-bold">Resource Allocation by Project</h2>
+              <button class="px-4 py-2 bg-primary hover:bg-primaryDark text-white rounded-lg flex items-center transition-colors duration-200">
+                <i class="fas fa-plus mr-2"></i>
+                <span>Allocate Resources</span>
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead>
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Project</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Team Members</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Budget</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Timeline</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="font-medium">Website Redesign</div>
+                      <div class="text-gray-500 dark:text-gray-400 text-sm">Frontend overhaul</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex -space-x-2">
+                        <div class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs ring-2 ring-white dark:ring-darkSecondary">MJ</div>
+                        <div class="h-8 w-8 rounded-full bg-pink-500 flex items-center justify-center text-white text-xs ring-2 ring-white dark:ring-darkSecondary">AK</div>
+                        <div class="h-8 w-8 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-800 dark:text-gray-200 text-xs ring-2 ring-white dark:ring-darkSecondary">+2</div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm">$25,000</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">$18,500 spent</div>
+                      <div class="mt-1 h-1.5 w-24 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-yellow-500" style="width: 74%"></div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm">May 15 - Jul 30</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">15 days remaining</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">In Progress</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <button class="text-primary dark:text-primaryLight hover:underline">View Details</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="font-medium">Mobile App Development</div>
+                      <div class="text-gray-500 dark:text-gray-400 text-sm">iOS and Android</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex -space-x-2">
+                        <div class="h-8 w-8 rounded-full bg-red-500 flex items-center justify-center text-white text-xs ring-2 ring-white dark:ring-darkSecondary">RS</div>
+                        <div class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs ring-2 ring-white dark:ring-darkSecondary">MJ</div>
+                        <div class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs ring-2 ring-white dark:ring-darkSecondary">TW</div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm">$42,000</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">$12,600 spent</div>
+                      <div class="mt-1 h-1.5 w-24 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500" style="width: 30%"></div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm">Jun 1 - Oct 31</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">108 days remaining</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">Planning</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <button class="text-primary dark:text-primaryLight hover:underline">View Details</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="font-medium">Marketing Campaign</div>
+                      <div class="text-gray-500 dark:text-gray-400 text-sm">Q3 product launch</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex -space-x-2">
+                        <div class="h-8 w-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs ring-2 ring-white dark:ring-darkSecondary">SL</div>
+                        <div class="h-8 w-8 rounded-full bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-800 dark:text-gray-200 text-xs ring-2 ring-white dark:ring-darkSecondary">+1</div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm">$18,000</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">$16,200 spent</div>
+                      <div class="mt-1 h-1.5 w-24 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-red-500" style="width: 90%"></div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm">Apr 1 - Jul 15</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">2 days remaining</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">In Progress</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <button class="text-primary dark:text-primaryLight hover:underline">View Details</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="font-medium">Customer Portal</div>
+                      <div class="text-gray-500 dark:text-gray-400 text-sm">Self-service dashboard</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="flex -space-x-2">
+                        <div class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs ring-2 ring-white dark:ring-darkSecondary">MJ</div>
+                        <div class="h-8 w-8 rounded-full bg-red-500 flex items-center justify-center text-white text-xs ring-2 ring-white dark:ring-darkSecondary">RS</div>
+                        <div class="h-8 w-8 rounded-full bg-pink-500 flex items-center justify-center text-white text-xs ring-2 ring-white dark:ring-darkSecondary">AK</div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm">$32,000</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">$8,000 spent</div>
+                      <div class="mt-1 h-1.5 w-24 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500" style="width: 25%"></div>
+                      </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm">Jul 1 - Sep 30</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">78 days remaining</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">Planning</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                      <button class="text-primary dark:text-primaryLight hover:underline">View Details</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Resource utilization -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-bold">Team Utilization</h2>
+                <div class="relative">
+                  <select class="appearance-none bg-gray-100 dark:bg-gray-800 border-none rounded-lg py-1 pl-3 pr-8 text-sm">
+                    <option>This Month</option>
+                    <option>Last Month</option>
+                    <option>Q2 2023</option>
+                  </select>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                    <i class="fas fa-chevron-down text-xs"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="h-60">
+                <canvas id="teamUtilizationChart" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas>
+              </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6">
+              <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-bold">Budget Utilization</h2>
+                <div class="relative">
+                  <select class="appearance-none bg-gray-100 dark:bg-gray-800 border-none rounded-lg py-1 pl-3 pr-8 text-sm">
+                    <option>All Projects</option>
+                    <option>Website Redesign</option>
+                    <option>Mobile App</option>
+                    <option>Marketing Campaign</option>
+                  </select>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                    <i class="fas fa-chevron-down text-xs"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="h-60">
+                <canvas id="budgetUtilizationChart" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gantt Chart Tab -->
+        <div id="gantt" class="tab-content hidden">
+          <div class="mb-6">
+            <h1 class="text-2xl font-bold">Gantt Chart</h1>
+            <p class="text-gray-600 dark:text-gray-400">Visualize project timelines and dependencies</p>
+          </div>
+
+          <!-- Gantt chart controls -->
+          <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-4 mb-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <div class="flex space-x-2">
+                <button class="px-3 py-2 bg-primary hover:bg-primaryDark text-white rounded-lg transition-colors duration-200">
+                  <i class="fas fa-plus mr-1"></i> Add Task
+                </button>
+                <select class="px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base">
+                  <option>All Projects</option>
+                  <option>Website Redesign</option>
+                  <option>Mobile App</option>
+                  <option>Marketing Campaign</option>
+                </select>
+              </div>
+              <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                  <span class="text-sm">Zoom:</span>
+                  <button class="p-1.5 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    <i class="fas fa-search-minus"></i>
+                  </button>
+                  <button class="p-1.5 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    <i class="fas fa-search-plus"></i>
+                  </button>
+                </div>
+                <div class="flex items-center space-x-1">
+                  <button class="p-1.5 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <span class="text-sm px-2">July 2023</span>
+                  <button class="p-1.5 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+                <select class="px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base">
+                  <option>Days</option>
+                  <option>Weeks</option>
+                  <option>Months</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gantt chart -->
+          <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6 overflow-hidden">
+            <div class="gantt-container">
+              <!-- Header (days) -->
+              <div class="flex border-b dark:border-gray-700">
+                <!-- Task labels column -->
+                <div class="flex-shrink-0 w-64 pr-4"></div>
+
+                <!-- Days columns -->
+                <div class="flex flex-grow">
+                  <div class="w-20 text-center text-xs font-medium text-gray-500 dark:text-gray-400 pb-2">Jul 10</div>
+                  <div class="w-20 text-center text-xs font-medium text-gray-500 dark:text-gray-400 pb-2">Jul 11</div>
+                  <div class="w-20 text-center text-xs font-medium text-gray-500 dark:text-gray-400 pb-2">Jul 12</div>
+                  <div class="w-20 text-center text-xs font-medium text-gray-500 dark:text-gray-400 pb-2">Jul 13</div>
+                  <div class="w-20 text-center text-xs font-medium text-gray-500 dark:text-gray-400 pb-2">Jul 14</div>
+                  <div class="w-20 text-center text-xs font-medium text-gray-500 dark:text-gray-400 pb-2">Jul 15</div>
+                  <div class="w-20 text-center text-xs font-medium text-gray-500 dark:text-gray-400 pb-2">Jul 16</div>
+                  <div class="w-20 text-center text-xs font-medium text-gray-500 dark:text-gray-400 pb-2">Jul 17</div>
+                  <div class="w-20 text-center text-xs font-medium text-gray-500 dark:text-gray-400 pb-2">Jul 18</div>
+                  <div class="w-20 text-center text-xs font-medium text-gray-500 dark:text-gray-400 pb-2">Jul 19</div>
+                  <div class="w-20 text-center text-xs font-medium text-gray-500 dark:text-gray-400 pb-2">Jul 20</div>
+                </div>
+              </div>
+
+              <!-- Project 1: Website Redesign -->
+              <div class="flex flex-col">
+                <!-- Project header -->
+                <div class="flex items-center py-3 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                  <div class="flex-shrink-0 w-64 pr-4 pl-2">
+                    <div class="flex items-center">
+                      <button class="p-1 mr-2">
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                      </button>
+                      <span class="font-medium">Website Redesign</span>
+                    </div>
+                  </div>
+                  <div class="flex-grow h-6 relative">
+                    <!-- Project timeline bar in the background -->
+                    <div class="absolute top-0 left-0 h-full bg-gray-100 dark:bg-gray-700" style="width: 100%"></div>
+                  </div>
+                </div>
+
+                <!-- Tasks -->
+                <div class="gantt-row flex items-center hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <div class="flex-shrink-0 w-64 pr-4 pl-6 py-2">
+                    <span class="text-sm">Design homepage mockup</span>
+                  </div>
+                  <div class="flex-grow relative">
+                    <div class="gantt-bar bg-pink-500" style="width: 120px; left: 20px;">
+                      <span class="absolute inset-0 flex items-center justify-center text-xs text-white">3 days</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="gantt-row flex items-center hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <div class="flex-shrink-0 w-64 pr-4 pl-6 py-2">
+                    <span class="text-sm">Frontend implementation</span>
+                  </div>
+                  <div class="flex-grow relative">
+                    <div class="gantt-bar bg-indigo-500" style="width: 160px; left: 140px;">
+                      <span class="absolute inset-0 flex items-center justify-center text-xs text-white">4 days</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="gantt-row flex items-center hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <div class="flex-shrink-0 w-64 pr-4 pl-6 py-2">
+                    <span class="text-sm">Testing &amp; QA</span>
+                  </div>
+                  <div class="flex-grow relative">
+                    <div class="gantt-bar bg-green-500" style="width: 80px; left: 300px;">
+                      <span class="absolute inset-0 flex items-center justify-center text-xs text-white">2 days</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Project 2: Mobile App -->
+              <div class="flex flex-col mt-4">
+                <!-- Project header -->
+                <div class="flex items-center py-3 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                  <div class="flex-shrink-0 w-64 pr-4 pl-2">
+                    <div class="flex items-center">
+                      <button class="p-1 mr-2">
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                      </button>
+                      <span class="font-medium">Mobile App Development</span>
+                    </div>
+                  </div>
+                  <div class="flex-grow h-6 relative">
+                    <!-- Project timeline bar in the background -->
+                    <div class="absolute top-0 left-0 h-full bg-gray-100 dark:bg-gray-700" style="width: 100%"></div>
+                  </div>
+                </div>
+
+                <!-- Tasks -->
+                <div class="gantt-row flex items-center hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <div class="flex-shrink-0 w-64 pr-4 pl-6 py-2">
+                    <span class="text-sm">Requirements gathering</span>
+                  </div>
+                  <div class="flex-grow relative">
+                    <div class="gantt-bar bg-blue-500" style="width: 80px; left: 60px;">
+                      <span class="absolute inset-0 flex items-center justify-center text-xs text-white">2 days</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="gantt-row flex items-center hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <div class="flex-shrink-0 w-64 pr-4 pl-6 py-2">
+                    <span class="text-sm">UI Design</span>
+                  </div>
+                  <div class="flex-grow relative">
+                    <div class="gantt-bar bg-purple-500" style="width: 120px; left: 140px;">
+                      <span class="absolute inset-0 flex items-center justify-center text-xs text-white">3 days</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="gantt-row flex items-center hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <div class="flex-shrink-0 w-64 pr-4 pl-6 py-2">
+                    <span class="text-sm">Backend API development</span>
+                  </div>
+                  <div class="flex-grow relative">
+                    <div class="gantt-bar bg-red-500" style="width: 200px; left: 140px;">
+                      <span class="absolute inset-0 flex items-center justify-center text-xs text-white">5 days</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Project 3: Marketing Campaign -->
+              <div class="flex flex-col mt-4">
+                <!-- Project header -->
+                <div class="flex items-center py-3 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                  <div class="flex-shrink-0 w-64 pr-4 pl-2">
+                    <div class="flex items-center">
+                      <button class="p-1 mr-2">
+                        <i class="fas fa-chevron-down text-gray-500"></i>
+                      </button>
+                      <span class="font-medium">Marketing Campaign</span>
+                    </div>
+                  </div>
+                  <div class="flex-grow h-6 relative">
+                    <!-- Project timeline bar in the background -->
+                    <div class="absolute top-0 left-0 h-full bg-gray-100 dark:bg-gray-700" style="width: 100%"></div>
+                  </div>
+                </div>
+
+                <!-- Tasks -->
+                <div class="gantt-row flex items-center hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <div class="flex-shrink-0 w-64 pr-4 pl-6 py-2">
+                    <span class="text-sm">Content creation</span>
+                  </div>
+                  <div class="flex-grow relative">
+                    <div class="gantt-bar bg-yellow-500" style="width: 160px; left: 0px;">
+                      <span class="absolute inset-0 flex items-center justify-center text-xs text-white">4 days</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="gantt-row flex items-center hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <div class="flex-shrink-0 w-64 pr-4 pl-6 py-2">
+                    <span class="text-sm">Social media scheduling</span>
+                  </div>
+                  <div class="flex-grow relative">
+                    <div class="gantt-bar bg-orange-500" style="width: 120px; left: 160px;">
+                      <span class="absolute inset-0 flex items-center justify-center text-xs text-white">3 days</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="gantt-row flex items-center hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <div class="flex-shrink-0 w-64 pr-4 pl-6 py-2">
+                    <span class="text-sm">Analytics setup</span>
+                  </div>
+                  <div class="flex-grow relative">
+                    <div class="gantt-bar bg-teal-500" style="width: 80px; left: 280px;">
+                      <span class="absolute inset-0 flex items-center justify-center text-xs text-white">2 days</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Collaboration Tab -->
+        <div id="collaboration" class="tab-content hidden">
+          <div class="mb-6">
+            <h1 class="text-2xl font-bold">Collaboration</h1>
+            <p class="text-gray-600 dark:text-gray-400">Communicate and share with your team</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Team members -->
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6 lg:col-span-1">
+              <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-bold">Team Members</h2>
+                <button class="p-2 text-primary hover:bg-primary hover:bg-opacity-10 rounded-full">
+                  <i class="fas fa-user-plus"></i>
+                </button>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 rounded-full bg-indigo-500 flex items-center justify-center text-white mr-3">MJ</div>
+                    <div>
+                      <div class="font-medium">Michael Johnson</div>
+                      <div class="text-sm text-gray-500 dark:text-gray-400">Lead Developer</div>
+                    </div>
+                  </div>
+                  <div class="relative flex items-center">
+                    <div class="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"></div>
+                    <button class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                      <i class="fas fa-comment"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 rounded-full bg-pink-500 flex items-center justify-center text-white mr-3">AK</div>
+                    <div>
+                      <div class="font-medium">Anna Kim</div>
+                      <div class="text-sm text-gray-500 dark:text-gray-400">UI/UX Designer</div>
+                    </div>
+                  </div>
+                  <div class="relative flex items-center">
+                    <div class="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"></div>
+                    <button class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                      <i class="fas fa-comment"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 rounded-full bg-purple-500 flex items-center justify-center text-white mr-3">SL</div>
+                    <div>
+                      <div class="font-medium">Sarah Lee</div>
+                      <div class="text-sm text-gray-500 dark:text-gray-400">Marketing Specialist</div>
+                    </div>
+                  </div>
+                  <div class="relative flex items-center">
+                    <div class="h-2.5 w-2.5 rounded-full bg-gray-300 dark:bg-gray-600 mr-2"></div>
+                    <button class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                      <i class="fas fa-comment"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 rounded-full bg-red-500 flex items-center justify-center text-white mr-3">RS</div>
+                    <div>
+                      <div class="font-medium">Robert Smith</div>
+                      <div class="text-sm text-gray-500 dark:text-gray-400">Backend Developer</div>
+                    </div>
+                  </div>
+                  <div class="relative flex items-center">
+                    <div class="h-2.5 w-2.5 rounded-full bg-green-500 mr-2"></div>
+                    <button class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                      <i class="fas fa-comment"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white mr-3">TW</div>
+                    <div>
+                      <div class="font-medium">Tom Wilson</div>
+                      <div class="text-sm text-gray-500 dark:text-gray-400">QA Engineer</div>
+                    </div>
+                  </div>
+                  <div class="relative flex items-center">
+                    <div class="h-2.5 w-2.5 rounded-full bg-gray-300 dark:bg-gray-600 mr-2"></div>
+                    <button class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                      <i class="fas fa-comment"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat -->
+            <div class="bg-white dark:bg-darkSecondary rounded-xl shadow-sm p-6 lg:col-span-2 flex flex-col h-[600px]">
+              <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center">
+                  <h2 class="text-lg font-bold">Team Chat</h2>
+                  <span class="ml-2 px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">3 online</span>
+                </div>
+                <div class="flex space-x-2">
+                  <button class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                    <i class="fas fa-video"></i>
+                  </button>
+                  <button class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                    <i class="fas fa-phone"></i>
+                  </button>
+                  <button class="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Chat messages -->
+              <div class="flex-1 overflow-y-auto mb-4 space-y-4">
+                <div class="flex items-start">
+                  <div class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center text-white flex-shrink-0 mr-2">MJ</div>
+                  <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 max-w-md">
+                    <div class="flex justify-between items-start">
+                      <span class="font-medium">Michael Johnson</span>
+                      <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">10:23 AM</span>
+                    </div>
+                    <p class="text-sm mt-1">Hey team, I've updated the API documentation. Can someone review it before I share with the client?</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div class="h-8 w-8 rounded-full bg-red-500 flex items-center justify-center text-white flex-shrink-0 mr-2">RS</div>
+                  <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 max-w-md">
+                    <div class="flex justify-between items-start">
+                      <span class="font-medium">Robert Smith</span>
+                      <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">10:25 AM</span>
+                    </div>
+                    <p class="text-sm mt-1">I can take a look at it this afternoon. Where did you save it?</p>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div class="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center text-white flex-shrink-0 mr-2">MJ</div>
+                  <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 max-w-md">
+                    <div class="flex justify-between items-start">
+                      <span class="font-medium">Michael Johnson</span>
+                      <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">10:27 AM</span>
+                    </div>
+                    <p class="text-sm mt-1">It's in the shared docs folder - I've also attached it here:</p>
+                    <div class="mt-2 p-2 bg-white dark:bg-gray-800 rounded border dark:border-gray-600 flex items-center">
+                      <i class="fas fa-file-alt text-primary mr-2"></i>
+                      <div class="flex-1">
+                        <div class="text-sm font-medium">API_Documentation_v2.1.pdf</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">2.4 MB</div>
+                      </div>
+                      <button class="p-1 text-gray-500 hover:text-primary">
+                        <i class="fas fa-download"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div class="h-8 w-8 rounded-full bg-pink-500 flex items-center justify-center text-white flex-shrink-0 mr-2">AK</div>
+                  <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 max-w-md">
+                    <div class="flex justify-between items-start">
+                      <span class="font-medium">Anna Kim</span>
+                      <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">10:30 AM</span>
+                    </div>
+                    <p class="text-sm mt-1">I've finished the designs for the dashboard. I'll share them in our meeting at 2 PM.</p>
+                  </div>
+                </div>
+
+                <div class="flex justify-center">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">Today at 11:45 AM</span>
+                </div>
+
+                <div class="flex items-start justify-end">
+                  <div class="bg-primary rounded-lg p-3 max-w-md text-white">
+                    <p class="text-sm">I'll be 5 minutes late to the meeting - just wrapping up a call with the client.</p>
+                    <span class="text-xs opacity-70 block text-right mt-1">11:45 AM</span>
+                  </div>
+                  <div class="h-8 w-8 rounded-full bg-gray-500 flex items-center justify-center text-white flex-shrink-0 ml-2">JD</div>
+                </div>
+
+                <div class="flex items-start">
+                  <div class="h-8 w-8 rounded-full bg-purple-500 flex items-center justify-center text-white flex-shrink-0 mr-2">SL</div>
+                  <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 max-w-md">
+                    <div class="flex justify-between items-start">
+                      <span class="font-medium">Sarah Lee</span>
+                      <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">11:52 AM</span>
+                    </div>
+                    <p class="text-sm mt-1">No problem! We can start a few minutes late. I have some exciting news about the social media campaign numbers.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Message input -->
+              <div class="mt-auto">
+                <div class="flex items-end">
+                  <div class="flex-grow relative">
+                    <textarea rows="3" class="w-full rounded-lg border dark:border-gray-700 px-4 py-2 bg-white dark:bg-gray-800 text-base" placeholder="Type a message..."></textarea>
+                    <div class="absolute bottom-2 right-2 flex space-x-1">
+                      <button class="p-1.5 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                        <i class="fas fa-paperclip"></i>
+                      </button>
+                      <button class="p-1.5 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                        <i class="fas fa-smile"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <button class="ml-3 px-4 py-3 bg-primary hover:bg-primaryDark text-white rounded-lg">
+                    <i class="fas fa-paper-plane"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Task Modal -->
+  <div id="addTaskModal" class="modal fixed inset-0 z-50 overflow-y-auto hidden" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" id="modalOverlay"></div>
+      <div class="bg-white dark:bg-darkSecondary rounded-xl max-w-lg w-full mx-auto z-10 shadow-xl transform transition-all fade-in">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-bold">Add New Task</h3>
+            <button id="closeTaskModal" class="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <form id="addTaskForm">
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Task Title</label>
+              <input type="text" class="w-full px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base" placeholder="Enter task title">
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-1">Description</label>
+              <textarea rows="3" class="w-full px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base" placeholder="Enter task description"></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Category</label>
+                <select class="w-full px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base">
+                  <option>Development</option>
+                  <option>Design</option>
+                  <option>Marketing</option>
+                  <option>Research</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Priority</label>
+                <select class="w-full px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base">
+                  <option>Low</option>
+                  <option>Medium</option>
+                  <option>High</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium mb-1">Due Date</label>
+                <input type="date" class="w-full px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-1">Assignee</label>
+                <select class="w-full px-3 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base">
+                  <option>Michael Johnson</option>
+                  <option>Anna Kim</option>
+                  <option>Sarah Lee</option>
+                  <option>Robert Smith</option>
+                  <option>Tom Wilson</option>
+                </select>
+              </div>
+            </div>
+            <div class="mt-6 flex justify-end space-x-3">
+              <button type="button" id="cancelAddTask" class="px-4 py-2 border dark:border-gray-700 rounded-lg">Cancel</button>
+              <button type="submit" class="px-4 py-2 bg-primary hover:bg-primaryDark text-white rounded-lg transition-colors duration-200">Add Task</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Assistant Modal -->
+  <div id="aiAssistantModal" class="modal fixed inset-0 z-50 overflow-y-auto hidden" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" id="aiModalOverlay"></div>
+      <div class="bg-white dark:bg-darkSecondary rounded-xl max-w-lg w-full mx-auto z-10 shadow-xl transform transition-all fade-in">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-6">
+            <div class="flex items-center">
+              <div class="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white mr-3">
+                <i class="fas fa-robot"></i>
+              </div>
+              <h3 class="text-lg font-bold">AI Assistant</h3>
+            </div>
+            <button id="closeAiModal" class="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div id="aiMessages" class="mb-4 h-60 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div class="flex items-start mb-4">
+              <div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 mr-2">
+                <i class="fas fa-robot text-sm"></i>
+              </div>
+              <div class="bg-white dark:bg-gray-700 rounded-lg p-3 max-w-md">
+                <p class="text-sm">Hello! I'm your AI assistant. How can I help you today with task management, resource allocation, or project analytics?</p>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-end">
+            <div class="flex-grow">
+              <input type="text" id="aiInput" class="w-full px-4 py-2 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-base" placeholder="Ask a question...">
+            </div>
+            <button id="sendAiMessage" class="ml-3 px-4 py-2 bg-primary hover:bg-primaryDark text-white rounded-lg">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+          <div class="mt-4 text-xs text-gray-500 dark:text-gray-400">
+            <p>Try asking: "What tasks are due this week?" or "How is our marketing campaign performing?"</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+    <script id="rendered-js">
+// Dark mode detection and toggle
+if (
+  window.matchMedia &&
+  window.matchMedia("(prefers-color-scheme: dark)").matches
+) {
+  document.documentElement.classList.add("dark");
+}
+window
+  .matchMedia("(prefers-color-scheme: dark)")
+  .addEventListener("change", (event) => {
+    if (event.matches) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    updateCharts(); // Redraw charts with appropriate colors
+  });
+document.getElementById("darkModeToggle").addEventListener("click", () => {
+  document.documentElement.classList.toggle("dark");
+  updateCharts(); // Redraw charts with appropriate colors
+});
+// CPU mode toggle
+const modeToggle = document.getElementById("modeToggle");
+const cpuModeIndicator = document.getElementById("cpuModeIndicator");
+const cpuLoadBar = document.getElementById("cpuLoadBar");
+const cpuLoadPercent = document.getElementById("cpuLoadPercent");
+modeToggle.addEventListener("change", () => {
+  if (modeToggle.checked) {
+    // CPU mode is active
+    cpuModeIndicator.classList.remove("hidden");
+    document.body.classList.add("cpu-mode");
+    // Simulate CPU activity
+    simulateCpuActivity();
+  } else {
+    // Standard mode is active
+    cpuModeIndicator.classList.add("hidden");
+    document.body.classList.remove("cpu-mode");
+  }
+});
+
+function simulateCpuActivity() {
+  if (!modeToggle.checked) return;
+  const load = Math.floor(50 + Math.random() * 45); // Random between 50-95%
+  cpuLoadBar.style.width = `${load}%`;
+  cpuLoadPercent.textContent = `${load}%`;
+  // Change color based on load
+  if (load > 80) {
+    cpuLoadBar.classList.add("bg-red-500");
+    cpuLoadBar.classList.remove("bg-yellow-500", "bg-primary");
+  } else if (load > 60) {
+    cpuLoadBar.classList.add("bg-yellow-500");
+    cpuLoadBar.classList.remove("bg-red-500", "bg-primary");
+  } else {
+    cpuLoadBar.classList.add("bg-primary");
+    cpuLoadBar.classList.remove("bg-red-500", "bg-yellow-500");
+  }
+  setTimeout(simulateCpuActivity, 2000);
+}
+// Tab navigation
+const tabButtons = document.querySelectorAll(".tab-btn");
+const mobileTabButtons = document.querySelectorAll(".mobile-tab-btn");
+const tabContents = document.querySelectorAll(".tab-content");
+
+function setActiveTab(tabId) {
+  // Hide all tab contents
+  tabContents.forEach((content) => {
+    content.classList.add("hidden");
+  });
+  // Show selected tab content
+  document.getElementById(tabId).classList.remove("hidden");
+  // Update active state of tab buttons
+  tabButtons.forEach((btn) => {
+    if (btn.dataset.tab === tabId) {
+      btn.classList.add(
+        "active-tab",
+        "text-primary",
+        "bg-primary",
+        "bg-opacity-10"
+      );
+      btn.classList.remove(
+        "text-gray-700",
+        "dark:text-gray-300",
+        "hover:bg-gray-100",
+        "dark:hover:bg-gray-700"
+      );
+    } else {
+      btn.classList.remove(
+        "active-tab",
+        "text-primary",
+        "bg-primary",
+        "bg-opacity-10"
+      );
+      btn.classList.add(
+        "text-gray-700",
+        "dark:text-gray-300",
+        "hover:bg-gray-100",
+        "dark:hover:bg-gray-700"
+      );
+    }
+  });
+  // Update mobile tab buttons as well
+  mobileTabButtons.forEach((btn) => {
+    if (btn.dataset.tab === tabId) {
+      btn.classList.add(
+        "active-tab",
+        "text-primary",
+        "bg-primary",
+        "bg-opacity-10"
+      );
+      btn.classList.remove(
+        "text-gray-700",
+        "dark:text-gray-300",
+        "hover:bg-gray-100",
+        "dark:hover:bg-gray-700"
+      );
+    } else {
+      btn.classList.remove(
+        "active-tab",
+        "text-primary",
+        "bg-primary",
+        "bg-opacity-10"
+      );
+      btn.classList.add(
+        "text-gray-700",
+        "dark:text-gray-300",
+        "hover:bg-gray-100",
+        "dark:hover:bg-gray-700"
+      );
+    }
+  });
+  // Close mobile sidebar after clicking a tab
+  closeMobileSidebar();
+}
+tabButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    setActiveTab(button.dataset.tab);
+  });
+});
+mobileTabButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    setActiveTab(button.dataset.tab);
+  });
+});
+// Mobile sidebar
+const mobileSidebarToggle = document.getElementById("mobileSidebarToggle");
+const mobileSidebar = document.getElementById("mobileSidebar");
+const mobileSidebarPanel = mobileSidebar.querySelector("div.absolute");
+const closeMobileSidebarBtn = document.getElementById("closeMobileSidebar");
+
+function openMobileSidebar() {
+  mobileSidebar.classList.remove("hidden");
+  setTimeout(() => {
+    mobileSidebarPanel.classList.remove("translate-x-full");
+  }, 10);
+}
+
+function closeMobileSidebar() {
+  mobileSidebarPanel.classList.add("translate-x-full");
+  setTimeout(() => {
+    mobileSidebar.classList.add("hidden");
+  }, 300);
+}
+mobileSidebarToggle.addEventListener("click", openMobileSidebar);
+closeMobileSidebarBtn.addEventListener("click", closeMobileSidebar);
+document
+  .getElementById("modalOverlay")
+  ?.addEventListener("click", closeMobileSidebar);
+// Modal handling
+const addTaskBtn = document.getElementById("addTaskBtn");
+const addTaskModal = document.getElementById("addTaskModal");
+const closeTaskModal = document.getElementById("closeTaskModal");
+const cancelAddTask = document.getElementById("cancelAddTask");
+const modalOverlay = document.getElementById("modalOverlay");
+
+function openModal(modal) {
+  modal.classList.remove("hidden");
+}
+
+function closeModal(modal) {
+  modal.classList.add("hidden");
+}
+addTaskBtn.addEventListener("click", () => openModal(addTaskModal));
+closeTaskModal.addEventListener("click", () => closeModal(addTaskModal));
+cancelAddTask.addEventListener("click", () => closeModal(addTaskModal));
+modalOverlay.addEventListener("click", () => closeModal(addTaskModal));
+// AI Assistant modal
+const aiAssistantBtn = document.getElementById("aiAssistantBtn");
+const aiAssistantModal = document.getElementById("aiAssistantModal");
+const closeAiModal = document.getElementById("closeAiModal");
+const aiModalOverlay = document.getElementById("aiModalOverlay");
+const aiInput = document.getElementById("aiInput");
+const sendAiMessage = document.getElementById("sendAiMessage");
+const aiMessages = document.getElementById("aiMessages");
+aiAssistantBtn.addEventListener("click", () => openModal(aiAssistantModal));
+closeAiModal.addEventListener("click", () => closeModal(aiAssistantModal));
+aiModalOverlay.addEventListener("click", () => closeModal(aiAssistantModal));
+
+function sendAiAssistantMessage() {
+  const message = aiInput.value.trim();
+  if (!message) return;
+  // Add user message
+  aiMessages.innerHTML += `
+                <div class="flex items-start justify-end mb-4">
+                    <div class="bg-primary rounded-lg p-3 max-w-md text-white">
+                        <p class="text-sm">${message}</p>
+                    </div>
+                    <div class="h-8 w-8 rounded-full bg-gray-500 flex items-center justify-center text-white flex-shrink-0 ml-2">JD</div>
+                </div>
+            `;
+  // Clear input
+  aiInput.value = "";
+  // Scroll to bottom
+  aiMessages.scrollTop = aiMessages.scrollHeight;
+  // Show loading indicator
+  aiMessages.innerHTML += `
+                <div class="flex items-start mb-4" id="ai-typing">
+                    <div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 mr-2">
+                        <i class="fas fa-robot text-sm"></i>
+                    </div>
+                    <div class="bg-white dark:bg-gray-700 rounded-lg p-3 max-w-md">
+                        <p class="text-sm"><span class="inline-block w-1 h-1 bg-gray-500 dark:bg-gray-300 rounded-full animate-pulse"></span><span class="inline-block w-1 h-1 bg-gray-500 dark:bg-gray-300 rounded-full animate-pulse ml-1"></span><span class="inline-block w-1 h-1 bg-gray-500 dark:bg-gray-300 rounded-full animate-pulse ml-1"></span></p>
+                    </div>
+                </div>
+            `;
+  // Simulate AI response after delay
+  setTimeout(() => {
+    document.getElementById("ai-typing")?.remove();
+    const responses = [
+      "I've analyzed your task list and found 5 high-priority items due this week. Would you like me to help you prioritize them?",
+      "Based on your team's velocity, I suggest allocating another developer to the mobile app project to meet the deadline.",
+      "Your marketing campaign is performing 12% better than forecasted. The social media ads have the highest conversion rate.",
+      "I've noticed a pattern in your resource allocation. Would you like me to suggest some optimization strategies?",
+      "Task completion rate has improved by 8% this month. Great job! The development team has the highest improvement at 15%."
+    ];
+    const randomResponse =
+      responses[Math.floor(Math.random() * responses.length)];
+    aiMessages.innerHTML += `
+                    <div class="flex items-start mb-4">
+                        <div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 mr-2">
+                            <i class="fas fa-robot text-sm"></i>
+                        </div>
+                        <div class="bg-white dark:bg-gray-700 rounded-lg p-3 max-w-md">
+                            <p class="text-sm">${randomResponse}</p>
+                        </div>
+                    </div>
+                `;
+    // Scroll to bottom
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+  }, 1500);
+}
+sendAiMessage.addEventListener("click", sendAiAssistantMessage);
+aiInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    sendAiAssistantMessage();
+  }
+});
+// Kanban board drag and drop
+const draggables = document.querySelectorAll(".task-card");
+const dropTargets = document.querySelectorAll(".kanban-tasks");
+let draggedItem = null;
+draggables.forEach((item) => {
+  item.addEventListener("dragstart", () => {
+    draggedItem = item;
+    setTimeout(() => {
+      item.classList.add("opacity-50");
+    }, 0);
+  });
+  item.addEventListener("dragend", () => {
+    item.classList.remove("opacity-50");
+    draggedItem = null;
+  });
+});
+dropTargets.forEach((target) => {
+  target.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    target.classList.add("bg-gray-100", "dark:bg-gray-700");
+  });
+  target.addEventListener("dragleave", () => {
+    target.classList.remove("bg-gray-100", "dark:bg-gray-700");
+  });
+  target.addEventListener("drop", (e) => {
+    e.preventDefault();
+    target.classList.remove("bg-gray-100", "dark:bg-gray-700");
+    if (draggedItem) {
+      target.appendChild(draggedItem);
+    }
+  });
+});
+// Charts initialization
+let progressChart,
+  tasksCompletionChart,
+  resourceAllocationChart,
+  teamUtilizationChart,
+  budgetUtilizationChart;
+
+function initializeCharts() {
+  const isDarkMode = document.documentElement.classList.contains("dark");
+  const textColor = isDarkMode ? "#D1D5DB" : "#4B5563";
+  const gridColor = isDarkMode
+    ? "rgba(255, 255, 255, 0.1)"
+    : "rgba(0, 0, 0, 0.1)";
+  // Progress Chart (Line)
+  const progressCtx = document
+    .getElementById("progressChart")
+    ?.getContext("2d");
+  if (progressCtx) {
+    progressChart = new Chart(progressCtx, {
+      type: "line",
+      data: {
+        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        datasets: [
+          {
+            label: "Tasks Completed",
+            data: [5, 7, 12, 8, 15, 8, 10],
+            borderColor: "#5D5CDE",
+            backgroundColor: "rgba(93, 92, 222, 0.1)",
+            tension: 0.4,
+            fill: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              color: gridColor
+            },
+            ticks: {
+              color: textColor
+            }
+          },
+          y: {
+            grid: {
+              color: gridColor
+            },
+            ticks: {
+              color: textColor
+            }
+          }
+        }
+      }
+    });
+  }
+  // Tasks Completion Chart (Bar)
+  const tasksCompletionCtx = document
+    .getElementById("tasksCompletionChart")
+    ?.getContext("2d");
+  if (tasksCompletionCtx) {
+    tasksCompletionChart = new Chart(tasksCompletionCtx, {
+      type: "bar",
+      data: {
+        labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+        datasets: [
+          {
+            label: "Completed",
+            data: [18, 25, 32, 28],
+            backgroundColor: "#5D5CDE"
+          },
+          {
+            label: "Planned",
+            data: [25, 30, 40, 32],
+            backgroundColor: "rgba(93, 92, 222, 0.3)"
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "top",
+            labels: {
+              color: textColor
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              color: gridColor
+            },
+            ticks: {
+              color: textColor
+            }
+          },
+          y: {
+            grid: {
+              color: gridColor
+            },
+            ticks: {
+              color: textColor
+            }
+          }
+        }
+      }
+    });
+  }
+  // Resource Allocation Chart (Doughnut)
+  const resourceAllocationCtx = document
+    .getElementById("resourceAllocationChart")
+    ?.getContext("2d");
+  if (resourceAllocationCtx) {
+    resourceAllocationChart = new Chart(resourceAllocationCtx, {
+      type: "doughnut",
+      data: {
+        labels: [
+          "Development",
+          "Design",
+          "Marketing",
+          "Research",
+          "Operations"
+        ],
+        datasets: [
+          {
+            data: [40, 20, 15, 10, 15],
+            backgroundColor: [
+              "#5D5CDE",
+              "#FF6B6B",
+              "#FFD166",
+              "#06D6A0",
+              "#118AB2"
+            ]
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "right",
+            labels: {
+              color: textColor
+            }
+          }
+        }
+      }
+    });
+  }
+  // Team Utilization Chart (Bar)
+  const teamUtilizationCtx = document
+    .getElementById("teamUtilizationChart")
+    ?.getContext("2d");
+  if (teamUtilizationCtx) {
+    teamUtilizationChart = new Chart(teamUtilizationCtx, {
+      type: "bar",
+      data: {
+        labels: ["Development", "Design", "Marketing", "Research", "QA"],
+        datasets: [
+          {
+            label: "Capacity",
+            data: [100, 100, 100, 100, 100],
+            backgroundColor: "rgba(150, 150, 150, 0.2)"
+          },
+          {
+            label: "Utilization",
+            data: [85, 90, 70, 65, 80],
+            backgroundColor: "#5D5CDE"
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              color: gridColor
+            },
+            ticks: {
+              color: textColor
+            }
+          },
+          y: {
+            grid: {
+              color: gridColor
+            },
+            ticks: {
+              color: textColor
+            },
+            max: 100
+          }
+        }
+      }
+    });
+  }
+  // Budget Utilization Chart (Pie)
+  const budgetUtilizationCtx = document
+    .getElementById("budgetUtilizationChart")
+    ?.getContext("2d");
+  if (budgetUtilizationCtx) {
+    budgetUtilizationChart = new Chart(budgetUtilizationCtx, {
+      type: "pie",
+      data: {
+        labels: ["Used", "Remaining"],
+        datasets: [
+          {
+            data: [65, 35],
+            backgroundColor: ["#5D5CDE", "rgba(93, 92, 222, 0.2)"]
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: {
+              color: textColor
+            }
+          }
+        }
+      }
+    });
+  }
+}
+
+function updateCharts() {
+  if (progressChart) progressChart.destroy();
+  if (tasksCompletionChart) tasksCompletionChart.destroy();
+  if (resourceAllocationChart) resourceAllocationChart.destroy();
+  if (teamUtilizationChart) teamUtilizationChart.destroy();
+  if (budgetUtilizationChart) budgetUtilizationChart.destroy();
+  initializeCharts();
+}
+// Initialize the app
+document.addEventListener("DOMContentLoaded", () => {
+  // Initialize with the dashboard tab active
+  setActiveTab("dashboard");
+  // Initialize charts
+  initializeCharts();
+  // Add task form handling
+  document.getElementById("addTaskForm")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    // In a real app, we would handle form submission here
+    // For this demo, we'll just close the modal and show a success notification
+    closeModal(addTaskModal);
+    // Show a toast notification
+    const toast = document.createElement("div");
+    toast.className =
+      "fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg";
+    toast.textContent = "Task added successfully!";
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
+  });
+});
+  </script>
+
+  
+
+
+
+</body></html>

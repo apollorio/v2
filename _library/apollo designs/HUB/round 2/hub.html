@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>HUB::rio — Apollo Linktree Editor</title>
+
+  <!-- Apollo CDN 
+   CDN Script of Apollo loads:
+        + injected inline Base Stylesheet.css (style /style before</head>);
+        + GSAP Animate v3.12.4;
+        + RemixIcon & Apollo Icons; 
+        + jQuery v4.0.0 
+        + Tracking script + 
+        + Popper Positioning 
+        + Dark Theme 
+        + Reveal-Up 
+        + Translate 
+        + More! -->
+ <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
+
+
+  <!-- Core Styles -->
+  <link rel="stylesheet" href="hub.css">
+  <link rel="stylesheet" href="blocks-hub.css">
+</head>
+<body>
+
+  <!-- LOADER -->
+  <div class="hub-loader">
+    <div class="ll">
+      <span class="gl">HUB</span>
+      <span class="ga"><sup>rio</sup></span>
+    </div>
+    <div class="hub-loader-bar"></div>
+  </div>
+
+  <div class="hub-app">
+
+    <!-- ═══════ SIDEBAR EDITOR ═══════ -->
+    <aside class="hub-sidebar" id="hub-controle">
+
+      <!-- Mobile: back to preview button (hidden on desktop via CSS) -->
+      <button class="mob-back-to-preview" onclick="HUB.mobilePanel('preview')">
+        <i class="ri-arrow-left-s-line"></i> Preview
+      </button>
+
+      <!-- Header -->
+      <div class="sb-header">
+        <div class="sb-brand">
+          <span class="gl">HUB</span>
+          <span class="ga"><sup>rio</sup></span>
+          <span class="tag">apollo</span>
+        </div>
+        <div class="sb-hd-acts">
+           <button class="device-btn on" data-device="phone" onclick="HUB.setDevice('phone')" title="Mobile">
+          <i class="ri-smartphone-line"></i>
+        </button>
+        <button class="device-btn" data-device="desktop" onclick="HUB.setDevice('desktop')" title="Desktop">
+          <i class="ri-computer-line"></i>
+        </button>
+      <button class="sb-hd-btn" onclick="HUB.exportJSON()" title="Exportar JSON"><i class="ri-file-download-line" style="font-size:19px;"></i></button>
+      <button class="sb-hd-btn" onclick="HUB.toggleSidebar()" title="Recolher"><i class="ri-side-bar-fill" style="font-size:19px;"></i></button>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="sb-nav">
+        <div class="sb-nav-item on" data-tab="blocks" onclick="HUB.switchTab('blocks')">
+          <i class="ri-stack-line" style="margin-right:4px;font-size:13px;vertical-align:middle;"></i>Blocos
+          <span class="cnt" id="block-count">13</span>
+        </div>
+        <div class="sb-nav-item" data-tab="design" onclick="HUB.switchTab('design')">
+          <i class="ri-palette-line" style="margin-right:4px;font-size:13px;vertical-align:middle;"></i>Design
+        </div>
+        <div class="sb-nav-item" data-tab="config" onclick="HUB.switchTab('config')">
+          <i class="ri-settings-3-line" style="margin-right:4px;font-size:13px;vertical-align:middle;"></i>Config
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="sb-body">
+
+        <!-- PANEL: BLOCKS -->
+        <div class="sb-panel on" id="panel-blocks">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div class="sb-sec" style="margin:0;">Seus Blocos</div>
+            <button class="icon-btn" onclick="HUB.openAddMenu(event)" data-tooltip="Adicionar bloco"><i class="ri-add-line"></i></button>
+          </div>
+          <div id="blocks-list" style="max-height:calc(100vh - 260px);overflow-y:auto;">
+            <!-- Block cards rendered by JS -->
+          </div>
+        </div>
+
+        <!-- PANEL: DESIGN -->
+        <div class="sb-panel" id="panel-design">
+
+          <!-- Profile Section -->
+          <div class="sb-sec">Perfil</div>
+
+          <div class="sb-field">
+            <label class="sb-label"><i class="ri-user-3-line"></i> Nome</label>
+            <input class="sb-input" type="text" data-profile="name" placeholder="Seu nome ou marca">
+          </div>
+
+          <div class="sb-field">
+            <label class="sb-label"><i class="ri-file-text-line"></i> Bio</label>
+            <textarea class="sb-textarea" data-profile="bio" placeholder="Uma frase sobre você"></textarea>
+          </div>
+
+          <div class="sb-field">
+            <label class="sb-label"><i class="ri-image-circle-line"></i> Avatar URL</label>
+            <input class="sb-input" type="url" data-profile="avatar" placeholder="https://...">
+          </div>
+
+          <div class="sb-field">
+            <label class="sb-label"><i class="ri-landscape-line"></i> Fundo URL</label>
+            <input class="sb-input" type="url" data-profile="bg" placeholder="https://...">
+          </div>
+
+          <!-- Avatar Layout -->
+          <div class="sb-field">
+            <label class="sb-label"><i class="ri-layout-3-line"></i> Layout do Avatar</label>
+            <select class="sb-select" data-profile="avatarLayout">
+              <option value="center">Centro</option>
+              <option value="left">Esquerda</option>
+              <option value="right">Direita</option>
+              <option value="hero">Hero (Grande)</option>
+              <option value="minimal">Sem Avatar</option>
+            </select>
+          </div>
+
+          <!-- Avatar Shape -->
+          <div class="sb-field">
+            <label class="sb-label"><i class="ri-shape-line"></i> Formato Avatar</label>
+            <select class="sb-select" data-profile="avatarShape">
+              <option value="circle">Redondo</option>
+              <option value="rounded">Harmonizado</option>
+              <option value="square">Quadrado</option>
+            </select>
+          </div>
+
+          <!-- Toggles -->
+          <div class="sb-toggle-row">
+            <span class="sb-label"><i class="ri-text"></i> Mostrar Nome</span>
+            <div class="sb-toggle on" data-profile="showName"></div>
+          </div>
+          <div class="sb-toggle-row">
+            <span class="sb-label"><i class="ri-file-text-line"></i> Mostrar Bio</span>
+            <div class="sb-toggle on" data-profile="showBio"></div>
+          </div>
+          <div class="sb-toggle-row">
+            <span class="sb-label"><i class="ri-verified-badge-line"></i> Selo Verificado</span>
+            <div class="sb-toggle on" data-profile="showVerified"></div>
+          </div>
+
+          <div class="sb-field">
+            <label class="sb-label">Texto do Selo</label>
+            <input class="sb-input" type="text" data-profile="verifiedText" placeholder="VERIFICADO">
+          </div>
+
+          <!-- THEME -->
+          <div class="sb-sec" style="margin-top:24px;">Tema & Cores</div>
+
+          <div class="sb-field">
+            <label class="sb-label"><i class="ri-paint-brush-line"></i> Cor de Fundo</label>
+            <div class="sb-color-row">
+              <div class="sb-color-swatch"><input type="color" data-profile="bgColor" value="#ffffff"></div>
+              <input class="sb-input" style="flex:1;" type="text" data-profile="bgColor" placeholder="#ffffff">
+            </div>
+          </div>
+
+          <div class="sb-toggle-row">
+            <span class="sb-label"><i class="ri-gradient-line"></i> Gradiente</span>
+            <div class="sb-toggle" data-profile="useGradient" id="toggle-gradient"></div>
+          </div>
+
+          <div id="gradient-options" style="display:none;">
+            <div class="sb-cols">
+              <div class="sb-field">
+                <label class="sb-label">Cor 1</label>
+                <div class="sb-color-row">
+                  <div class="sb-color-swatch"><input type="color" data-profile="gradColor1" value="#121214"></div>
+                  <input class="sb-input" style="flex:1;" data-profile="gradColor1" value="#121214">
+                </div>
+              </div>
+              <div class="sb-field">
+                <label class="sb-label">Cor 2</label>
+                <div class="sb-color-row">
+                  <div class="sb-color-swatch"><input type="color" data-profile="gradColor2" value="#3a3a3f"></div>
+                  <input class="sb-input" style="flex:1;" data-profile="gradColor2" value="#3a3a3f">
+                </div>
+              </div>
+            </div>
+            <div class="sb-cols">
+              <div class="sb-field">
+                <label class="sb-label">Cor 3 (opcional)</label>
+                <div class="sb-color-row">
+                  <div class="sb-color-swatch"><input type="color" data-profile="gradColor3" value="#000000"></div>
+                  <input class="sb-input" style="flex:1;" data-profile="gradColor3" placeholder="vazio = 2 cores">
+                </div>
+              </div>
+              <div class="sb-field">
+                <label class="sb-label">Ângulo (°)</label>
+                <input class="sb-input" type="number" data-profile="gradAngle" value="135" min="0" max="360">
+              </div>
+            </div>
+          </div>
+
+          <div class="sb-cols">
+            <div class="sb-field">
+              <label class="sb-label">Cor Destaque 1 (Botões)</label>
+              <div class="sb-color-row">
+                <div class="sb-color-swatch"><input type="color" data-profile="buttonColor" value="#121214"></div>
+                <input class="sb-input" style="flex:1;" data-profile="buttonColor" value="#121214">
+              </div>
+            </div>
+            <div class="sb-field">
+              <label class="sb-label">Cor Destaque 2</label>
+              <div class="sb-color-row">
+                <div class="sb-color-swatch"><input type="color" data-profile="primaryColor" value="#f45f00"></div>
+                <input class="sb-input" style="flex:1;" data-profile="primaryColor" value="#f45f00">
+              </div>
+            </div>
+          </div>
+
+          <div class="sb-field">
+            <label class="sb-label">Cor Texto</label>
+            <div class="sb-color-row">
+              <div class="sb-color-swatch"><input type="color" data-profile="textColor" value="#121214"></div>
+              <input class="sb-input" style="flex:1;" data-profile="textColor" value="#121214">
+            </div>
+          </div>
+
+          <div class="sb-field">
+            <label class="sb-label"><i class="ri-font-size-2"></i> Fonte</label>
+            <select class="sb-select" data-profile="fontFamily">
+              <option value="Space Grotesk">Space Grotesk</option>
+              <option value="Urbanist">Urbanist</option>
+              <option value="Inter">Inter</option>
+              <option value="Poppins">Poppins</option>
+              <option value="DM Sans">DM Sans</option>
+              <option value="Sora">Sora</option>
+              <option value="Outfit">Outfit</option>
+            </select>
+          </div>
+
+          <!-- BG ANIMATION -->
+          <div class="sb-sec" style="margin-top:24px;">Animação de Fundo</div>
+          <div class="sb-field">
+            <label class="sb-label"><i class="ri-magic-line"></i> Efeito</label>
+            <select class="sb-select" data-profile="bgAnimation" onchange="HUB.setBgAnimation(this.value)">
+              <option value="none">Nenhum</option>
+              <option value="orbs">Orbs Flutuantes</option>
+              <option value="particles">Partículas</option>
+              <option value="waves">Ondas Suaves</option>
+              <option value="aurora">Aurora Boreal</option>
+              <option value="mesh">Gradiente Vivo</option>
+            </select>
+          </div>
+
+          <!-- BLOCKS STYLE -->
+          <div class="sb-sec" style="margin-top:24px;">Estilo dos Blocos</div>
+
+          <div class="sb-field">
+            <label class="sb-label"><i class="ri-rounded-corner"></i> Estilo</label>
+            <select class="sb-select" data-profile="borderStyle" onchange="HUB.toggleBorderOptions(this.value)">
+              <option value="none">Nenhum</option>
+              <option value="solid">Sólida</option>
+              <option value="dashed">Tracejada</option>
+              <option value="dotted">Pontilhada</option>
+              <option value="groove">Sulco</option>
+              <option value="ridge">Crista</option>
+              <option value="outset">Relevo</option>
+              <option value="glass">Vidro (Blur)</option>
+            </select>
+          </div>
+
+          <div class="sb-cols" id="border-options-row" style="display:none;">
+            <div class="sb-field">
+              <label class="sb-label">Espessura (px)</label>
+              <input class="sb-input" type="number" data-profile="borderWidth" value="1" min="0" max="4" step="0.5" onkeydown="return false;">
+            </div>
+            <div class="sb-field">
+              <label class="sb-label">Cor da Borda</label>
+              <div class="sb-color-row">
+                <div class="sb-color-swatch"><input type="color" data-profile="borderColor" value="#e4e4e7"></div>
+                <input class="sb-input" style="flex:1;" data-profile="borderColor" value="#e4e4e7">
+              </div>
+            </div>
+          </div>
+
+          <div class="sb-cols">
+            <div class="sb-field">
+              <label class="sb-label">Bordas</label>
+              <input class="sb-input" type="number" data-profile="blockRadius" value="14" min="0" max="40">
+            </div>
+            <div class="sb-field">
+              <label class="sb-label">Espaçamento (px)</label>
+              <input class="sb-input" type="number" data-profile="blockGap" value="10" min="0" max="40">
+            </div>
+          </div>
+
+          <!-- SIZES & MARGINS -->
+          <div class="sb-sec" style="margin-top:24px;">Tamanhos & Margens</div>
+          
+          <div class="sb-field">
+            <label class="sb-label">Tamanho dos Blocos</label>
+            <input class="sb-input" type="range" data-profile="blockSize" value="1" min="0.5" max="1.5" step="0.05">
+          </div>
+          <div class="sb-field">
+            <label class="sb-label">Tamanho do Avatar</label>
+            <input class="sb-input" type="range" data-profile="avatarSize" value="1" min="0.5" max="2" step="0.05">
+          </div>
+          <div class="sb-field">
+            <label class="sb-label">Tamanho da Fonte</label>
+            <input class="sb-input" type="range" data-profile="fontSize" value="1" min="0.7" max="1.5" step="0.05">
+          </div>
+          <div class="sb-field">
+            <label class="sb-label">Tamanho dos Ícones</label>
+            <input class="sb-input" type="range" data-profile="iconSize" value="1" min="0.5" max="2" step="0.05">
+          </div>
+
+          <div class="sb-cols">
+            <div class="sb-field">
+              <label class="sb-label">Margem Topo (rem)</label>
+              <input class="sb-input" type="number" data-profile="paddingTop" value="4" min="0" max="10" step="0.5">
+            </div>
+            <div class="sb-field">
+              <label class="sb-label">Margem Base (rem)</label>
+              <input class="sb-input" type="number" data-profile="paddingBottom" value="2" min="0" max="10" step="0.5">
+            </div>
+          </div>
+          <div class="sb-field">
+            <label class="sb-label">Margem Lateral (rem)</label>
+            <input class="sb-input" type="number" data-profile="paddingX" value="1.5" min="0" max="5" step="0.25">
+          </div>
+
+        </div>
+
+        <!-- PANEL: CONFIG -->
+        <div class="sb-panel" id="panel-config">
+          <div class="sb-sec">Exportar & Dados</div>
+          <button class="sb-btn sb-btn-primary sb-btn-block" onclick="HUB.exportJSON()" style="margin-bottom:12px;">
+            <i class="ri-download-line"></i> Exportar JSON
+          </button>
+          <span class="sb-help">Exporte toda a configuração do seu HUB para uso no WordPress plugin.</span>
+
+          <div class="sb-sec" style="margin-top:24px;">Informações</div>
+          <div style="font-size:11px;color:var(--ghost);line-height:1.6;">
+            <p><strong style="color:var(--ink);">HUB::rio</strong> é o builder de linktree do Apollo.</p>
+            <p style="margin-top:8px;">Todos os blocos são 100% URL-based (sem uploads). Eventos Apollo são carregados automaticamente via API.</p>
+            <p style="margin-top:8px;">Blocos disponíveis: Link/CTA, Sociais, Evento, Áudio, Vídeo, Imagem, Texto/Bio, RSS/Feed, Newsletter, Carousel, HTML Custom, Enquete, Depoimento, Tabs/Accordion, Timeline, Monetização, Divisor, Marquee, Cards Grid, Social Embed, Contato.</p>
+          </div>
+
+          <div class="sb-sec" style="margin-top:24px;">Tema Pré-definido</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <button class="sb-btn sb-btn-ghost sb-btn-block" onclick="applyPreset('dark')" style="height:60px;flex-direction:column;gap:2px;">
+              <div style="width:24px;height:24px;background:#121214;border-radius:6px;border:1px solid rgba(255,255,255,0.1);"></div>
+              <span style="font-size:9px;">Escuro</span>
+            </button>
+            <button class="sb-btn sb-btn-ghost sb-btn-block" onclick="applyPreset('light')" style="height:60px;flex-direction:column;gap:2px;">
+              <div style="width:24px;height:24px;background:#ffffff;border-radius:6px;border:1px solid #e4e4e7;"></div>
+              <span style="font-size:9px;">Claro</span>
+            </button>
+            <button class="sb-btn sb-btn-ghost sb-btn-block" onclick="applyPreset('neon')" style="height:60px;flex-direction:column;gap:2px;">
+              <div style="width:24px;height:24px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:6px;"></div>
+              <span style="font-size:9px;">Neon</span>
+            </button>
+            <button class="sb-btn sb-btn-ghost sb-btn-block" onclick="applyPreset('warm')" style="height:60px;flex-direction:column;gap:2px;">
+              <div style="width:24px;height:24px;background:linear-gradient(135deg,#fad0c4,#ffd1ff);border-radius:6px;"></div>
+              <span style="font-size:9px;">Quente</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- ═══════ PREVIEW AREA ═══════ -->
+    <main class="hub-main" id="hub-prever">
+
+      <!-- Sidebar Toggle -->
+      <button class="toggle-sb-btn" onclick="HUB.toggleSidebar()" title="Toggle Sidebar">
+        <i class="ri-side-bar-fill" style="font-size:19px;"></i>
+      </button>
+
+      <!-- Device bttm Switcher 
+      <div class="device-bar">
+       
+      </div>-->
+
+      <!-- Phone Frame -->
+      <div class="phone-wrap">
+        <div class="phone-island"></div>
+        <div class="phone-screen pv">
+          <div id="pv-bg" class="pv-bg-layer"></div>
+          <div class="pv-container">
+            <header id="pv-profile" class="pv-profile" data-layout="center">
+              <!-- Rendered by JS -->
+            </header>
+            <div id="pv-blocks-area" style="display:flex;flex-direction:column;gap:10px;">
+              <!-- Block previews rendered by JS -->
+            </div>
+            <div class="pv-watermark">
+              <div class="pv-watermark-logo">
+                <span class="gl">HUB</span>
+                <span class="ga"><sup>rio</sup></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ═══════ ADD BLOCK MENU ═══════ -->
+  <div class="add-menu" id="add-menu"></div>
+
+  <!-- ═══════ ICON PICKER MODAL ═══════ -->
+  <div class="hub-overlayer" id="icon-modal-overlay" onclick="HUB.closeModal('icon-modal')"></div>
+  <div class="hub-popup" id="icon-modal">
+    <div class="hub-modal icon-modal-lg">
+      <div class="hub-modal-head">
+        <span class="hub-modal-title">
+          <i class="ri-apps-2-line"></i>Selecionar Ícone
+        </span>
+        <button class="hub-modal-close" onclick="HUB.closeModal('icon-modal')" title="Fechar">
+          <i class="ri-close-fill"></i>
+        </button>
+      </div>
+      <div class="icon-modal-filters">
+        <div class="icon-modal-search-row icon-search-wrap">
+          <i class="ri-search-line"></i>
+          <input class="sb-input icon-search-input" id="icon-search" placeholder="Buscar ícone..." oninput="HUB.filterIcons(this.value)">
+        </div>
+        <div class="icon-cat-tabs" id="icon-cat-tabs">
+          <!-- Category tabs rendered by JS -->
+        </div>
+      </div>
+      <div class="hub-modal-body">
+        <div class="icon-grid" id="icon-grid">
+          <!-- Icons rendered by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ TOAST CONTAINER ═══════ -->
+  <div class="hub-toast-container"></div>
+
+  <!-- ═══════ MOBILE NAV BAR (layout-page.js panel powered) ═══════ -->
+  <nav class="mob-nav" role="navigation" aria-label="Navegação mobile">
+    <button class="mob-nav-btn mob-active" data-mob="preview" data-panel-mob="preview" onclick="HUB.mobilePanel('preview')">
+      <i class="ri-smartphone-line"></i>
+      <span>Preview</span>
+    </button>
+    <button class="mob-nav-btn" data-mob="blocks" data-panel-mob="blocks" onclick="HUB.mobilePanel('blocks')">
+      <i class="ri-stack-line"></i>
+      <span>Blocos</span>
+    </button>
+    <button class="mob-nav-btn" data-mob="design" data-panel-mob="design" onclick="HUB.mobilePanel('design')">
+      <i class="ri-palette-line"></i>
+      <span>Design</span>
+    </button>
+    <button class="mob-nav-btn" data-mob="config" data-panel-mob="config" onclick="HUB.mobilePanel('config')">
+      <i class="ri-settings-3-line"></i>
+      <span>Config</span>
+    </button>
+  </nav>
+
+  <!-- ═══════ SCRIPTS ═══════ -->
+  <!-- ═══════ ICON CDN — MUST load BEFORE blocks-hub.js and hub.js ═══════ -->
+  <script>
+    /* Apollo Icon CDN loader with retry + fallback */
+    (function() {
+      var loaded = false;
+      var urls = [
+        'https://assets.apollo.rio.br/js/icon.js',
+        'https://cdn.apollo.rio.br/v1.0.0/js/icon.js'
+      ];
+      function tryLoad(idx) {
+        if (loaded || idx >= urls.length) return;
+        var s = document.createElement('script');
+        s.src = urls[idx];
+        s.onload = function() { loaded = true; console.log('[Apollo] icon.js loaded from:', urls[idx]); };
+        s.onerror = function() { console.warn('[Apollo] icon.js failed:', urls[idx]); tryLoad(idx + 1); };
+        document.head.appendChild(s);
+      }
+      tryLoad(0);
+    })();
+  </script>
+
+  <script src="blocks-hub.js"></script>
+  <script src="hub.js"></script>
+  <script>
+    /* Theme Presets */
+    function applyPreset(name) {
+      const p = HUB.state.profile;
+      if (name === 'dark') {
+        p.bgColor = '#0a0a0b'; p.bgGradient = ''; p.textColor = '#fafafa'; p.primaryColor = '#f45f00';
+        p.borderStyle = 'solid'; p.blockRadius = '16';
+      } else if (name === 'light') {
+        p.bgColor = '#ffffff'; p.bgGradient = ''; p.textColor = '#121214'; p.primaryColor = '#f45f00';
+        p.borderStyle = 'glass'; p.blockRadius = '14';
+      } else if (name === 'neon') {
+        p.bgColor = ''; p.bgGradient = 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)';
+        p.textColor = '#e0e0ff'; p.primaryColor = '#a855f7'; p.borderStyle = 'glass'; p.blockRadius = '18';
+      } else if (name === 'warm') {
+        p.bgColor = ''; p.bgGradient = 'linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%)';
+        p.textColor = '#3d2c2c'; p.primaryColor = '#e11d48'; p.borderStyle = 'none'; p.blockRadius = '20';
+      }
+      HUB.syncProfileInputs();
+      HUB.render();
+      HUB.toast('Tema aplicado: ' + name);
+    }
+
+    /* Force-init icon rendering after all scripts are loaded */
+    window.addEventListener('load', function() {
+      /* Re-render to ensure all block icons are drawn with CSS masks */
+      setTimeout(function() { if (window.HUB) HUB.render(); }, 300);
+    });
+  </script>
+  <!-- layout-page.js: Apollo panel engine (mandatory for mobile) -->
+  <script src="https://cdn.apollo.rio.br/v1.0.0/js/page-layout.min.js"></script>
+  <!-- GSAP for background animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
+</body>
+</html>

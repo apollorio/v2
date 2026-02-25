@@ -1,0 +1,1548 @@
+<html lang="en"><head><style id="apollo-icon-runtime">[data-apollo-icon],[class^="icon-"],[class*=" icon-"],[class^="i-"],[class*=" i-"]:not([class*="i-beat"]):not([class*="i-fade"]):not([class*="i-bounce"]):not([class*="i-flip"]):not([class*="i-shake"]):not([class*="i-spin"]),.p-icon-masked{display:inline-block!important;width:1em!important;height:1em!important;line-height:1!important;background-color:currentColor!important;mask-image:var(--apollo-mask)!important;-webkit-mask-image:var(--apollo-mask)!important;mask-size:contain!important;-webkit-mask-size:contain!important;mask-repeat:no-repeat!important;-webkit-mask-repeat:no-repeat!important;mask-position:center!important;-webkit-mask-position:center!important;vertical-align:-.125em!important;transition:mask-image .15s ease,-webkit-mask-image .15s ease}.p-icon-masked{width:2em!important;height:2em!important}[data-icon-active]:active,.active[data-icon-active],.is-active[data-icon-active],[aria-expanded="true"][data-icon-active],[aria-selected="true"][data-icon-active],[aria-pressed="true"][data-icon-active],[aria-current="true"][data-icon-active],[data-state="active"][data-icon-active],[data-state="open"][data-icon-active]{mask-image:var(--apollo-mask-active)!important;-webkit-mask-image:var(--apollo-mask-active)!important}
+.i-0\.5x{font-size:0.5em!important;line-height:1!important}
+.i-1x{font-size:1em!important;line-height:1!important}
+.i-1\.5x{font-size:1.5em!important;line-height:1!important}
+.i-2x{font-size:2em!important;line-height:1!important}
+.i-2\.5x{font-size:2.5em!important;line-height:1!important}
+.i-3x{font-size:3em!important;line-height:1!important}
+.i-3\.5x{font-size:3.5em!important;line-height:1!important}
+.i-4x{font-size:4em!important;line-height:1!important}
+.i-4\.5x{font-size:4.5em!important;line-height:1!important}
+.i-5x{font-size:5em!important;line-height:1!important}
+.i-5\.5x{font-size:5.5em!important;line-height:1!important}
+.i-6x{font-size:6em!important;line-height:1!important}
+.i-6\.5x{font-size:6.5em!important;line-height:1!important}
+.i-7x{font-size:7em!important;line-height:1!important}
+.i-7\.5x{font-size:7.5em!important;line-height:1!important}
+.i-8x{font-size:8em!important;line-height:1!important}
+.i-8\.5x{font-size:8.5em!important;line-height:1!important}
+.i-9x{font-size:9em!important;line-height:1!important}
+.i-9\.5x{font-size:9.5em!important;line-height:1!important}
+.i-10x{font-size:10em!important;line-height:1!important}:root{--i-animation-duration:1s;--i-beat-scale:1.25;--i-fade-opacity:.4;--i-bounce-height:.25em;--i-shake-angle:10deg;--i-flip-rotate:180deg}.i-beat,.fa-beat{animation:i-beat var(--i-animation-duration,1s) ease-in-out infinite!important;display:inline-block!important;will-change:transform!important;transform-origin:center!important}.i-fade,.fa-fade{animation:i-fade var(--i-animation-duration,1s) ease-in-out infinite!important;display:inline-block!important;will-change:opacity!important}.i-beat-fade,.fa-beat-fade{animation:i-beat-fade var(--i-animation-duration,1s) ease-in-out infinite!important;display:inline-block!important;will-change:transform,opacity!important;transform-origin:center!important}.i-bounce,.fa-bounce{animation:i-bounce var(--i-animation-duration,1s) ease-in-out infinite!important;display:inline-block!important;will-change:transform!important;transform-origin:center!important}.i-flip,.fa-flip{animation:i-flip var(--i-animation-duration,1s) ease-in-out infinite!important;display:inline-block!important;will-change:transform!important;transform-style:preserve-3d!important;transform-origin:center!important}.i-shake,.fa-shake{animation:i-shake var(--i-animation-duration,1s) ease-in-out infinite!important;display:inline-block!important;will-change:transform!important;transform-origin:center!important}.i-spin,.fa-spin{animation:i-spin var(--i-animation-duration,1s) linear infinite!important;display:inline-block!important;will-change:transform!important;transform-origin:center!important}.i-spin-pulse,.fa-spin-pulse{animation:i-spin var(--i-animation-duration,1s) steps(8) infinite!important;display:inline-block!important;will-change:transform!important;transform-origin:center!important}.i-spin-reverse,.fa-spin-reverse{animation-direction:reverse!important}@keyframes i-beat{0%,100%{transform:scale(1)}45%{transform:scale(var(--i-beat-scale,1.25))}}@keyframes i-fade{0%,100%{opacity:1}50%{opacity:var(--i-fade-opacity,.4)}}@keyframes i-beat-fade{0%,100%{opacity:1;transform:scale(1)}50%{opacity:var(--i-fade-opacity,.4);transform:scale(var(--i-beat-scale,1.25))}}@keyframes i-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(calc(-1*var(--i-bounce-height,.25em)))}}@keyframes i-flip{0%{transform:perspective(400px) rotateY(0)}100%{transform:perspective(400px) rotateY(var(--i-flip-rotate,180deg))}}@keyframes i-shake{0%,100%{transform:rotate(0)}25%{transform:rotate(var(--i-shake-angle,10deg))}75%{transform:rotate(calc(-1*var(--i-shake-angle,10deg)))}}@keyframes i-spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.i-beat,.fa-beat,.i-fade,.fa-fade,.i-beat-fade,.fa-beat-fade,.i-bounce,.fa-bounce,.i-flip,.fa-flip,.i-shake,.fa-shake,.i-spin,.fa-spin,.i-spin-pulse,.fa-spin-pulse{animation:none!important}}</style><style id="apollo-panels">html { overflow: hidden !important; height: 100dvh !important; }
+body { overflow: hidden !important; height: 100dvh !important; overscroll-behavior: none; }
+[data-panel] { position: fixed; inset: 0; width: 100dvw; height: 100dvh; overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; will-change: transform, opacity; backface-visibility: hidden; -webkit-backface-visibility: hidden; visibility: hidden; opacity: 0; z-index: 1; }
+[data-panel].as-on { z-index: 2; }
+[data-to], [data-back], .pra-dir, .pra-esq, .pra-baixo, .pra-cima, .volta-esq, .volta-dir, .volta-cima, .volta-baixo { cursor: pointer; }
+[data-invert] span, .inverte-icon span { display: inline-block; transition: rotate 0.5s cubic-bezier(0.22,1,0.36,1); }
+[data-invert].as-inverted span, .inverte-icon.as-inverted span { rotate: 180deg; }
+@media (prefers-reduced-motion: reduce) { [data-panel] { transition: none !important; } }</style><style id="apollo-base">*, *::before, *::after { box-sizing: border-box; min-width: 0; }
+html, body { margin: 0; padding: 0; }
+body { min-height: 100dvh; }
+img, picture, svg, video, canvas { display: block; max-width: 100%; }
+img, video { height: auto; }
+:root { --safe-top: env(safe-area-inset-top,0px); --safe-right: env(safe-area-inset-right,0px); --safe-bottom: env(safe-area-inset-bottom,0px); --safe-left: env(safe-area-inset-left,0px); }
+.full-height { min-height: 100dvh; } .full-height-small { min-height: 100svh; } .full-height-large { min-height: 100lvh; }
+.scroll-snap-y { overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
+.scroll-snap-x { overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.scroll-snap-x::-webkit-scrollbar { display: none; }
+.scroll-snap-soft { overflow-y: auto; scroll-snap-type: y proximity; overscroll-behavior-y: contain; }
+.snap-start { scroll-snap-align: start; } .snap-center { scroll-snap-align: center; } .snap-end { scroll-snap-align: end; }
+* { -webkit-tap-highlight-color: transparent; }
+button, a, [role="button"], [role="link"] { min-height: 44px; min-width: 44px; cursor: pointer; touch-action: manipulation; }
+button { -webkit-appearance: none; appearance: none; background: none; border: none; }
+:focus { outline: none; } :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+:root { font-kerning: normal; font-variant-ligatures: contextual; hanging-punctuation: first last; text-rendering: optimizeLegibility; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+p, li, dd, dt { max-width: 65ch; }
+input, textarea, select { font-size: max(16px, 1rem); font-family: inherit; }
+img[width][height], video[width][height] { aspect-ratio: attr(width) / attr(height); }
+.contain-paint { contain: layout style paint; content-visibility: auto; contain-intrinsic-size: 0 320px; }
+.contain-section { contain: layout; content-visibility: auto; contain-intrinsic-size: 0 500px; }
+.will-animate { will-change: transform; } .gpu-layer { transform: translateZ(0); backface-visibility: hidden; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+:root { color-scheme: light dark; }
+.mx-auto { margin-inline: auto; } .px-page { padding-inline: max(1rem, 5vw); } .px-edge { padding-inline: max(1rem, env(safe-area-inset-left,0px)); }
+.cq { container-type: inline-size; } .cq-strict { container-type: size; }
+@container (min-width: 400px) { .cq-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; } }
+@container (min-width: 640px) { .cq-grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; } }
+@media (hover: hover) and (pointer: fine) { .hover-lift:hover { transform: translateY(-2px); } .hover-scale:hover { transform: scale(1.02); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }
+html { scrollbar-gutter: stable; scroll-behavior: smooth; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.stretch { width: 100%; } .no-select { user-select: none; -webkit-user-select: none; }</style><link id="apollo-token-css" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;family=Space+Mono:wght@400;700&amp;display=swap" media="all"><style>
+@import url("https://fonts.googleapis.com/css2?family=Shrikhand&family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+:root{
+block-size: 100%;
+inline-size: 100%;
+/* ========================================= */
+  /* 1. TYPOGRAPHY (Fonts & Sizes)             */
+  /* ========================================= */
+  
+  /* Font Families */
+  --ff-main:    "Space Grotesk", system-ui, -apple-system, sans-serif; /* Body text */
+  --ff-mono:    "Space Mono", monospace;                               /* Code / Technical */
+  --ff-fun:     "Shrikhand", cursive;                                  /* Decorative / Display */
+  
+  /* Font Assignments */
+  --font-main:    var(--ff-main);
+  --font-heading: var(--ff-mono); /* Headings use the Monospace font by default */
+  --font:         400 14px/1.5 var(--ff-main); /* Default shorthand */
+
+  /* Font Sizes (Headings) */
+  --fs-h1: 48px;
+  --fs-h2: 36px;
+  --fs-h3: 30px;
+  --fs-h4: 24px;
+  --fs-h5: 18px;
+  --fs-h6: 10px;
+  
+  /* Font Sizes (Body) */
+  --fs-p:  14px;
+
+  /* ========================================= */
+  /* 2. BRAND & THEME COLORS                   */
+  /* ========================================= */
+  
+  --primary:       #f45f00;   /* Apollo Orange */
+  --accent-violet: #651FFF;   /* Secondary Accent */
+  
+  /* Semantic Mappings */
+  --color-main: var(--primary);
+  --accent:     var(--accent-violet);
+
+  /* ========================================= */
+  /* 3. TEXT COLORS                            */
+  /* ========================================= */
+  
+  /* Base RGB value used for opacity calculations */
+  --txt-rgb: 19, 21, 23;
+
+  /* Usage Variables */
+  --txt-color:         rgba(var(--txt-rgb), 0.77); /* Main Body Text */
+  --txt-color-hover:   rgba(var(--txt-rgb), 0.9);  /* Hover State Text */
+  --txt-color-heading: var(--txt-color-hover);     /* Headings (Darker/ bolder) */
+  
+  /* Disabled / Subtle Text */
+  --muted:     rgba(var(--txt-rgb), 0.31);
+  --txt-muted: var(--muted);
+
+  /* ========================================= */
+  /* 4. BACKGROUNDS & SURFACES                 */
+  /* ========================================= */
+  
+  --bg:            var(--white-1);  /* Main Page Background */
+  --bg-neutral:    var(--white-2);  /* Secondary/Alt Background */
+  
+  --surface:       var(--white-3);  /* Cards, Modals, Panels */
+  --surface-hover: var(--white-4);  /* Interactive Surface Hover */
+  
+  /* Glassmorphism Effect */
+  --glass:         rgba(0, 0, 0, 0.04);
+
+  /* ========================================= */
+  /* 5. BORDERS & UI ELEMENTS                  */
+  /* ========================================= */
+  
+  --card:         #0000000a;
+  --card-hover:   #00000012;
+  
+  --border:       #00000027; /* Default Borders */
+  --border-hover: #00000037; /* Interactive Borders */
+
+  /* ========================================= */
+  /* 6. LAYOUT & SPACING                       */
+  /* ========================================= */
+  
+  /* Border Radius */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius:    18px;  /* Standard Radius */
+  --radius-lg: 28px;
+
+  /* Spacing Units */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+
+  /* ========================================= */
+  /* 7. ANIMATION & LAYERING                   */
+  /* ========================================= */
+  
+  /* Easings */
+  --ease-default: cubic-bezier(.16, 1, .3, 1);
+  --ease-smooth:  cubic-bezier(.25, 1, .5, 1);
+  --ease-snappy:  cubic-bezier(.2, .9, .3, 1);
+  
+  /* Transitions */
+  --transition-ui: .25s var(--ease-default);
+  
+  /* Z-Index Layers */
+  --z-ui:      10;
+  --z-popover: 100;
+  --z-modal:   1000;
+
+  /* ========================================= */
+  /* 8. COLOR PRIMITIVES (PALETTE)             */
+  /* ========================================= */
+  
+  /* Theme Helpers */
+  --rgb-theme: 255, 255, 255;
+  --rgb-diff:  0, 0, 0;
+
+  --white-1:  rgba(255, 255, 255, 1); /* #ffffff equiv */
+  --white-2:  rgba(0, 0, 0, 0.02);    /* #fafafa equiv */
+  --white-3:  rgba(0, 0, 0, 0.04);    /* #f5f5f5 equiv */
+  --white-4:  rgba(0, 0, 0, 0.06);    /* #f0f0f0 equiv */
+  --white-5:  rgba(0, 0, 0, 0.08);    /* #ebebeb equiv */
+  --white-6:  rgba(0, 0, 0, 0.10);    /* #e6e6e6 equiv */
+  --white-7:  rgba(0, 0, 0, 0.12);    /* #e0e0e0 equiv */
+  --white-8:  rgba(0, 0, 0, 0.14);    /* #dbdbdb equiv */
+  --white-9:  rgba(0, 0, 0, 0.16);    /* #d6d6d6 equiv */
+  --white-10: rgba(0, 0, 0, 0.18);    /* #d1d1d1 equiv */
+  --white-11: rgba(0, 0, 0, 0.20);    /* #cccccc equiv */
+  --white-12: rgba(0, 0, 0, 0.22);    /* #c7c7c7 equiv */
+  --white-13: rgba(0, 0, 0, 0.24);    /* #c2c2c2 equiv */
+  --white-14: rgba(0, 0, 0, 0.26);    /* #bdbdbd equiv */
+  --white-15: rgba(0, 0, 0, 0.28);    /* #b8b8b8 equiv */
+  --white-16: rgba(0, 0, 0, 0.30);    /* #b3b3b3 equiv */
+  --white-17: rgba(0, 0, 0, 0.32);    /* #adadad equiv */
+  --white-18: rgba(0, 0, 0, 0.34);    /* #a8a8a8 equiv */
+  --white-19: rgba(0, 0, 0, 0.36);    /* #a3a3a3 equiv */
+  --white-20: rgba(0, 0, 0, 0.38);    /* #9e9e9e equiv */
+
+  --gray-1: rgba(0, 0, 0, 0.40);    /* #999999 equiv */
+  --gray-2: rgba(0, 0, 0, 0.42);    /* #949494 equiv */
+  --gray-3: rgba(0, 0, 0, 0.44);    /* #8f8f8f equiv */
+  --gray-4: rgba(0, 0, 0, 0.46);    /* #8a8a8a equiv */
+  --gray-5: rgba(0, 0, 0, 0.48);    /* #858585 equiv */
+  --gray-6: rgba(0, 0, 0, 0.50);    /* #808080 equiv */
+  --gray-7: rgba(0, 0, 0, 0.52);    /* #7a7a7a equiv */
+  --gray-8: rgba(0, 0, 0, 0.54);    /* #757575 equiv */
+  --gray-9: rgba(0, 0, 0, 0.56);    /* #707070 equiv */
+  --gray-10: rgba(0, 0, 0, 0.58);   /* #6b6b6b equiv */
+
+  --black-1: #121214;
+  --black-2: #0f0f11;
+  --black-3: #0c0c0d;
+  --black-4: #0a0a0a;
+  --black-5: #090909;
+  --black-6: #070707;
+  --black-7: #060606;
+  --black-8: #050505;
+  --black-9: #030303;
+  --black-10: #000;
+}
+html.dark-mode{
+  /* ========================================= */
+  /* THEME SWAPS: DARK MODE                    */
+  /* ========================================= */
+  --rgb-theme: 0, 0, 0;       /* Theme base becomes black */
+  --rgb-diff:  255, 255, 255; /* Contrast becomes white */
+  /* Text Color Base (Light Gray for Dark Mode) */
+  --txt-rgb:   232, 234, 236; 
+  /* Backgrounds & Surfaces (remapped) */
+  --bg:            var(--black-10); /* Deepest Black */
+  --bg-neutral:    var(--black-1);  /* Slightly lighter black */
+  --surface:       var(--white-4);  /* Actually a dark gray in this mode (see below) */
+  --surface-hover: var(--white-6);
+  /* UI Elements */
+  --card:         #ffffff09; /* White with low opacity */
+  --card-hover:   #ffffff10;
+  --border:       #ffffff2d;
+  --border-hover: #ffffff39;
+  /* ========================================= */
+  /* PALETTE REMAPPING (The "Magic" Swap)      */
+  /* ========================================= */
+  /* "White" vars are redefined to Dark colors for Dark Mode */
+  --white-1: #0b0b0d;
+  --white-2: #121214;
+  --white-3: #161618;
+  --white-4: #1a1a1c;
+  --white-5: #1e1e20;
+  --white-6: #232325;
+  /* "Gray" vars are shifted */
+  --gray-1: #17171a;
+  --gray-2: #1f1f21;
+  --gray-3: #262628;
+  --gray-4: #2d2d2f;
+  --gray-5: #343436;
+}
+  button,hr,input{overflow:visible}audio,canvas,progress,video{display:inline-block}progress,sub,sup{vertical-align:baseline}html{font-family:sans-serif;line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0} menu,article,aside,details,footer,header,nav,section{display:block}h1{font-size:2em;margin:.67em 0}figcaption,figure,main{display:block}figure{margin:1em 40px}hr{box-sizing:content-box;height:0}code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em}a{background-color:transparent;-webkit-text-decoration-skip:objects}a:active,a:hover{outline-width:0}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:bolder}dfn{font-style:italic}mark{background-color:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}audio:not([controls]){display:none;height:0}img{border-style:none}svg:not(:root){overflow:hidden}button,input,optgroup,select,textarea{font-family:sans-serif;font-size:100%;line-height:1.15;margin:0}button,input{}button,select{text-transform:none}[type=submit], [type=reset],button,html [type=button]{-webkit-appearance:button}[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner,button::-moz-focus-inner{border-style:none;padding:0}[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring,button:-moz-focusring{outline:ButtonText dotted 1px}fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-cancel-button,[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}[hidden],template{display:none}/*# sourceMappingURL=normalize.min.css.map */
+* {
+-moz-box-sizing:border-box;
+-webkit-box-sizing:border-box;
+box-sizing:border-box;
+padding:0;
+margin:0;
+corner-shape:squircle
+}
+::after {box-sizing:border-box}
+::before {box-sizing:border-box}
+::selection {
+background-color:var(--orange-400,#f80);
+color:#fff;
+background-color:#FF8640!important;
+color:#fff}
+section {display:block}
+select {font-size:90%;text-decoration:none;text-transform:none}
+small {font-size:80%}
+strong {font-weight:bolder}
+sub {
+bottom:-.25em;
+font-size:75%;
+line-height:0;
+position:relative;
+vertical-align:baseline}
+summary {display:list-item}
+sup {font-size:75%;line-height:0;position:relative;top:-.5em;vertical-align:baseline}
+svg {display:block;height:auto;max-width:100%}
+svg:not(:root) {overflow:hidden}
+template {display:none}
+textarea {font-family:inherit;font-size:90%;line-height:1.2;margin:0;overflo:auto;text-decoration:none}
+ul {list-style:none;margin:0;padding:0}
+video {display:inline-block;height:auto;max-width:100%}
+button {text-transform:none}
+textarea {overflow:auto}
+a {text-decoration:none;outline:none}
+html {
+  font-size: clamp(14px, 0.4vw + 12px, 16px);
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  touch-action: pan-x pan-y;
+  overscroll-behavior: contain;
+scroll-behavior:smooth;}
+html,body {
+font:var(--font);
+-webkit-font-smoothing:antialiased;
+-moz-osx-font-smoothing:grayscale;
+text-rendering:optimizeLegibility;
+text-shadow:#00000003 0 0 1px
+text-wrap: balance;}
+mark {background-color:#fd5c021a;font-weight:500;color:#fd5c02}
+p, h1, h2, h3, h4, h5, h6 {margin-block-start: 0;margin-block-end: 1.5rem;text-box-trim: trim-both;text-box-edge: cap alphabetic;}
+h1 {font-size:var(--fs-h1)}
+h2 {font-size:var(--fs-h2)}
+h3 {font-size:var(--fs-h3)}
+h4 {font-size:var(--fs-h4)}
+h5 {font-size:var(--fs-h5)}
+h6 {font-size:var(--fs-h6);}
+button, .tag {text-box-edge: cap alphabetic;padding-block: 10px;}
+h2:has(+ blockquote) {margin-block-end: 3rem;}
+figure:not(:has(figcaption)), 
+figure:has(figcaption:empty) {padding-block-end: 0;}
+.grid-container:has(> :nth-child(5)) {grid-template-columns: repeat(3, 1fr);}
+.popover {position: absolute;position-anchor: --main-menu;position-area: bottom right;position-try-fallbacks: flip-block, flip-inline;}
+@supports (-webkit-overflow-scrolling: touch) {
+  .scroll {-webkit-overflow-scrolling: touch;  }}
+@container (min-width: 20em) {
+  :has(> *) { container-type: inline-size; }}
+@media print {
+  body { background: white; color: black; }
+  * { box-shadow: none !important; background: transparent !important; }
+  a { text-decoration: underline; }
+  @page { margin: 2cm; size: A4; }}
+section, article, div, main {margin-trim: block;}
+[class*="tooltip"]{position:relative}.tooltip{position:absolute;background:var(--black-1);color:#fff;padding:6px 10px;border-radius:6px;font-size:10px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;opacity:0;pointer-events:none;transition:.15s;z-index:999;border:1px solid var(--border);box-shadow:0 4px 12px #0000004d;top:100%;left:50%;transform:translateX(-50%) translateY(4px)}:hover > .tooltip{opacity:1;transform:translateX(-50%) translateY(0)}.nav-btn .tooltip{left:100%;top:50%;bottom:auto;transform:translateY(-50%) translateX(8px);margin-left:4px}.nav-btn:hover .tooltip{transform:translateY(-50%) translateX(0)}
+  </style>
+  <meta charset="UTF-8">
+  
+  
+  
+
+  <title>sgn[</title>
+
+    <link rel="canonical" href="https://codepen.io/Rafael-Valle-the-looper/pen/jErjaVJ">
+  
+  
+  
+  
+
+  
+  
+  
+<link rel="preload" as="image" href="https://assets.apollo.rio.br/i/file-text-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/file-pdf-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/download-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/checkbox-circle-s.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/time-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/quill-pen-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/fingerprint-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/cursor-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/layout-bottom-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/drag-move-2-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/lock-2-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/shield-check-s.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/shield-check-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/check-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/download-2-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/links-v.svg"><link rel="preload" as="image" href="https://assets.apollo.rio.br/i/hash-v.svg"><style>
+        /* Base Animation State */
+        .reveal-up, .slide-up, .reveal-up-word { opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        .slide-down { opacity: 0; transform: translateY(-50px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+        
+        /* Active State */
+        .active { opacity: 1 !important; transform: translateY(0) !important; }
+        
+        /* Word Splitter Helper */
+        .reveal-up-word { display: inline-block; white-space: pre-wrap; margin-right: 0.2em; }
+        
+        /* Disable animations if class present or reduced motion */
+        .active-no-anim { opacity: 1 !important; transform: none !important; transition: none !important; }
+        
+        /* Apollo Card Mobile Special */
+        .apollo-card.active { transform: scale(1.05); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+    </style></head>
+
+<body style="opacity: 1; transition: opacity 0.6s ease-in-out;">
+  
+
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <title>Assinatura Digital — Apollo Docs</title>
+
+  <script src="https://cdn.apollo.rio.br/v1.0.0/js/reveal-up.js" async=""></script><script src="https://cdn.apollo.rio.br/v1.0.0/js/popper.v2.11.8.min.js" async=""></script><script src="" async=""></script><script src="https://cdn.apollo.rio.br/v1.0.0/js/morphism.min.js" async=""></script><script src="https://cdn.apollo.rio.br/v1.0.0/js/gsap.v3.14.2.min.js"></script><script src="https://cdn.apollo.rio.br/v1.0.0/js/icon.min.js"></script><script src="https://cdn.apollo.rio.br/v1.0.0/js/translate.min.js"></script><script src="https://cdn.apollo.rio.br/v1.0.0/js/tracker.min.js"></script><script src="https://cdn.apollo.rio.br/v1.0.0/js/jquery.v4.min.js" fetchpriority="high"></script><script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high" onerror="void(0)"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&amp;family=Space+Mono:ital,wght@0,400;0,700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
+  <style>
+    /* ══════════════════════════════════════════════════
+       APOLLO DESIGN TOKENS — gestor.css exact source
+    ══════════════════════════════════════════════════ */
+    :root {
+      /* Canvas */
+      --bg:    #ffffff;
+      --sf:    #fafafa;
+      --sf2:   #f2f2f3;    /* doc tray — paper sits on this */
+      --sf3:   #e8e8e9;
+      --ink:   #121214;
+      --smoke: #666666;
+      --ghost: #999999;
+      --mist:  #bbbbbb;
+      --faint: #dddddd;
+      --whisper:#eeeeee;
+      /* Apollo border law: alpha ONLY, never opaque */
+      --brd:   rgba(0,0,0,.08);
+      --brd-h: rgba(0,0,0,.14);
+      /* Law 2: Precious accent — use sparingly */
+      --primary:   #f45f00;
+      --primary-l: rgba(244,95,0,.07);
+      --primary-m: rgba(244,95,0,.18);
+      /* Status */
+      --s-live: #16a34a;
+      --s-prep: #d97706;
+      /* Type — NO Shrikhand on legal docs */
+      --ff:    "Space Grotesk", system-ui, -apple-system, sans-serif;
+      --mono:  "Space Mono", monospace;
+      /* Layout */
+      --r:    16px;
+      --rlg:  22px;
+      --pill: 999px;
+      --ease: cubic-bezier(.16,1,.3,1);
+      /* Apollo shadow law: ≤ alpha .05 on static, .04 preferred */
+      --sh-paper: 0 1px 4px rgba(0,0,0,.04), 0 4px 20px rgba(0,0,0,.04);
+      --sh-card:  0 8px 28px rgba(0,0,0,.05), 0 0 0 1px rgba(0,0,0,.04);
+      --sh-zone:  inset 0 1px 2px rgba(0,0,0,.03);
+    }
+
+    /* ══════════════════════════════════════════════════
+       BASE
+    ══════════════════════════════════════════════════ */
+    *, *::before, *::after {
+      box-sizing: border-box; margin: 0; padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: var(--ff); font-size: 14px; line-height: 1.5;
+      color: var(--ink); background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+    button { border: none; background: none; cursor: pointer; font-family: inherit; font-size: inherit; }
+    a { text-decoration: none; color: inherit; }
+    ::-webkit-scrollbar { width: 2px; height: 2px; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.08); border-radius: 2px; }
+    ::selection { background: var(--primary-m); }
+
+    /* layout-page.js manages [data-panel] positioning/visibility — we set design only */
+    [data-panel] {
+      background: var(--bg);
+      /* nav bar from host app */
+      padding-top: calc(56px + env(safe-area-inset-top, 0px));
+    }
+
+    /* ══════════════════════════════════════════════════
+       SHARED COMPONENTS
+    ══════════════════════════════════════════════════ */
+
+    /* breadcrumb strip */
+    .pg-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px 16px;
+    }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 5px;
+      font-family: var(--mono); font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em; color: var(--ghost);
+    }
+    .breadcrumb i { font-size: 12px; color: var(--mist); }
+    .breadcrumb .sep { color: var(--faint); font-weight: 400; }
+
+    /* status pill */
+    .pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: var(--pill);
+      font-family: var(--mono); font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .04em;
+      border: 1px solid var(--brd); color: var(--ghost);
+      transition: all .5s var(--ease);
+    }
+    .pill.pending { color: var(--s-prep); border-color: rgba(217,119,6,.22); }
+    .pill.signed  { color: var(--s-live); border-color: rgba(22,163,74,.25); }
+    .sdot {
+      width: 5px; height: 5px; border-radius: 50%; background: currentColor;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.22} }
+
+    /* mono label */
+    .mono-lbl {
+      font-family: var(--mono); font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em; color: var(--ghost);
+    }
+
+    /* ══════════════════════════════════════════════════
+       THE DOCUMENT ZONE
+       Only place with non-white bg: --sf2 (barely gray).
+       White paper sits on gray tray = physical paper feel.
+       Shadow: Apollo law ≤ .04 alpha.
+    ══════════════════════════════════════════════════ */
+    .doc-zone {
+      margin: 0 16px;
+      background: var(--sf2);
+      border-radius: var(--rlg);
+      box-shadow: var(--sh-zone);
+      overflow: hidden;
+    }
+
+    /* toolbar */
+    .doc-tb {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 14px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--brd);
+    }
+    .doc-tb-meta {
+      flex: 1; display: flex; align-items: center; gap: 6px;
+      font-family: var(--mono); font-size: 9px; color: var(--ghost);
+      text-transform: uppercase; letter-spacing: .05em;
+      overflow: hidden; white-space: nowrap; text-overflow: ellipsis; min-width: 0;
+    }
+    .doc-tb-meta i { font-size: 13px; color: var(--smoke); flex-shrink: 0; }
+    .doc-tb-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+    .tb-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 8px;
+      font-family: var(--mono); font-size: 13px; font-weight: 700;
+      color: var(--ghost); border: 1px solid var(--brd);
+      transition: all .16s var(--ease);
+    }
+    .tb-btn i { font-size: 12px; }
+    .tb-btn:active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .tb-sep { width: 1px; height: 16px; background: var(--brd); margin: 0 2px; flex-shrink: 0; }
+
+    /* scroll container */
+    .doc-scroll {
+      overflow-y: auto; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      display: flex; justify-content: center;
+      background: var(--sf2); /* gray tray continues through scroll */
+    }
+    .doc-scroll.h-full  { max-height: 62vh; padding: 20px 16px 24px; }
+    .doc-scroll.h-short { height: 36vh;     padding: 14px 12px 18px; }
+
+    /* ═══ THE PAPER ═══
+       Portrait A4 proportion. Narrow (≤320px) → tall → portrait feel.
+       White on sf2 gray = physical document on a desk.
+       Shadow: EXACT Apollo grade — rgba(0,0,0,.04).
+    ═══ */
+    .paper-sheet {
+      width: 100%;
+      max-width: 310px;          /* narrow = portrait ratio */
+      background: #fff;
+      border-radius: 3px;
+      /* Apollo-law shadow: alpha ≤ .05 */
+      box-shadow: var(--sh-paper);
+      position: relative;
+      overflow: hidden;
+      user-select: none; -webkit-user-select: none;
+      min-height: 500px;         /* tall = portrait feel */
+      transition: transform .3s var(--ease);
+      transform-origin: top center;
+      flex-shrink: 0;
+    }
+
+    /* paper body */
+    .paper { padding: 28px 22px 44px; }
+
+    /* document header — NEVER fun/playful. Clean, institutional, modern. */
+    .paper-hd {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #ebebeb;
+    }
+    .paper-inst {
+      font-family: var(--mono); font-size: 7px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .14em;
+      color: var(--mist); margin-bottom: 6px;
+    }
+    .paper-title {
+      font-size: 11.5px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .06em;
+      color: var(--ink); line-height: 1.3;
+    }
+    .paper-docid {
+      font-family: var(--mono); font-size: 7px;
+      color: var(--mist); margin-top: 4px; letter-spacing: .04em;
+    }
+
+    /* sections */
+    .paper-sec { margin-bottom: 10px; }
+    .paper-sec-lbl {
+      font-family: var(--mono); font-size: 7.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em;
+      color: var(--smoke); margin-bottom: 3px;
+    }
+    .paper-txt {
+      font-size: 10px; color: #3a3a3a; line-height: 1.8; text-align: justify;
+    }
+    .paper-list { margin: 4px 0 0 12px; }
+    .paper-list li { font-size: 10px; color: #4a4a4a; margin-bottom: 2px; list-style: disc; }
+
+    /* sig row */
+    .paper-sig-row {
+      display: flex; gap: 14px;
+      margin-top: 28px; padding-top: 12px;
+      border-top: 1px solid #ebebeb;
+    }
+    .paper-sig-col { flex: 1; position: relative; }
+    .paper-sig-line { border-top: 1px solid; padding-top: 6px; }
+    .paper-sig-line.ink     { border-color: #2a2a2a; }
+    .paper-sig-line.waiting { border-color: var(--faint); }
+    .sig-name { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+    .sig-role { font-family: var(--mono); font-size: 7px; color: var(--mist); margin-top: 1px; }
+    .sig-stamp {
+      position: absolute; top: -16px; left: 2px;
+      border: 1.5px solid var(--s-live); color: var(--s-live);
+      padding: 1px 5px; border-radius: 2px;
+      font-family: var(--mono); font-size: 6.5px; font-weight: 700;
+      transform: rotate(-9deg); opacity: 0;
+      pointer-events: none; white-space: nowrap;
+      transition: opacity .5s var(--ease);
+    }
+
+    /* paper footer */
+    .paper-foot {
+      display: flex; justify-content: space-between;
+      margin-top: 14px; padding-top: 8px;
+      border-top: 1px solid #f0f0f0;
+      font-family: var(--mono); font-size: 7px; color: var(--faint);
+    }
+
+    /* ══════════════════════════════════════════════════
+       PANEL 1 — PREVIEW
+    ══════════════════════════════════════════════════ */
+    .part-strip {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 20px 10px;
+    }
+    .part-chip {
+      display: flex; align-items: center; gap: 5px;
+      font-family: var(--mono); font-size: 9px; color: var(--ghost);
+    }
+    .part-chip i { font-size: 12px; }
+    .part-chip.ok { color: var(--s-live); }
+    .part-rule { width: 1px; height: 12px; background: var(--brd-h); }
+
+    .pg-footer {
+      position: sticky; bottom: 0;
+      padding: 20px 20px calc(28px + env(safe-area-inset-bottom, 0px));
+      background: linear-gradient(to bottom, transparent 0, var(--bg) 22px);
+    }
+    .btn-proceed {
+      width: 100%; padding: 15px;
+ …</style>
+
+
+
+<div id="min-warn">⚠ Área mínima de assinatura</div>
+
+<!-- ════════════════════════════════════════════════════
+     PANEL 1 — DOCUMENT PREVIEW
+════════════════════════════════════════════════════ -->
+
+
+<!-- ════════════════════════════════════════════════════
+     PANEL 2 — PLACEMENT + SIGN
+════════════════════════════════════════════════════ -->
+<section data-panel="preview" class="" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 0; visibility: hidden; z-index: 1;">
+
+  <div class="pg-top ai" style="opacity: 1;">
+    <div class="breadcrumb">
+      <i class="ri-file-text-line icon-file-text-v" data-apollo-icon="file-text-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/file-text-v.svg&quot;) !important;"></i>
+      <span>Docs</span>
+      <span class="sep">/</span>
+      <span>Assinatura</span> <div class="doc-tb-meta">
+        :
+        <span>Termo de Responsabilidade</span>
+      </div>
+      
+    </div>
+    <span class="pill pending" id="pill-p1"><span class="sdot"></span> Pendente</span> <div class="doc-tb-right">
+        <button class="tb-btn"><i class="ri-download-line icon-download-v" data-apollo-icon="download-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/download-v.svg&quot;) !important;"></i></button>
+      </div>
+      
+  </div>
+
+  <div class="doc-zone ai" style="opacity: 1;">
+    
+
+    <div class="doc-scroll h-full">
+      <div class="paper-sheet" id="pdf-p1">
+        <div class="paper">
+          <div class="paper-hd">
+            <div class="paper-inst">Apollo Plataforma Digital Ltda.</div>
+            <div class="paper-title">Termo de<br>Responsabilidade</div>
+            <div class="paper-docid">Nº APOLLO-2025-X992 · v1.0</div>
+          </div>
+
+          <div class="paper-sec">
+            <div class="paper-sec-lbl">1. Do Objeto</div>
+            <p class="paper-txt">O presente instrumento formaliza as responsabilidades operacionais, de segurança e convivência aplicáveis ao evento cadastrado na plataforma Apollo::rio, conforme dados inseridos pelo GESTOR responsável.</p>
+          </div>
+
+          <div class="paper-sec">
+            <div class="paper-sec-lbl">2. Da Responsabilidade</div>
+            <p class="paper-txt">O GESTOR declara ciência e concordância com as normas vigentes, comprometendo-se a:</p>
+            <ul class="paper-list">
+              <li>Garantir a integridade física de todos os participantes.</li>
+              <li>Respeitar os limites de decibéis estabelecidos pela legislação local.</li>
+              <li>Assegurar limpeza e organização do local pós-evento.</li>
+              <li>Responsabilizar-se civilmente por danos causados a terceiros.</li>
+            </ul>
+          </div>
+
+          <div class="paper-sec">
+            <div class="paper-sec-lbl">3. Da Validade Digital</div>
+            <p class="paper-txt">A assinatura eletrônica gera hash único registrado na blockchain Apollo, conferindo plena validade jurídica nos termos da MP 2.200-2/2001 e Lei 14.063/2020 (ICP-Brasil A3).</p>
+          </div>
+
+          <div class="paper-sec">
+            <div class="paper-sec-lbl">4. Das Penalidades</div>
+            <p class="paper-txt">O descumprimento sujeitará o GESTOR às penalidades previstas nos Termos de Uso Apollo e na legislação vigente, incluindo suspensão de conta e responsabilidade civil.</p>
+          </div>
+
+          <div class="paper-sec">
+            <div class="paper-sec-lbl">5. Da Aceitação</div>
+            <p class="paper-txt">Ao assinar eletronicamente, o GESTOR confirma que leu, compreendeu e aceita integralmente os termos do presente instrumento.</p>
+          </div>
+
+          <div class="paper-sig-row">
+            <div class="paper-sig-col">
+              <div class="paper-sig-line ink">
+                <div class="sig-name">Apollo Plataforma</div>
+                <div class="sig-role">CNPJ 00.000.000/0001-00</div>
+              </div>
+            </div>
+            <div class="paper-sig-col">
+              <div class="paper-sig-line waiting">
+                <div class="sig-name" style="color:var(--faint);">Gestor</div>
+                <div class="sig-role">Aguardando assinatura</div>
+              </div>
+            </div>
+          </div>
+          <div class="paper-foot">
+            <span>APOLLO-2025-X992</span>
+            <span>HASH: <span style="color:var(--faint);">PENDING</span></span>
+          </div>
+        </div><!-- /paper -->
+      </div><!-- /paper-sheet -->
+    </div><!-- /doc-scroll -->
+  </div><!-- /doc-zone -->
+
+  <!-- open strip, no card -->
+  <div class="part-strip ai" style="opacity: 1;">
+    <div class="part-chip ok"><i class="ri-checkbox-circle-fill icon-checkbox-circle-s" data-apollo-icon="checkbox-circle-s" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/checkbox-circle-s.svg&quot;) !important;"></i> Apollo Admin</div>
+    <div class="part-rule"></div>
+    <div class="part-chip"><i class="ri-time-line icon-time-v" data-apollo-icon="time-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/time-v.svg&quot;) !important;"></i> Você — pendente</div>
+  </div>
+
+  <div class="pg-footer">
+    <button class="btn-proceed ai" data-to="sign" data-dir="right" style="opacity: 1;">
+      <i class="ri-quill-pen-line icon-quill-pen-v" data-apollo-icon="quill-pen-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/quill-pen-v.svg&quot;) !important;"></i> Prosseguir para Assinar
+    </button>
+  </div>
+
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     PANEL 3 — DONE
+════════════════════════════════════════════════════ -->
+<section data-panel="sign" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1; visibility: inherit; z-index: 2;" class="as-on">
+
+  <div class="pg-top">
+    <div class="breadcrumb">
+      <i class="ri-quill-pen-line icon-quill-pen-v" data-apollo-icon="quill-pen-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/quill-pen-v.svg&quot;) !important;"></i>
+      <span>Assinar Documento</span>
+    </div>
+    <span class="pill pending" id="pill-p2"><span class="sdot"></span> Pendente</span>
+  </div>
+
+  <!-- doc zone: short viewport for signing -->
+  <div class="doc-zone">
+    <div class="doc-tb">
+      <div class="doc-tb-meta">
+        <i class="ri-file-pdf-line icon-file-pdf-v" data-apollo-icon="file-pdf-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/file-pdf-v.svg&quot;) !important;"></i>
+        <span>Termo de Responsabilidade</span>
+      </div>
+      <div class="doc-tb-right">
+        <!-- zoom BEFORE download — same row -->
+        <button class="tb-btn" id="btn-minus">−</button>
+        <button class="tb-btn" id="btn-plus">+</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn"><i class="ri-download-line icon-download-v" data-apollo-icon="download-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/download-v.svg&quot;) !important;"></i></button>
+      </div>
+    </div>
+
+    <div class="doc-scroll h-short">
+      <!-- paper-sheet is the CANVAS for placement — position:relative required -->
+      <div class="paper-sheet" id="pdf-p2" style="position:relative;overflow:hidden;">
+        <div class="paper">
+          <div class="paper-hd">
+            <div class="paper-inst">Apollo Plataforma Digital Ltda.</div>
+            <div class="paper-title">Termo de Responsabilidade</div>
+            <div class="paper-docid">Nº APOLLO-2025-X992</div>
+          </div>
+          <div class="paper-sec">
+            <div class="paper-sec-lbl">1. Do Objeto</div>
+            <p class="paper-txt">O presente instrumento formaliza as responsabilidades operacionais, de segurança e convivência aplicáveis ao evento cadastrado na plataforma Apollo::rio.</p>
+          </div>
+          <div class="paper-sec">
+            <div class="paper-sec-lbl">2. Da Responsabilidade</div>
+            <p class="paper-txt">O GESTOR declara ciência e concordância, comprometendo-se a garantir a integridade, respeitar os limites legais e assegurar organização pós-evento.</p>
+          </div>
+          <div class="paper-sec">
+            <div class="paper-sec-lbl">3. Da Validade Digital</div>
+            <p class="paper-txt">Assinatura blockchain Apollo — validade jurídica nos termos da Lei 14.063/2020 e MP 2.200-2/2001.</p>
+          </div>
+          <div class="paper-sig-row">
+            <div class="paper-sig-col">
+              <div class="paper-sig-line ink">
+                <div class="sig-name">Apollo Plataforma</div>
+                <div class="sig-role">CNPJ 00.000.000/0001-00</div>
+              </div>
+            </div>
+            <div class="paper-sig-col">
+              <div class="sig-stamp" id="sig-stamp">✦ ASSINADO</div>
+              <div class="paper-sig-line waiting" id="user-sig-line">
+                <div class="sig-name" id="user-sig-name" style="color:var(--faint);">Gestor</div>
+                <div class="sig-role" id="user-sig-date">Aguardando...</div>
+              </div>
+            </div>
+          </div>
+          <div class="paper-foot">
+            <span>APOLLO-2025-X992</span>
+            <span>HASH: <span id="doc-hash-prev" style="color:var(--faint);">PENDING</span></span>
+          </div>
+        </div>
+
+        <!-- touch layer -->
+        <div id="touch-ov">
+          <svg id="ghost-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+
+        <!-- sign rect -->
+        <div id="sign-rect">
+          <div class="rect-inner">
+            <span class="rect-lbl" id="rect-lbl">Assinatura</span>
+            <span class="rect-dim" id="rect-dim">posicione</span>
+          </div>
+          <div class="rh rh-tl"></div><div class="rh rh-tr"></div>
+          <div class="rh rh-bl"></div><div class="rh rh-br"></div>
+        </div>
+
+        <!-- MANDATORY overlay (inside paper, overflow:hidden) -->
+        <div id="sign-overlay">
+          <div id="ov-bg"></div>
+          <div id="ov-card">
+            <div class="ov-icon"><i class="ri-fingerprint-line icon-fingerprint-v" data-apollo-icon="fingerprint-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/fingerprint-v.svg&quot;) !important;"></i></div>
+            <div class="ov-title">Posicionar Assinatura</div>
+            <div class="ov-sub">Toque dois pontos opostos para definir a área.</div>
+            <div class="sim-wrap">
+              <div class="sim-lines">
+                <div class="sim-line"></div><div class="sim-line"></div><div class="sim-line"></div>
+              </div>
+              <div class="sim-rect"></div>
+              <div class="sim-dot"></div>
+              <span class="sim-hand">👆</span>
+            </div>
+            <button id="btn-iniciar"><i class="ri-cursor-line icon-cursor-v" data-apollo-icon="cursor-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/cursor-v.svg&quot;) !important;"></i> Iniciar</button>
+            <button id="btn-auto" style="margin-top:5px;"><i class="ri-layout-bottom-line icon-layout-bottom-v" data-apollo-icon="layout-bottom-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/layout-bottom-v.svg&quot;) !important;"></i> Inserir no rodapé</button>
+          </div>
+        </div>
+
+      </div><!-- /pdf-p2 -->
+    </div><!-- /doc-scroll -->
+  </div><!-- /doc-zone -->
+
+  <!-- OPEN BOTTOM — no wrapper card, just breathing space -->
+  <div class="sign-bottom">
+    <p class="sign-pg-title ai" style="opacity: 1;">Validar &amp; Assinar</p>
+    <p class="sign-pg-sub ai" style="opacity: 1;">Documento Nº APOLLO-2025-X992</p>
+
+    <!-- single checkbox -->
+    <label class="chk-wrap ai" style="opacity: 1;">
+      <input type="checkbox" id="chk-agree">
+      <div class="chk-box"></div>
+      <span class="chk-text">De acordo com os termos e ciente da responsabilidade pelo documento.</span>
+    </label>
+
+    <!-- [Posicionar] + [Assinar] same row -->
+    <div class="action-row ai" style="opacity: 1;">
+      <button class="btn-pos" id="btn-pos">
+        <i class="ri-drag-move-2-line icon-drag-move-2-v" data-apollo-icon="drag-move-2-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/drag-move-2-v.svg&quot;) !important;"></i>
+        <span id="btn-pos-lbl">Posicionar</span>
+      </button>
+      <button class="btn-assinar" id="btn-assinar" disabled="">
+        <i class="ri-quill-pen-line icon-quill-pen-v" data-apollo-icon="quill-pen-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/quill-pen-v.svg&quot;) !important;"></i> Assinar
+      </button>
+    </div>
+
+    <div class="lock-note ai" style="opacity: 1;"><i class="ri-lock-2-line icon-lock-2-v" data-apollo-icon="lock-2-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/lock-2-v.svg&quot;) !important;"></i> Criptografado ponta-a-ponta · ICP-Brasil A3</div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     layout-page.js v2 — Apollo Slider Engine (embedded)
+     Source: https://cdn.apollo.rio.br/v1.0.0/js/layout-page.js
+════════════════════════════════════════════════════ -->
+<section data-panel="done" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 0; visibility: hidden;">
+
+  <div style="padding:0 20px 16px;">
+    <div class="done-badge ai"><i class="ri-shield-check-fill icon-shield-check-s" data-apollo-icon="shield-check-s" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/shield-check-s.svg&quot;) !important;"></i> Assinatura Confirmada</div>
+    <div class="done-id ai" id="done-id-line">APOLLO-2025-X992</div>
+  </div>
+
+  <div class="doc-zone ai">
+    <div class="doc-tb">
+      <div class="doc-tb-meta">
+        <i class="ri-file-pdf-line icon-file-pdf-v" data-apollo-icon="file-pdf-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/file-pdf-v.svg&quot;) !important;"></i>
+        <span>Termo de Responsabilidade</span>
+      </div>
+    </div>
+    <div class="doc-scroll h-full">
+      <div class="paper-sheet" id="pdf-p3" style="position:relative;overflow:hidden;">
+        <div class="paper">
+          <div class="paper-hd">
+            <div class="paper-inst">Apollo Plataforma Digital Ltda.</div>
+            <div class="paper-title">Termo de Responsabilidade</div>
+            <div class="paper-docid">Nº APOLLO-2025-X992</div>
+          </div>
+          <div class="paper-sec">
+            <div class="paper-sec-lbl">1. Do Objeto</div>
+            <p class="paper-txt">O presente instrumento formaliza as responsabilidades operacionais, de segurança e convivência aplicáveis ao evento cadastrado na plataforma Apollo::rio.</p>
+          </div>
+          <div class="paper-sec">
+            <div class="paper-sec-lbl">2. Da Responsabilidade</div>
+            <p class="paper-txt">O GESTOR declara ciência e concordância, comprometendo-se a garantir a integridade, respeitar os limites legais e assegurar organização pós-evento.</p>
+          </div>
+          <div class="paper-sec">
+            <div class="paper-sec-lbl">3. Da Validade Digital</div>
+            <p class="paper-txt">Assinatura blockchain Apollo — validade jurídica nos termos da Lei 14.063/2020 e MP 2.200-2/2001.</p>
+          </div>
+          <div class="paper-sec">
+            <div class="paper-sec-lbl">4. Das Penalidades</div>
+            <p class="paper-txt">O descumprimento sujeitará o GESTOR às penalidades previstas nos Termos de Uso Apollo e na legislação vigente, incluindo suspensão de conta e responsabilidade civil.</p>
+          </div>
+          <div class="paper-sig-row">
+            <div class="paper-sig-col">
+              <div class="paper-sig-line ink">
+                <div class="sig-name">Apollo Plataforma</div>
+                <div class="sig-role">CNPJ 00.000.000/0001-00</div>
+              </div>
+            </div>
+            <div class="paper-sig-col" style="position:relative;">
+              <div class="sig-stamp" id="sig-stamp-p3">✦ ASSINADO</div>
+              <div class="paper-sig-line ink">
+                <div class="sig-name" id="done-sig-name" style="color:var(--s-live);">—</div>
+                <div class="sig-role" id="done-sig-date">—</div>
+              </div>
+            </div>
+          </div>
+          <div class="paper-foot">
+            <span>APOLLO-2025-X992</span>
+            <span style="color:var(--s-live);">HASH: <span id="done-hash-short">—</span></span>
+          </div>
+        </div>
+        <div id="done-sig-rect"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- open bottom: participants + download + hash -->
+  <div style="padding:20px 20px calc(28px + env(safe-area-inset-bottom,0px));">
+
+    <p class="mono-lbl ai" style="margin-bottom:4px;">Participantes</p>
+    <div class="part-list ai">
+      <div class="part-row ok">
+        <div class="part-av"><i class="ri-shield-check-line icon-shield-check-v" style="font-size: 12px; --apollo-mask: url(&quot;https://assets.apollo.rio.br/i/shield-check-v.svg&quot;) !important;" data-apollo-icon="shield-check-v"></i></div>
+        <div class="part-meta">
+          <div class="part-name">Apollo Admin</div>
+          <div class="part-role">Plataforma</div>
+        </div>
+        <i class="ri-checkbox-circle-fill part-ic ok icon-checkbox-circle-s" data-apollo-icon="checkbox-circle-s" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/checkbox-circle-s.svg&quot;) !important;"></i>
+      </div>
+      <div class="part-row ok">
+        <div class="part-av"><i class="ri-check-line icon-check-v" style="font-size: 12px; --apollo-mask: url(&quot;https://assets.apollo.rio.br/i/check-v.svg&quot;) !important;" data-apollo-icon="check-v"></i></div>
+        <div class="part-meta">
+          <div class="part-name">Você</div>
+          <div class="part-role">Gestor do Evento</div>
+        </div>
+        <i class="ri-checkbox-circle-fill part-ic ok icon-checkbox-circle-s" data-apollo-icon="checkbox-circle-s" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/checkbox-circle-s.svg&quot;) !important;"></i>
+      </div>
+    </div>
+
+    <button class="btn-dl ai" id="btn-download">
+      <i class="ri-download-2-line icon-download-2-v" data-apollo-icon="download-2-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/download-2-v.svg&quot;) !important;"></i>
+      <span id="btn-dl-lbl">Baixar Documento Assinado</span>
+    </button>
+
+    <p class="ai" style="font-family:var(--mono);font-size:7.5px;color:var(--faint);text-align:center;margin-bottom:12px;">
+      Administradores podem baixar em qualquer fase do fluxo.
+    </p>
+
+    <div class="hash-strip ai">
+      <span class="hash-k"><i class="ri-links-line icon-links-v" data-apollo-icon="links-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/links-v.svg&quot;) !important;"></i> Blockchain</span>
+      <span class="hash-v icon-hash-v" id="done-hash-full" data-apollo-icon="hash-v" style="--apollo-mask: url(&quot;https://assets.apollo.rio.br/i/hash-v.svg&quot;) !important;">—</span>
+    </div>
+  </div>
+
+</section><script>
+;(function() {
+  'use strict';
+  if (window.__apolloLayout) return;
+  window.__apolloLayout = true;
+
+  var BASE_CSS = [
+    '*, *::before, *::after { box-sizing: border-box; min-width: 0; }',
+    'html, body { margin: 0; padding: 0; }',
+    'body { min-height: 100dvh; }',
+    'img, picture, svg, video, canvas { display: block; max-width: 100%; }',
+    'img, video { height: auto; }',
+    ':root { --safe-top: env(safe-area-inset-top,0px); --safe-right: env(safe-area-inset-right,0px); --safe-bottom: env(safe-area-inset-bottom,0px); --safe-left: env(safe-area-inset-left,0px); }',
+    '.full-height { min-height: 100dvh; } .full-height-small { min-height: 100svh; } .full-height-large { min-height: 100lvh; }',
+    '.scroll-snap-y { overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }',
+    '.scroll-snap-x { overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; }',
+    '.scroll-snap-x::-webkit-scrollbar { display: none; }',
+    '.scroll-snap-soft { overflow-y: auto; scroll-snap-type: y proximity; overscroll-behavior-y: contain; }',
+    '.snap-start { scroll-snap-align: start; } .snap-center { scroll-snap-align: center; } .snap-end { scroll-snap-align: end; }',
+    '* { -webkit-tap-highlight-color: transparent; }',
+    'button, a, [role="button"], [role="link"] { min-height: 44px; min-width: 44px; cursor: pointer; touch-action: manipulation; }',
+    'button { -webkit-appearance: none; appearance: none; background: none; border: none; }',
+    ':focus { outline: none; } :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }',
+    ':root { font-kerning: normal; font-variant-ligatures: contextual; hanging-punctuation: first last; text-rendering: optimizeLegibility; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }',
+    'p, li, dd, dt { max-width: 65ch; }',
+    'input, textarea, select { font-size: max(16px, 1rem); font-family: inherit; }',
+    'img[width][height], video[width][height] { aspect-ratio: attr(width) / attr(height); }',
+    '.contain-paint { contain: layout style paint; content-visibility: auto; contain-intrinsic-size: 0 320px; }',
+    '.contain-section { contain: layout; content-visibility: auto; contain-intrinsic-size: 0 500px; }',
+    '.will-animate { will-change: transform; } .gpu-layer { transform: translateZ(0); backface-visibility: hidden; }',
+    'html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }',
+    ':root { color-scheme: light dark; }',
+    '.mx-auto { margin-inline: auto; } .px-page { padding-inline: max(1rem, 5vw); } .px-edge { padding-inline: max(1rem, env(safe-area-inset-left,0px)); }',
+    '.cq { container-type: inline-size; } .cq-strict { container-type: size; }',
+    '@container (min-width: 400px) { .cq-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; } }',
+    '@container (min-width: 640px) { .cq-grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; } }',
+    '@media (hover: hover) and (pointer: fine) { .hover-lift:hover { transform: translateY(-2px); } .hover-scale:hover { transform: scale(1.02); } }',
+    '@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; } }',
+    'html { scrollbar-gutter: stable; scroll-behavior: smooth; }',
+    '.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }',
+    '.stretch { width: 100%; } .no-select { user-select: none; -webkit-user-select: none; }',
+  ].join('\n');
+
+  var PANEL_CSS = [
+    'html { overflow: hidden !important; height: 100dvh !important; }',
+    'body { overflow: hidden !important; height: 100dvh !important; overscroll-behavior: none; }',
+    '[data-panel] { position: fixed; inset: 0; width: 100dvw; height: 100dvh; overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; will-change: transform, opacity; backface-visibility: hidden; -webkit-backface-visibility: hidden; visibility: hidden; opacity: 0; z-index: 1; }',
+    '[data-panel].as-on { z-index: 2; }',
+    '[data-to], [data-back], .pra-dir, .pra-esq, .pra-baixo, .pra-cima, .volta-esq, .volta-dir, .volta-cima, .volta-baixo { cursor: pointer; }',
+    '[data-invert] span, .inverte-icon span { display: inline-block; transition: rotate 0.5s cubic-bezier(0.22,1,0.36,1); }',
+    '[data-invert].as-inverted span, .inverte-icon.as-inverted span { rotate: 180deg; }',
+    '@media (prefers-reduced-motion: reduce) { [data-panel] { transition: none !important; } }',
+  ].join('\n');
+
+  function injectStyle(id, css) {
+    if (document.getElementById(id)) return;
+    var s = document.createElement('style');
+    s.id = id; s.textContent = css;
+    document.head.prepend(s);
+  }
+  injectStyle('apollo-base', BASE_CSS);
+  injectStyle('apollo-panels', PANEL_CSS);
+
+  function onDom(fn) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
+  }
+  onDom(function() { poll(0); });
+  function poll(n) {
+    if (typeof gsap !== 'undefined') return boot();
+    if (n < 80) return setTimeout(function() { poll(n+1); }, 50);
+    console.warn('[ApolloSlider] GSAP not found.');
+  }
+
+  function boot() {
+    gsap.config({ nullTargetWarn: false });
+
+    var DIR = {
+      right: { from:[100,0],   to:[-25,0],  rev:'left'  },
+      left:  { from:[-100,0],  to:[25,0],   rev:'right' },
+      down:  { from:[0,100],   to:[0,-15],  rev:'up'    },
+      up:    { from:[0,-100],  to:[0,15],   rev:'down'  },
+    };
+    var PT = { dir:'right', esq:'left', baixo:'down', cima:'up' };
+    var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var DUR = REDUCED ? 0.01 : 0.5;
+    var EASE = 'expo.out';
+    var STAGGER = REDUCED ? 0 : 0.045;
+    var panels = new Map(), active = null, stack = [], busy = false;
+
+    document.querySelectorAll('[class]').forEach(function(el) {
+      el.classList.forEach(function(cls) {
+        var m;
+        m = cls.match(/^pra-(dir|esq|cima|baixo)(?:-(\d+))?$/);
+        if (m) { if (!el.dataset.dir) el.dataset.dir = PT[m[1]]; return; }
+        m = cls.match(/^volta-(dir|esq|cima|baixo)(?:-(\d+))?$/);
+        if (m && !el.hasAttribute('data-back')) { el.setAttribute('data-back', m[2]||'1'); return; }
+        if (cls === 'inverte-icon' && !el.hasAttribute('data-invert')) el.setAttribute('data-invert','');
+      });
+    });
+
+    document.querySelectorAll('[data-panel]').forEach(function(el) {
+      panels.set(el.dataset.panel, el);
+      gsap.set(el, { autoAlpha:0, xPercent:0, yPercent:0 });
+    });
+    if (!panels.size) { console.warn('[ApolloSlider] No panels found.'); return; }
+
+    var firstId = panels.keys().next().value;
+    var firstEl = panels.get(firstId);
+    gsap.set(firstEl, { autoAlpha:1, zIndex:2 });
+    firstEl.classList.add('as-on');
+    active = firstId;
+    reveal(firstEl, 0.12);
+
+    function navigate(targetId, dir) {
+      dir = dir || 'right';
+      if (busy || !panels.has(targetId) || targetId === active) return;
+      var v = DIR[dir]||DIR.right, le = panels.get(active), en = panels.get(targetId);
+      busy = true;
+      gsap.set(le, { zIndex:1 });
+      gsap.set(en, { xPercent:v.from[0], yPercent:v.from[1], autoAlpha:1, zIndex:3 });
+      le.classList.remove('as-on'); en.classList.add('as-on');
+      var tl = gsap.timeline({
+        defaults:{ duration:DUR, ease:EASE },
+        onComplete:function() {
+          gsap.set(le, { autoAlpha:0, xPercent:0, yPercent:0, zIndex:1 });
+          gsap.set(en, { zIndex:2 });
+          busy = false;
+        },
+      });
+      tl.to(le, { xPercent:v.to[0], yPercent:v.to[1] }, 0);
+      tl.to(en, { xPercent:0, yPercent:0 }, 0);
+      tl.add(function() { reveal(en); }, DUR * 0.15);
+      stack.push({ id:active, dir:dir });
+      active = targetId;
+      syncIcons();
+    }
+
+    function back(steps) {
+      steps = steps || 1;
+      if (busy || !stack.length) return;
+      var real = Math.min(steps, stack.length);
+      if (real > 1) stack.splice(-(real-1));
+      var prev = stack.pop(), d = DIR[prev.dir]||DIR.right;
+      var le = panels.get(active), re = panels.get(prev.id);
+      busy = true;
+      gsap.set(re, { xPercent:d.to[0], yPercent:d.to[1], autoAlpha:1, zIndex:1 });
+      gsap.set(le, { zIndex:3 });
+      le.classList.remove('as-on'); re.classList.add('as-on');
+      var tl = gsap.timeline({
+        defaults:{ duration:DUR, ease:EASE },
+        onComplete:function() {
+          gsap.set(le, { autoAlpha:0, xPercent:0, yPercent:0, zIndex:1 });
+          gsap.set(re, { zIndex:2 });
+          busy = false;
+        },
+      });
+      tl.to(le, { xPercent:d.from[0], yPercent:d.from[1] }, 0);
+      tl.to(re, { xPercent:0, yPercent:0 }, 0);
+      tl.add(function() { reveal(re); }, DUR * 0.15);
+      active = prev.id;
+      syncIcons();
+    }
+
+    function reveal(el, delay) {
+      var items = el.querySelectorAll('.ai');
+      if (!items.length) return;
+      gsap.fromTo(items,
+        { y:14, opacity:0 },
+        { y:0, opacity:1, duration:.38, ease:'power3.out', stagger:STAGGER, delay:delay||0, overwrite:'auto', clearProps:'transform' }
+      );
+    }
+
+    function syncIcons() {
+      document.querySelectorAll('[data-invert], .inverte-icon').forEach(function(ic) {
+        var target = ic._svdTo || ic.dataset.to;
+        if (!target) return;
+        var flip = (active === target);
+        ic.classList.toggle('as-inverted', flip);
+        if (flip) {
+          ic._svdTo = ic._svdTo || ic.dataset.to;
+          ic._svdDir = ic._svdDir || ic.dataset.dir;
+          delete ic.dataset.to; delete ic.dataset.dir; ic.dataset.back = '1';
+        } else {
+          if (ic._svdTo) ic.dataset.to = ic._svdTo;
+          if (ic._svdDir) ic.dataset.dir = ic._svdDir;
+          delete ic.dataset.back;
+        }
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      var fwd = e.target.closest('[data-to]');
+      if (fwd) { e.preventDefault(); navigate(fwd.dataset.to, fwd.dataset.dir); return; }
+      var bk = e.target.closest('[data-back]');
+      if (bk) { e.preventDefault(); back(parseInt(bk.dataset.back||'1', 10)); }
+    });
+
+    var px0=0,py0=0,pt0=0,swiping=false,scrolled=false;
+    panels.forEach(function(el) {
+      el.addEventListener('scroll', function() { if(swiping) scrolled=true; }, {passive:true});
+    });
+    document.addEventListener('pointerdown', function(e) { px0=e.clientX;py0=e.clientY;pt0=performance.now();swiping=true;scrolled=false; }, {passive:true});
+    document.addEventListener('pointerup', function(e) {
+      if(!swiping)return; swiping=false; if(!stack.length)return;
+      var dx=e.clientX-px0,dy=e.clientY-py0,dt=Math.max(1,performance.now()-pt0);
+      var vx=Math.abs(dx/dt),vy=Math.abs(dy/dt),ed=stack[stack.length-1].dir;
+      if(vx>vy&&(vx>.3||Math.abs(dx)/innerWidth>.12)){if(dx>0)back(1);else if(ed==='left')back(1);return;}
+      if(scrolled)return;
+      if(vy>vx&&(vy>.3||Math.abs(dy)/innerHeight>.12)){
+        var el=panels.get(active);
+        if(dy>0&&el.scrollTop<=0)back(1);
+        else if(dy<0&&ed==='up'){var atBot=el.scrollTop>=el.scrollHeight-el.clientHeight-2;if(atBot)back(1);}
+      }
+    }, {passive:true});
+    document.addEventListener('pointercancel', function() { swiping=false; }, {passive:true});
+
+    var dirMap={ArrowRight:'right',ArrowLeft:'left',ArrowUp:'up',ArrowDown:'down'};
+    document.addEventListener('keydown', function(e) {
+      var tag=document.activeElement&&document.activeElement.tagName;
+      if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
+      var k=e.key;
+      if(k==='Escape'||k==='Backspace'){e.preventDefault();if(stack.length)back(1);return;}
+      if(!dirMap[k])return; e.preventDefault();
+      var dir=dirMap[k],activeEl=panels.get(active);
+      var trigger=activeEl&&activeEl.querySelector('[data-to][data-dir="'+dir+'"]');
+      if(trigger)navigate(trigger.dataset.to,dir);
+      else if(stack.length){var ed=stack[stack.length-1].dir;if(dir===ed||k==='ArrowLeft'||k==='ArrowUp')back(1);}
+    });
+
+    window.ApolloSlider = Object.defineProperties({},{
+      navigate:{value:navigate}, back:{value:back},
+      active:{get:function(){return active;}},
+      stack:{get:function(){return stack.slice();}},
+      panels:{get:function(){return Array.from(panels.keys());}},
+    });
+
+    console.log('%c ApolloSlider v2 %c '+panels.size+' panels ','background:#0d1117;color:#5ee7df;font-weight:700;padding:2px 8px;border-radius:4px','color:#666;font-weight:400');
+  }
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════
+     SIGN LOGIC
+════════════════════════════════════════════════════ -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var MIN_W=84, MIN_H=34;
+  var STATE='IDLE', P1=null;
+  var currentRect={x:0,y:0,w:MIN_W,h:MIN_H};
+  var rectPlaced=false, interactInst=null, docZoom=1;
+
+  var pdfC     = document.getElementById('pdf-p2');
+  var overlay  = document.getElementById('sign-overlay');
+  var ovBg     = document.getElementById('ov-bg');
+  var ovCard   = document.getElementById('ov-card');
+  var touchOv  = document.getElementById('touch-ov');
+  var ghostSvg = document.getElementById('ghost-svg');
+  var signRect = document.getElementById('sign-rect');
+  var rectLbl  = document.getElementById('rect-lbl');
+  var rectDim  = document.getElementById('rect-dim');
+  var btnPos   = document.getElementById('btn-pos');
+  var btnPosLbl= document.getElementById('btn-pos-lbl');
+  var chkAg    = document.getElementById('chk-agree');
+  var btnSign  = document.getElementById('btn-assinar');
+  var minWarn  = document.getElementById('min-warn');
+
+  /* overlay anim */
+  function dismissOverlay(cb) {
+    if(typeof gsap!=='undefined'){
+      var tl=gsap.timeline({onComplete:function(){overlay.style.display='none';if(cb)cb();}});
+      tl.to(ovCard,{scale:.88,opacity:0,duration:.22,ease:'power2.in'})
+        .to(ovBg,{opacity:0,duration:.3},0.06)
+        .to(overlay,{opacity:0,duration:.16},0.26);
+    } else { overlay.style.display='none'; if(cb)cb(); }
+  }
+  function openOverlay() {
+    overlay.style.display='flex'; overlay.style.opacity='1';
+    if(typeof gsap!=='undefined'){
+      gsap.fromTo(ovCard,{scale:.84,opacity:0},{scale:1,opacity:1,duration:.36,ease:'back.out(2.2)'});
+      gsap.fromTo(ovBg,{opacity:0},{opacity:1,duration:.24});
+    }
+  }
+
+  document.getElementById('btn-iniciar').addEventListener('click',function(){dismissOverlay(startManual);});
+  document.getElementById('btn-auto').addEventListener('click',function(){dismissOverlay(autoPlace);});
+  btnPos.addEventListener('click',function(){if(!rectPlaced)openOverlay();});
+
+  function startManual(){
+    STATE='IDLE';P1=null;ghostSvg.innerHTML='';
+    signRect.style.display='none';
+    touchOv.classList.add('active');
+    btnPos.classList.remove('placed');btnPos.classList.add('placing');
+    btnPosLbl.textContent='1º ponto...';
+  }
+
+  function getPt(e){
+    var r=pdfC.getBoundingClientRect();
+    var cx=e.clientX!=null?e.clientX:(e.touches&&e.touches[0]?e.touches[0].clientX:(e.changedTouches&&e.changedTouches[0]?e.changedTouches[0].clientX:0));
+    var cy=e.clientY!=null?e.clientY:(e.touches&&e.touches[0]?e.touches[0].clientY:(e.changedTouches&&e.changedTouches[0]?e.changedTouches[0].clientY:0));
+    return{x:Math.max(0,Math.min(cx-r.left,r.width)),y:Math.max(0,Math.min(cy-r.top,r.height))};
+  }
+
+  function onTap(e){
+    if(!touchOv.classList.contains('active'))return;
+    if(e.cancelable)e.preventDefault();
+    var p=getPt(e);
+    if(STATE==='IDLE'){P1=p;STATE='V1';drawP1(p);btnPosLbl.textContent='2º ponto...';}
+    else if(STATE==='V1'){
+      var d=Math.hypot(p.x-P1.x,p.y-P1.y);
+      var P2=d<20?{x:P1.x+MIN_W,y:P1.y+MIN_H}:p;
+      ghostSvg.innerHTML='';
+      commitRect(buildRect(P1,P2));
+      STATE='DONE';touchOv.classList.remove('active');
+      activateInteract();markPlaced();
+    }
+  }
+
+  touchOv.addEventListener('touchstart',onTap,{passive:false});
+  touchOv.addEventListener('click',onTap);
+  touchOv.addEventListener('touchmove',function(e){
+    if(STATE!=='V1'||!P1)return;
+    if(e.cancelable)e.preventDefault();
+    drawLive(P1,getPt(e));
+  },{passive:false});
+  touchOv.addEventListener('mousemove',function(e){
+    if(STATE==='IDLE'&&touchOv.classList.contains('active')){drawCross(getPt(e));return;}
+    if(STATE==='V1'&&P1)drawLive(P1,getPt(e));
+  });
+  touchOv.addEventListener('mouseleave',function(){if(STATE==='IDLE')ghostSvg.innerHTML='';});
+
+  function svgEl(tag,attrs){
+    var el=document.createElementNS('http://www.w3.org/2000/svg',tag);
+    Object.keys(attrs).forEach(function(k){el.setAttribute(k,attrs[k]);});
+    ghostSvg.appendChild(el);return el;
+  }
+
+  function drawCross(p){
+    ghostSvg.innerHTML='';
+    var cw=pdfC.offsetWidth,ch=pdfC.offsetHeight,s='rgba(244,95,0,.2)';
+    svgEl('line',{x1:0,y1:p.y,x2:cw,y2:p.y,stroke:s,'stroke-width':1,'stroke-dasharray':'4,5'});
+    svgEl('line',{x1:p.x,y1:0,x2:p.x,y2:ch,stroke:s,'stroke-width':1,'stroke-dasharray':'4,5'});
+  }
+
+  function drawP1(p){
+    ghostSvg.innerHTML='';
+    var cw=pdfC.offsetWidth,ch=pdfC.offsetHeight,s='rgba(244,95,0,.3)';
+    svgEl('line',{x1:0,y1:p.y,x2:cw,y2:p.y,stroke:s,'stroke-width':1,'stroke-dasharray':'4,5'});
+    svgEl('line',{x1:p.x,y1:0,x2:p.x,y2:ch,stroke:s,'stroke-width':1,'stroke-dasharray':'4,5'});
+    svgEl('circle',{cx:p.x,cy:p.y,r:5,fill:'var(--primary)',opacity:.88});
+  }
+
+  function drawLive(p1,p2){
+    ghostSvg.innerHTML='';
+    var x=Math.min(p1.x,p2.x),y=Math.min(p1.y,p2.y);
+    var w=Math.max(Math.abs(p2.x-p1.x),2),h=Math.max(Math.abs(p2.y-p1.y),2);
+    svgEl('circle',{cx:p1.x,cy:p1.y,r:5,fill:'var(--primary)',opacity:.9});
+    svgEl('rect',{x:x,y:y,width:w,height:h,fill:'rgba(244,95,0,.06)',stroke:'var(--primary)','stroke-width':1.5,'stroke-dasharray':'5,4'});
+    svgEl('circle',{cx:p2.x,cy:p2.y,r:5,fill:'var(--primary)',opacity:.55});
+    var t=svgEl('text',{x:x+w/2,y:Math.max(y-5,10),'text-anchor':'middle','font-family':'Space Mono,monospace','font-size':'8.5',fill:'var(--primary)',opacity:.85});
+    t.textContent=Math.round(w)+'×'+Math.round(h)+'px';
+  }
+
+  function buildRect(p1,p2){
+    var cw=pdfC.offsetWidth,ch=pdfC.offsetHeight;
+    var x=Math.min(p1.x,p2.x),y=Math.min(p1.y,p2.y);
+    var w=Math.max(Math.abs(p2.x-p1.x),MIN_W),h=Math.max(Math.abs(p2.y-p1.y),MIN_H);
+    return{x:x,y:y,w:Math.min(w,cw-x),h:Math.min(h,ch-y)};
+  }
+
+  function commitRect(r){
+    currentRect=Object.assign({},r);
+    Object.assign(signRect.style,{display:'block',left:r.x+'px',top:r.y+'px',width:r.w+'px',height:r.h+'px',transform:'none'});
+    signRect.dataset.x=0;signRect.dataset.y=0;
+    updateDim(r.w,r.h);
+    if(typeof gsap!=='undefined')gsap.fromTo(signRect,{opacity:0,scale:.84},{opacity:1,scale:1,duration:.3,ease:'back.out(2.2)'});
+  }
+
+  function updateDim(w,h){if(rectDim)rectDim.textContent=Math.round(w)+'×'+Math.round(h)+'px';}
+
+  function autoPlace(){
+    var cw=pdfC.offsetWidth,ch=pdfC.offsetHeight;
+    var w=Math.min(165,cw*.42),h=44;
+    commitRect({x:cw-w-22,y:ch-h-48,w:w,h:h});
+    STATE='DONE';activateInteract();markPlaced();
+  }
+
+  function markPlaced(){
+    rectPlaced=true;
+    btnPos.classList.remove('placing');btnPos.classList.add('placed');
+    btnPosLbl.textContent='✦ Posicionado';
+    if(rectDim)rectDim.textContent='arraste · resize';
+    checkState();
+  }
+
+  function activateInteract(){
+    if(interactInst){interactInst.unset();interactInst=null;}
+    interactInst=interact('#sign-rect')
+      .draggable({
+        listeners:{move:function(ev){
+          var el=ev.target;
+          var x=(parseFloat(el.dataset.x)||0)+ev.dx;
+          var y=(parseFloat(el.dataset.y)||0)+ev.dy;
+          el.style.transform='translate('+x+'px,'+y+'px)';
+          el.dataset.x=x;el.dataset.y=y;syncRectData(el);
+        }},
+        modifiers:[interact.modifiers.restrictRect({restriction:'#pdf-p2',endOnly:true})]
+      })
+      .resizable({
+        edges:{left:true,right:true,bottom:true,top:true},
+        listeners:{move:function(ev){
+          var el=ev.target;
+          if(ev.rect.width<MIN_W||ev.rect.height<MIN_H){showWarn();return;}
+          el.style.width=ev.rect.width+'px';el.style.height=ev.rect.height+'px';
+          var x=(parseFloat(el.dataset.x)||0)+ev.deltaRect.left;
+          var y=(parseFloat(el.dataset.y)||0)+ev.deltaRect.top;
+          el.style.transform='translate('+x+'px,'+y+'px)';
+          el.dataset.x=x;el.dataset.y=y;syncRectData(el);
+        }},
+        modifiers:[interact.modifiers.restrictSize({min:{width:MIN_W,height:MIN_H}})]
+      });
+  }
+
+  function syncRectData(el){
+    var bx=parseFloat(el.style.left)||0,by=parseFloat(el.style.top)||0;
+    var tx=parseFloat(el.dataset.x)||0,ty=parseFloat(el.dataset.y)||0;
+    currentRect={x:bx+tx,y:by+ty,w:parseFloat(el.style.width),h:parseFloat(el.style.height)};
+    updateDim(currentRect.w,currentRect.h);
+  }
+
+  var warnTm;
+  function showWarn(){clearTimeout(warnTm);minWarn.classList.add('vis');warnTm=setTimeout(function(){minWarn.classList.remove('vis');},2200);}
+
+  function nudge(dw,dh){
+    if(!rectPlaced){
+      docZoom=Math.max(.65,Math.min(1.5,docZoom+dw*.007));
+      pdfC.style.transform='scale('+docZoom+')';
+      return;
+    }
+    var nw=(parseFloat(signRect.style.width)||currentRect.w)+dw;
+    var nh=(parseFloat(signRect.style.height)||currentRect.h)+dh;
+    if(nw<MIN_W||nh<MIN_H){showWarn();return;}
+    signRect.style.width=nw+'px';signRect.style.height=nh+'px';
+    currentRect.w=nw;currentRect.h=nh;updateDim(nw,nh);
+  }
+
+  document.getElementById('btn-plus').addEventListener('click',function(e){e.stopPropagation();nudge(14,6);});
+  document.getElementById('btn-minus').addEventListener('click',function(e){e.stopPropagation();nudge(-14,-6);});
+  document.getElementById('btn-plus').addEventListener('touchstart',function(e){e.stopPropagation();nudge(14,6);},{passive:true});
+  document.getElementById('btn-minus').addEventListener('touchstart',function(e){e.stopPropagation();nudge(-14,-6);},{passive:true});
+
+  function checkState(){btnSign.disabled=!(chkAg.checked&&rectPlaced);}
+  chkAg.addEventListener('change',checkState);
+
+  function genHash(){return Array.from({length:64},function(){return Math.floor(Math.random()*16).toString(16);}).join('');}
+
+  btnSign.addEventListener('click',function(){
+    if(btnSign.disabled)return;
+    btnSign.innerHTML='<i class="ri-loader-4-line ri-spin"></i> Processando...';
+    btnSign.style.opacity='.6';
+
+    setTimeout(function(){
+      var hash=genHash(),date=new Date().toLocaleString('pt-BR');
+
+      /* update paper p2 */
+      document.getElementById('sig-stamp').style.opacity='1';
+      document.getElementById('user-sig-name').textContent='GESTOR';
+      document.getElementById('user-sig-name').style.color='var(--s-live)';
+      document.getElementById('user-sig-date').textContent=date;
+      document.getElementById('user-sig-line').className='paper-sig-line ink';
+      document.getElementById('doc-hash-prev').textContent=hash.substring(0,10)+'...';
+      document.getElementById('doc-hash-prev').style.color='var(--s-live)';
+      signRect.classList.add('confirmed');
+      rectLbl.classList.add('ok');rectDim.classList.add('ok');rectDim.textContent='✦ confirmado';
+
+      /* pills */
+      ['pill-p1','pill-p2'].forEach(function(id){
+        var el=document.getElementById(id);
+        if(el){el.className='pill signed';el.innerHTML='<i class="ri-check-line"></i> Assinado';}
+      });
+
+      /* page 3 */
+      document.getElementById('done-id-line').textContent='APOLLO-2025-X992 · '+date;
+      document.getElementById('done-sig-name').textContent='GESTOR';
+      document.getElementById('done-sig-date').textContent=date;
+      document.getElementById('sig-stamp-p3').style.opacity='1';
+      document.getElementById('done-hash-short').textContent=hash.substring(0,14)+'...';
+      document.getElementById('done-hash-full').textContent=hash;
+
+      /* mirror rect to p3 */
+      var p3=document.getElementById('pdf-p3');
+      var scale=p3.offsetWidth/pdfC.offsetWidth;
+      var sr=document.getElementById('done-sig-rect');
+      sr.style.left=(currentRect.x*scale)+'px';sr.style.top=(currentRect.y*scale)+'px';
+      sr.style.width=(currentRect.w*scale)+'px';sr.style.height=(currentRect.h*scale)+'px';
+      sr.style.display='block';
+
+      if(typeof gsap!=='undefined')particles();
+
+      setTimeout(function(){
+        if(window.ApolloSlider)window.ApolloSlider.navigate('done','right');
+        if(typeof gsap!=='undefined'){
+          gsap.fromTo('[data-panel="done"] .done-badge',{opacity:0,y:10},{opacity:1,y:0,duration:.48,ease:'back.out(1.8)',delay:.2});
+          gsap.fromTo('[data-panel="done"] .part-list',{opacity:0,y:10},{opacity:1,y:0,duration:.44,ease:'power3.out',delay:.34});
+          gsap.fromTo('#sig-stamp-p3',{opacity:0,rotate:-14},{opacity:1,rotate:-9,duration:.46,ease:'back.out(2)',delay:.52});
+        }
+      },560);
+
+    },1500);
+  });
+
+  document.getElementById('btn-download').addEventListener('click',function(){
+    var btn=document.getElementById('btn-download');
+    btn.innerHTML='<i class="ri-loader-4-line ri-spin"></i> Gerando PDF...';
+    setTimeout(function(){btn.innerHTML='<i class="ri-check-line"></i> Download Concluído';},1800);
+  });
+
+  function particles(){
+    var c=['var(--primary)','var(--s-live)','rgba(18,18,20,.22)'];
+    for(var i=0;i<20;i++){
+      (function(i){
+        var d=document.createElement('div');
+        d.style.cssText='position:fixed;width:5px;height:5px;border-radius:50%;pointer-events:none;z-index:9999;background:'+c[i%3]+';left:'+(43+Math.random()*18)+'vw;top:60vh;';
+        document.body.appendChild(d);
+        gsap.to(d,{y:-(Math.random()*190+80),x:(Math.random()-.5)*130,opacity:0,scale:Math.random()+.3,duration:Math.random()*.8+.5,ease:'power2.out',delay:Math.random()*.28,onComplete:function(){d.remove();}});
+      })(i);
+    }
+  }
+});
+</script>
+
+
+  
+  
+  
+
+
+
+</body></html>

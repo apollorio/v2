@@ -1,0 +1,112 @@
+#!/bin/sh
+# This script is run before pushing to github. It does all the javascript cleanups works.
+
+if [ ! -f "index.php" -a \
+     ! -d "design" -a \
+     ! -d "lib" -a \
+     ! -d "pos" -a \
+     ! -d "modules" ] ; then
+     echo "You seem to be in the wrong directory"
+     echo "Place yourself in the LHC root directory and run ./deploys.sh"
+     exit 1
+fi
+
+echo "Removing lazy load core js files"
+rm -rf ./design/defaulttheme/js/lh/dist/*.js
+rm -rf ./design/defaulttheme/js/admin/dist/*.js
+rm -rf ./design/defaulttheme/js/lh/dist/*.js.map
+rm -rf ./design/defaulttheme/js/admin/dist/*.js.map
+rm -rf ./design/defaulttheme/js/admin/dist/*.js.map
+rm -rf ./design/defaulttheme/js/svelte/public/build/*.js
+rm -rf ./design/defaulttheme/js/svelte/public/build/*.js.map
+
+echo "Compiling default js"
+docker run --rm -v "$(pwd)":/app -w /app node:22 npm run build
+
+echo "Cleaning up voice/video js files"
+rm -rf ./design/defaulttheme/widget/voice-call-operator/dist/*.js
+rm -rf ./design/defaulttheme/widget/voice-call-operator/dist/*.js.map
+
+echo "Cleaning up react-app"
+rm -rf ./design/defaulttheme/widget/react-app/dist/*.js
+rm -rf ./design/defaulttheme/widget/react-app/dist/*.js.map
+
+echo "Cleaning up wrapper app"
+rm -rf ./design/defaulttheme/widget/wrapper/dist/*.js
+rm -rf ./design/defaulttheme/widget/wrapper/dist/*.js.map
+
+echo "Cleaning up widget js files"
+rm -rf ./design/defaulttheme/js/widgetv2/*.js
+rm -rf ./design/defaulttheme/js/widgetv2/*.js.map
+
+echo "Cleaning up voice js files"
+rm -rf ./design/defaulttheme/js/voice/*.js.map
+rm -rf ./design/defaulttheme/js/voice/*.js
+
+echo "Compiling admin react apps"
+cd ./design/defaulttheme/js/admin && docker run --rm -v "$(pwd)":/app -w /app node:22 npm run build
+cd ../../../../
+
+echo "Compiling react-js"
+cd ./design/defaulttheme/widget/react-app && docker run --rm -v "$(pwd)":/app -w /app node:22 npm run build
+cp -v dist/*.js ../../js/widgetv2/ && cp -v dist/*.js.map ../../js/widgetv2/
+cd ../../../../
+
+echo "Compiling wrapper"
+cd ./design/defaulttheme/widget/wrapper && docker run --rm -v "$(pwd)":/app -w /app node:22 npm run build
+cp -v dist/*.js ../../js/widgetv2/ && cp -v dist/*.js.map ../../js/widgetv2/
+cd ../../../../
+
+echo "Voice"
+cd ./design/defaulttheme/widget/voice-call-operator && docker run --rm -v "$(pwd)":/app -w /app node:22 npm run build
+cp -v dist/*.js ../../js/voice/ && cp -v dist/*.js.map ../../js/voice/
+cd ../../../../
+
+echo "Svelte"
+cd ./design/defaulttheme/js/svelte && docker run --rm -v "$(pwd)":/app -w /app node:22 npm run build
+cd ../../../../
+
+echo "Generating JS/CSS files"
+PHP_CMD=""
+
+# First check default php version
+if command -v php &> /dev/null; then
+    version_id=$(php -r 'echo PHP_VERSION_ID;' 2>/dev/null)
+    if [ "$version_id" -ge 80200 ]; then
+        PHP_CMD="php"
+        echo "Using default php (version ID: $version_id)"
+    else
+        echo "Default php version is too old (version ID: $version_id), looking for alternatives..."
+    fi
+fi
+
+# If default php is not suitable, try to find alternative PHP versions (8.2 or higher)
+if [ -z "$PHP_CMD" ]; then
+    for version in php8.3 php8.2 php83 php82 php8.4 php84 php8.5 php85; do
+        if command -v $version &> /dev/null; then
+            version_id=$($version -r 'echo PHP_VERSION_ID;' 2>/dev/null)
+            if [ "$version_id" -ge 80200 ]; then
+                PHP_CMD="$version"
+                echo "Using $version (version ID: $version_id)"
+                break
+            fi
+        fi
+    done
+fi
+
+# If still no suitable PHP found, error out
+if [ -z "$PHP_CMD" ]; then
+    echo "Error: Could not find PHP 8.2 or higher. Please install PHP 8.2+ or ensure it's in your PATH."
+    echo "Tried: php, php8.3, php8.2, php83, php82"
+    exit 1
+fi
+
+$PHP_CMD cron.php -s site_admin -c cron/util/generate_css -p 1
+
+echo "Compressing JS"
+docker run --rm -v "$(pwd)":/app -w /app node:22 npm run build:static
+
+if [ -f "post_deploy.sh" ]; then
+    echo "Running post_deploy.sh"
+    ./post_deploy.sh
+fi

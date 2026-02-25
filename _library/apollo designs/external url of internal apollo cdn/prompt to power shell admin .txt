@@ -1,0 +1,789 @@
+#Requires -RunAsAdministrator
+<#
+╔══════════════════════════════════════════════════════════════════════════════╗
+║  PHPCS + PHPCBF — WORDPRESS VIP GO — ULTRA PRO v3                          ║
+║  Projeto: Apollo Rio                                                        ║
+║                                                                              ║
+║  FULLY AUTOMATIC — NO PAUSES — XDEBUG-PROOF                                ║
+║  • Auto-installs PHP, Composer, PHPCS, PHPCBF & all WP coding standards    ║
+║  • Kills Xdebug interference on every PHP/PHPCS/PHPCBF call                ║
+║  • Fallback chain: Choco → Scoop → Manual download                         ║
+║  • Loop: Analyse → Fix → Re-verify per standard, per plugin                ║
+║  • Generates _correct.md + full logs                                         ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+#>
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ██  CONFIGURATION — EDIT THIS SECTION                                       ██
+# ═══════════════════════════════════════════════════════════════════════════════
+
+$PluginsRoot = "C:\Users\rafae\Local Sites\apollo\app\public\wp-content\plugins"
+
+$TargetPlugins = @(
+    "apollo-journal"
+    "apollo-admin"
+    "apollo-adverts"
+    "apollo-chat"
+    "apollo-classifieds"
+    "apollo-coauthor"
+    "apollo-comment"
+    "apollo-core"
+    "apollo-dashboard"
+    "apollo-djs"
+    "apollo-docs"
+    "apollo-email"
+    "apollo-events"
+    "apollo-fav"
+    "apollo-gestor"
+    "apollo-groups"
+    "apollo-hub"
+    "apollo-loc"
+    "apollo-login"
+    "apollo-membership"
+    "apollo-mod"
+    "apollo-notif"
+    "apollo-runtime"
+    "apollo-seo"
+    "apollo-sheets"
+    "apollo-shortcodes"
+    "apollo-sign"
+    "apollo-social"
+    "apollo-statistics"
+    "apollo-templates"
+    "apollo-users"
+    "apollo-wow"
+)
+
+$Standards = @(
+    "WordPress"
+    "WordPress-Extra"
+    "WordPress-VIP-Go"
+)
+
+$IgnorePatterns = "vendor/*,node_modules/*,tests/*,assets/*,dist/*,build/*"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ██  INTERNAL VARS                                                            ██
+# ═══════════════════════════════════════════════════════════════════════════════
+
+$ErrorActionPreference = "Continue"
+$ProgressPreference    = "SilentlyContinue"
+$Host.UI.RawUI.WindowTitle = "PHPCS VIP Go Ultra Pro v3"
+
+$LogDir          = Join-Path $PluginsRoot "_phpcs-logs"
+$CorrectFile     = Join-Path $PluginsRoot "_correct.md"
+$DownloadsDir    = "C:\Users\rafae\Downloads"
+$DownloadsReport = Join-Path $DownloadsDir "apollo-phpcs-pending-fixes_$(Get-Date -Format 'yyyyMMdd_HHmmss').md"
+$Timestamp       = Get-Date -Format "yyyyMMdd_HHmmss"
+$TotalErrors     = 0
+$TotalWarnings   = 0
+$PluginSummary   = @()
+$StartTime       = Get-Date
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ██  XDEBUG KILLER — THE FIX FOR YOUR CRASH                                  ██
+# ═══════════════════════════════════════════════════════════════════════════════
+# Xdebug was spamming "Time-out connecting to debugging client" into EVERY
+# output, corrupting phpcs -i results and making standard detection fail.
+# This kills it at the environment level for the entire PowerShell session.
+
+$env:XDEBUG_MODE = "off"
+$env:COMPOSER_ALLOW_XDEBUG = "0"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ██  HELPER FUNCTIONS                                                         ██
+# ═══════════════════════════════════════════════════════════════════════════════
+
+function Write-Banner {
+    param([string]$Text, [string]$Color = "Cyan")
+    $len = [Math]::Max($Text.Length + 4, 50)
+    $padded = $Text.PadRight($len - 4)
+    $border = [string]::new([char]0x2550, $len)
+    Write-Host "`n╔$border╗" -ForegroundColor $Color
+    Write-Host "║  $padded  ║" -ForegroundColor $Color
+    Write-Host "╚$border╝`n" -ForegroundColor $Color
+}
+
+function Write-Step {
+    param([string]$Symbol, [string]$Color, [string]$Message)
+    Write-Host "  $Symbol " -NoNewline -ForegroundColor $Color
+    Write-Host $Message
+}
+
+function Write-Ok    { param([string]$Msg) Write-Step "✔" "Green"  $Msg }
+function Write-Warn  { param([string]$Msg) Write-Step "⚠" "Yellow" $Msg }
+function Write-Err   { param([string]$Msg) Write-Step "✖" "Red"    $Msg }
+function Write-Info  { param([string]$Msg) Write-Step "→" "Gray"   $Msg }
+
+function Test-Command {
+    param([string]$Name)
+    return [bool](Get-Command $Name -ErrorAction SilentlyContinue)
+}
+
+function Refresh-Path {
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" +
+                [System.Environment]::GetEnvironmentVariable("Path", "User")
+}
+
+# Clean wrappers — strip Xdebug + PHPCS deprecation noise from ALL output
+function Strip-Noise {
+    param([string]$Text)
+    return (($Text -split "`n") | Where-Object {
+        $_ -notmatch "^Xdebug:" -and
+        $_ -notmatch "Time-out connecting to debugging client" -and
+        $_ -notmatch "^DEPRECATED:" -and
+        $_ -notmatch "sniff is listening for" -and
+        $_ -notmatch "deprecated and support will be removed" -and
+        $_ -notmatch "^\s*$"
+    }) -join "`n"
+}
+
+# Backward compat alias
+function Strip-Xdebug { param([string]$Text) return (Strip-Noise $Text) }
+
+# Extract valid JSON from mixed output (finds first { to last })
+function Extract-JsonBlock {
+    param([string]$Text)
+    $cleaned = Strip-Noise $Text
+    # Find the first { and the last } — that's the JSON object
+    $startIdx = $cleaned.IndexOf('{')
+    $endIdx   = $cleaned.LastIndexOf('}')
+    if ($startIdx -ge 0 -and $endIdx -gt $startIdx) {
+        return $cleaned.Substring($startIdx, $endIdx - $startIdx + 1)
+    }
+    return $cleaned
+}
+
+function Invoke-PHPCS {
+    param([string[]]$Arguments)
+    $allArgs = @("-d", "xdebug.mode=off") + $Arguments
+    $raw = & phpcs @allArgs 2>&1 | Out-String
+    return (Strip-Noise $raw).Trim()
+}
+
+function Invoke-PHPCBF {
+    param([string[]]$Arguments)
+    $allArgs = @("-d", "xdebug.mode=off") + $Arguments
+    $raw = & phpcbf @allArgs 2>&1 | Out-String
+    return (Strip-Noise $raw).Trim()
+}
+
+function Invoke-PHPClean {
+    param([string[]]$Arguments)
+    $allArgs = @("-d", "xdebug.mode=off") + $Arguments
+    $raw = & php @allArgs 2>&1 | Out-String
+    return (Strip-Noise $raw).Trim()
+}
+
+function Invoke-ComposerClean {
+    param([string[]]$Arguments)
+    $raw = & composer @Arguments 2>&1 | Out-String
+    return (Strip-Noise $raw).Trim()
+}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ██  PHASE 1 — DEPENDENCY INSTALLATION & VERIFICATION                        ██
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Clear-Host
+Write-Banner "PHASE 1: DEPENDENCY CHECK & INSTALLATION"
+
+# ── 1.1  CHOCOLATEY ──────────────────────────────────────────────────────────
+Write-Info "Checking for Chocolatey..."
+if (-not (Test-Command "choco")) {
+    Write-Warn "Chocolatey not found. Installing..."
+    try {
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+        Refresh-Path
+        if (Test-Command "choco") { Write-Ok "Chocolatey installed." }
+        else { throw "Not in PATH" }
+    } catch {
+        Write-Err "Chocolatey install failed: $_"
+        Write-Warn "Will try alternatives."
+    }
+} else {
+    Write-Ok "Chocolatey found. Updating..."
+    choco upgrade chocolatey -y --no-progress 2>&1 | Out-Null
+}
+
+# ── 1.2  PHP ─────────────────────────────────────────────────────────────────
+Write-Host ""
+Write-Info "Checking for PHP..."
+Refresh-Path
+
+if (-not (Test-Command "php")) {
+    Write-Warn "PHP not found. Attempting install..."
+
+    if (Test-Command "choco") {
+        Write-Info "Installing PHP via Chocolatey..."
+        choco install php -y --no-progress 2>&1 | Out-Null
+        Refresh-Path
+    }
+
+    if (-not (Test-Command "php")) {
+        if (-not (Test-Command "scoop")) {
+            try {
+                Write-Info "Installing Scoop..."
+                Invoke-Expression "& {$(Invoke-RestMethod get.scoop.sh)} -RunAsAdmin" 2>&1 | Out-Null
+                Refresh-Path
+            } catch { }
+        }
+        if (Test-Command "scoop") {
+            scoop install php 2>&1 | Out-Null
+            Refresh-Path
+        }
+    }
+
+    if (-not (Test-Command "php")) {
+        Write-Warn "Manual PHP download..."
+        $phpZip = Join-Path $env:TEMP "php.zip"
+        $phpDir = "C:\php"
+        try {
+            Invoke-WebRequest -Uri "https://windows.php.net/downloads/releases/latest/php-8.3-nts-Win32-vs16-x64-latest.zip" -OutFile $phpZip -UseBasicParsing
+            Expand-Archive -Path $phpZip -DestinationPath $phpDir -Force
+            $iniSrc = Join-Path $phpDir "php.ini-development"
+            $iniDst = Join-Path $phpDir "php.ini"
+            if (Test-Path $iniSrc) {
+                Copy-Item $iniSrc $iniDst -Force
+                (Get-Content $iniDst) -replace ';extension=mbstring', 'extension=mbstring' `
+                                      -replace ';extension=openssl',  'extension=openssl' `
+                                      -replace ';extension=curl',     'extension=curl' `
+                                      -replace ';extension=fileinfo', 'extension=fileinfo' `
+                                      -replace ';extension=zip',      'extension=zip' |
+                    Set-Content $iniDst
+            }
+            [Environment]::SetEnvironmentVariable("Path", "$phpDir;" + $env:Path, "Machine")
+            Refresh-Path
+        } catch { Write-Err "Manual PHP download failed: $_" }
+    }
+
+    if (Test-Command "php") {
+        Write-Ok "PHP installed: $((Invoke-PHPClean @('-v') -split "`n")[0])"
+    } else {
+        Write-Err "FATAL: Could not install PHP."
+        Start-Sleep 10; exit 1
+    }
+} else {
+    Write-Ok "PHP found: $((Invoke-PHPClean @('-v') -split "`n")[0])"
+}
+
+# ── 1.3  DISABLE XDEBUG IN PHP.INI ──────────────────────────────────────────
+Write-Host ""
+Write-Info "Neutralizing Xdebug in php.ini..."
+
+$phpIniPath = (Invoke-PHPClean @("-r", "echo php_ini_loaded_file();")).Trim()
+if ($phpIniPath -and (Test-Path $phpIniPath)) {
+    $iniContent = Get-Content $phpIniPath -Raw
+    $modified = $false
+
+    # Comment out any active xdebug lines
+    $patterns = @('zend_extension.*xdebug', 'xdebug\.mode\s*=', 'xdebug\.start_with_request', 'xdebug\.client_host', 'xdebug\.client_port')
+    foreach ($p in $patterns) {
+        if ($iniContent -match "(?m)^(?!;).*$p") {
+            $iniContent = $iniContent -replace "(?m)^((?!;).*$p.*)", '; $1 ; DISABLED BY PHPCS SCRIPT'
+            $modified = $true
+        }
+    }
+    if ($modified) {
+        Copy-Item $phpIniPath "$phpIniPath.bak_$Timestamp" -Force
+        $iniContent | Set-Content $phpIniPath -Force
+        Write-Ok "Xdebug disabled in php.ini (backup: .bak_$Timestamp)"
+    } else {
+        Write-Ok "No active Xdebug in php.ini."
+    }
+} else {
+    Write-Warn "php.ini not found — relying on env vars to suppress Xdebug."
+}
+
+# ── 1.4  COMPOSER ─────────────────────────────────────────────────────────────
+Write-Host ""
+Write-Info "Checking for Composer..."
+Refresh-Path
+
+if (-not (Test-Command "composer")) {
+    Write-Warn "Composer not found. Installing..."
+
+    if (Test-Command "choco") {
+        choco install composer -y --no-progress 2>&1 | Out-Null
+        Refresh-Path
+    }
+
+    if (-not (Test-Command "composer")) {
+        try {
+            $composerSetup = Join-Path $env:TEMP "composer-setup.php"
+            Invoke-WebRequest -Uri "https://getcomposer.org/installer" -OutFile $composerSetup -UseBasicParsing
+            $targetDir = "C:\ProgramData\ComposerSetup\bin"
+            if (-not (Test-Path $targetDir)) { New-Item -ItemType Directory -Path $targetDir -Force | Out-Null }
+            Invoke-PHPClean @($composerSetup, "--install-dir=$targetDir", "--filename=composer")
+            [Environment]::SetEnvironmentVariable("Path", "$targetDir;" + $env:Path, "Machine")
+            Refresh-Path
+        } catch { Write-Err "Composer install failed: $_" }
+    }
+
+    if (Test-Command "composer") { Write-Ok "Composer installed." }
+    else { Write-Err "FATAL: Composer unavailable."; Start-Sleep 10; exit 1 }
+} else {
+    Write-Ok "Composer found. Self-updating..."
+    Invoke-ComposerClean @("self-update") | Out-Null
+    Write-Ok "Composer: $(Invoke-ComposerClean @('--version'))"
+}
+
+# ── 1.5  PHPCS & PHPCBF ──────────────────────────────────────────────────────
+Write-Host ""
+Write-Info "Checking for PHPCS & PHPCBF..."
+Refresh-Path
+
+$composerGlobalBin = (Invoke-ComposerClean @("global", "config", "bin-dir", "--absolute")).Trim()
+if (-not $composerGlobalBin -or -not (Test-Path $composerGlobalBin -ErrorAction SilentlyContinue)) {
+    $composerGlobalBin = Join-Path $env:APPDATA "Composer\vendor\bin"
+}
+if ($env:Path -notlike "*$composerGlobalBin*") {
+    $env:Path = "$composerGlobalBin;$env:Path"
+    [Environment]::SetEnvironmentVariable("Path", "$composerGlobalBin;" + [Environment]::GetEnvironmentVariable("Path", "User"), "User")
+}
+
+if (-not (Test-Command "phpcs") -or -not (Test-Command "phpcbf")) {
+    Write-Warn "Installing PHPCS + PHPCBF globally..."
+    Invoke-ComposerClean @("global", "require", "squizlabs/php_codesniffer=*", "--update-with-all-dependencies") | Out-Null
+    Refresh-Path
+}
+
+if (Test-Command "phpcs") { Write-Ok "PHPCS: $(Invoke-PHPCS @('--version'))" }
+else { Write-Err "FATAL: PHPCS unavailable."; Start-Sleep 10; exit 1 }
+
+if (Test-Command "phpcbf") { Write-Ok "PHPCBF: Available." }
+else { Write-Err "FATAL: PHPCBF unavailable."; Start-Sleep 10; exit 1 }
+
+# ── 1.6  WORDPRESS CODING STANDARDS ──────────────────────────────────────────
+Write-Host ""
+Write-Info "Installing/Updating WordPress Coding Standards..."
+
+Invoke-ComposerClean @(
+    "global", "require", "--update-with-all-dependencies",
+    "dealerdirect/phpcodesniffer-composer-installer=*",
+    "wp-coding-standards/wpcs=*",
+    "automattic/vipwpcs=*",
+    "phpcompatibility/phpcompatibility-wp=*",
+    "sirbrillig/phpcs-variable-analysis=*"
+) | Out-Null
+
+Refresh-Path
+
+Write-Info "Verifying installed coding standards..."
+$installedStandards = Invoke-PHPCS @("-i")
+Write-Host "  $installedStandards" -ForegroundColor DarkGray
+
+# Check each required standard
+$missingStandards = @()
+foreach ($std in $Standards) {
+    if ($installedStandards -notmatch [regex]::Escape($std)) {
+        $missingStandards += $std
+    }
+}
+
+if ($missingStandards.Count -gt 0) {
+    Write-Warn "Not auto-registered: $($missingStandards -join ', '). Fixing manually..."
+
+    $composerGlobalDir = (Invoke-ComposerClean @("global", "config", "vendor-dir", "--absolute")).Trim()
+    if (-not $composerGlobalDir) { $composerGlobalDir = Join-Path $env:APPDATA "Composer\vendor" }
+
+    $standardPaths = @()
+    @(
+        "wp-coding-standards\wpcs",
+        "automattic\vipwpcs",
+        "phpcompatibility\phpcompatibility-wp",
+        "phpcompatibility\phpcompatibility-paragonie",
+        "phpcompatibility\php-compatibility",
+        "sirbrillig\phpcs-variable-analysis"
+    ) | ForEach-Object {
+        $d = Join-Path $composerGlobalDir $_
+        if (Test-Path $d) { $standardPaths += $d }
+    }
+
+    if ($standardPaths.Count -gt 0) {
+        Invoke-PHPCS @("--config-set", "installed_paths", ($standardPaths -join ",")) | Out-Null
+        $installedStandards = Invoke-PHPCS @("-i")
+        Write-Host "  $installedStandards" -ForegroundColor DarkGray
+    }
+
+    # Final check
+    foreach ($std in $Standards) {
+        if ($installedStandards -notmatch [regex]::Escape($std)) {
+            Write-Err "FATAL: '$std' still missing."
+            Start-Sleep 10; exit 1
+        }
+    }
+}
+
+Write-Ok "All coding standards registered!"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ██  PHASE 2 — VALIDATION                                                    ██
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Write-Banner "PHASE 2: VALIDATION" "Yellow"
+
+if (-not (Test-Path $PluginsRoot)) {
+    Write-Err "FATAL: Plugins root not found: $PluginsRoot"
+    Start-Sleep 10; exit 1
+}
+
+$validPlugins = @()
+foreach ($plugin in $TargetPlugins) {
+    $pluginPath = Join-Path $PluginsRoot $plugin
+    if (Test-Path $pluginPath) {
+        $phpFiles = Get-ChildItem -Path $pluginPath -Filter "*.php" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($phpFiles) {
+            Write-Ok "$plugin"
+            $validPlugins += $plugin
+        } else {
+            Write-Warn "$plugin (no .php files — skipping)"
+        }
+    } else {
+        Write-Err "$plugin (folder not found — skipping)"
+    }
+}
+
+if ($validPlugins.Count -eq 0) {
+    Write-Err "FATAL: No valid plugins found."
+    Start-Sleep 10; exit 1
+}
+
+Write-Host ""
+Write-Ok "$($validPlugins.Count) plugins queued | $($Standards.Count) standards | $($validPlugins.Count * $Standards.Count * 3) total operations"
+
+if (-not (Test-Path $LogDir)) { New-Item -ItemType Directory -Path $LogDir -Force | Out-Null }
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ██  PHASE 3 — ANALYSE → AUTO-FIX → RE-VERIFY (fully automatic)             ██
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Write-Banner "PHASE 3: PHPCS ANALYSE → PHPCBF FIX → RE-VERIFY" "Magenta"
+
+$pluginIndex = 0
+foreach ($plugin in $validPlugins) {
+    $pluginIndex++
+    $pluginPath = Join-Path $PluginsRoot $plugin
+
+    Write-Host ""
+    Write-Host "  ╔═══════════════════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host "  ║  [$pluginIndex/$($validPlugins.Count)] $plugin" -ForegroundColor Cyan
+    Write-Host "  ╚═══════════════════════════════════════════════════════════" -ForegroundColor Cyan
+
+    $pluginErrors   = 0
+    $pluginWarnings = 0
+
+    $stdIndex = 0
+    foreach ($standard in $Standards) {
+        $stdIndex++
+        Write-Host ""
+        Write-Host "    ── Standard $stdIndex/$($Standards.Count): $standard ──" -ForegroundColor Yellow
+
+        $safePlugin = $plugin -replace '[^\w\-]', '_'
+        $safeStd    = $standard -replace '[^\w\-]', '_'
+        $logPrefix  = "${safePlugin}_${safeStd}_${Timestamp}"
+
+        # ── STEP 1: Analyse ──────────────────────────────────────────────
+        Write-Info "  [1/3] Analysing..."
+        $preLog = Join-Path $LogDir "${logPrefix}_PRE.log"
+
+        $preResult = Invoke-PHPCS @(
+            "--standard=$standard",
+            "--extensions=php",
+            "--ignore=$IgnorePatterns",
+            "--report=full",
+            "$pluginPath"
+        )
+        $preResult | Out-File -FilePath $preLog -Encoding UTF8
+
+        if ($preResult -match "No coding standards violations found") {
+            Write-Ok "  Clean! No violations."
+            continue
+        }
+
+        $foundLine = ($preResult -split "`n" | Where-Object { $_ -match "FOUND" } | Select-Object -First 1)
+        if ($foundLine) { Write-Warn "  $($foundLine.Trim())" }
+
+        # ── STEP 2: Auto-Fix ─────────────────────────────────────────────
+        Write-Info "  [2/3] Auto-fixing (PHPCBF)..."
+        $cbfLog = Join-Path $LogDir "${logPrefix}_PHPCBF.log"
+
+        $cbfResult = Invoke-PHPCBF @(
+            "--standard=$standard",
+            "--extensions=php",
+            "--ignore=$IgnorePatterns",
+            "$pluginPath"
+        )
+        $cbfResult | Out-File -FilePath $cbfLog -Encoding UTF8
+
+        if ($cbfResult -match "No fixable errors") {
+            Write-Info "  No auto-fixable errors."
+        } else {
+            $fixedMatch = [regex]::Match($cbfResult, "FIXED (\d+)")
+            if ($fixedMatch.Success) { Write-Ok "  Fixed $($fixedMatch.Groups[1].Value) issue(s)." }
+            else { Write-Ok "  PHPCBF done." }
+        }
+
+        # ── STEP 3: Re-Verify ────────────────────────────────────────────
+        Write-Info "  [3/3] Re-verifying..."
+        $postLog = Join-Path $LogDir "${logPrefix}_POST.json"
+
+        $postResult = Invoke-PHPCS @(
+            "--standard=$standard",
+            "--extensions=php",
+            "--ignore=$IgnorePatterns",
+            "--report=json",
+            "$pluginPath"
+        )
+        $postResult | Out-File -FilePath $postLog -Encoding UTF8
+
+        try {
+            $jsonText = Extract-JsonBlock $postResult
+            $json = $jsonText | ConvertFrom-Json
+            $stdErrors   = [int]$json.totals.errors
+            $stdWarnings = [int]$json.totals.warnings
+            $pluginErrors   += $stdErrors
+            $pluginWarnings += $stdWarnings
+
+            if ($stdErrors -eq 0 -and $stdWarnings -eq 0) { Write-Ok "  ALL CLEAN!" }
+            else { Write-Warn "  Remaining: $stdErrors error(s), $stdWarnings warning(s)" }
+        } catch {
+            Write-Warn "  JSON parse failed (check: $postLog)"
+            Write-Info  "  Raw output (first 200 chars): $($postResult.Substring(0, [Math]::Min(200, $postResult.Length)))"
+        }
+    }
+
+    # Plugin summary line
+    $TotalErrors   += $pluginErrors
+    $TotalWarnings += $pluginWarnings
+
+    $PluginSummary += [PSCustomObject]@{
+        Plugin   = $plugin
+        Errors   = $pluginErrors
+        Warnings = $pluginWarnings
+        Status   = if ($pluginErrors -eq 0 -and $pluginWarnings -eq 0) { "CLEAN" } else { "NEEDS WORK" }
+    }
+
+    $sc = if ($pluginErrors -eq 0 -and $pluginWarnings -eq 0) { "Green" } else { "Yellow" }
+    $si = if ($pluginErrors -eq 0 -and $pluginWarnings -eq 0) { "✔" } else { "⚠" }
+    Write-Host ""
+    Write-Host "  $si  $plugin → E:$pluginErrors W:$pluginWarnings [$pluginIndex/$($validPlugins.Count)]" -ForegroundColor $sc
+}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ██  PHASE 4 — GENERATE correct.md                                           ██
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Write-Banner "PHASE 4: GENERATING REPORT" "Blue"
+
+$reportContent = @"
+# PHPCS Persistent Issues — WordPress VIP Go
+**Project:** Apollo Rio
+**Generated:** $(Get-Date -Format "dd/MM/yyyy HH:mm:ss")
+**Standards:** $($Standards -join ', ')
+**Plugins:** $($validPlugins.Count) | **Errors:** $TotalErrors | **Warnings:** $TotalWarnings
+
+---
+
+## Summary
+
+| # | Plugin | Errors | Warnings | Status |
+|---|--------|--------|----------|--------|
+"@
+
+$i = 0
+foreach ($s in $PluginSummary) {
+    $i++
+    $icon = if ($s.Status -eq "CLEAN") { "✅" } else { "❌" }
+    $reportContent += "`n| $i | $($s.Plugin) | $($s.Errors) | $($s.Warnings) | $icon $($s.Status) |"
+}
+
+$reportContent += "`n`n---`n`n## Detailed Issues`n"
+
+foreach ($plugin in $validPlugins) {
+    foreach ($standard in $Standards) {
+        $safePlugin = $plugin -replace '[^\w\-]', '_'
+        $safeStd    = $standard -replace '[^\w\-]', '_'
+        $postLog    = Join-Path $LogDir "${safePlugin}_${safeStd}_${Timestamp}_POST.json"
+
+        if (Test-Path $postLog) {
+            try {
+                $jsonRaw = Get-Content $postLog -Raw
+                $jsonText = Extract-JsonBlock $jsonRaw
+                $json = $jsonText | ConvertFrom-Json
+
+                if ($json.totals.errors -gt 0 -or $json.totals.warnings -gt 0) {
+                    $reportContent += "`n### $plugin — $standard`n"
+                    foreach ($file in $json.files.PSObject.Properties) {
+                        $relPath = $file.Name -replace [regex]::Escape($PluginsRoot), '...'
+                        $errs = $file.Value.errors
+                        $warns = $file.Value.warnings
+
+                        if ($errs -gt 0 -or $warns -gt 0) {
+                            $reportContent += "`n- **$relPath** → $errs error(s), $warns warning(s)"
+                            foreach ($msg in $file.Value.messages) {
+                                $icon = if ($msg.type -eq "ERROR") { "🔴" } else { "🟡" }
+                                $reportContent += "`n  - $icon L$($msg.line): ``$($msg.source)`` — $($msg.message)"
+                            }
+                        }
+                    }
+                }
+            } catch {
+                $reportContent += "`n### $plugin — $standard`n> ⚠ Could not parse log.`n"
+            }
+        }
+    }
+}
+
+$reportContent | Out-File -FilePath $CorrectFile -Encoding UTF8
+Write-Ok "Report: $CorrectFile"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ██  PHASE 5 — SAVE PENDING FIXES TO DOWNLOADS                               ██
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Write-Banner "PHASE 5: EXPORTING PENDING FIXES TO DOWNLOADS" "Yellow"
+
+$pendingContent = @"
+# APOLLO — PHPCS PENDING FIXES
+**Generated:** $(Get-Date -Format "dd/MM/yyyy HH:mm:ss")
+**Standards:** $($Standards -join ', ')
+**Plugins Scanned:** $($validPlugins.Count)
+**Total Remaining Errors:** $TotalErrors | **Warnings:** $TotalWarnings
+
+> These are the issues that PHPCBF could NOT auto-fix.
+> Each must be resolved manually.
+
+---
+
+## Plugins With Pending Issues
+
+"@
+
+$pluginsWithIssues = $PluginSummary | Where-Object { $_.Errors -gt 0 -or $_.Warnings -gt 0 }
+
+if ($pluginsWithIssues.Count -eq 0) {
+    $pendingContent += "> **ALL CLEAN!** No pending fixes across all plugins.`n"
+} else {
+    $pendingContent += "| # | Plugin | Errors | Warnings |`n|---|--------|--------|----------|`n"
+    $pi = 0
+    foreach ($p in $pluginsWithIssues) {
+        $pi++
+        $pendingContent += "| $pi | $($p.Plugin) | $($p.Errors) | $($p.Warnings) |`n"
+    }
+
+    $pendingContent += "`n---`n`n## Detailed Pending Errors & Warnings`n"
+
+    foreach ($plugin in $validPlugins) {
+        foreach ($standard in $Standards) {
+            $safePlugin = $plugin -replace '[^\w\-]', '_'
+            $safeStd    = $standard -replace '[^\w\-]', '_'
+            $postLog    = Join-Path $LogDir "${safePlugin}_${safeStd}_${Timestamp}_POST.json"
+
+            if (Test-Path $postLog) {
+                try {
+                    $jsonRaw = Get-Content $postLog -Raw
+                    $jsonText = Extract-JsonBlock $jsonRaw
+                    $json = $jsonText | ConvertFrom-Json
+
+                    if ($json.totals.errors -gt 0 -or $json.totals.warnings -gt 0) {
+                        $pendingContent += "`n### $plugin — $standard`n"
+                        $pendingContent += "**Errors:** $($json.totals.errors) | **Warnings:** $($json.totals.warnings)`n"
+                        foreach ($file in $json.files.PSObject.Properties) {
+                            $relPath = $file.Name -replace [regex]::Escape($PluginsRoot), '...'
+                            $errs = $file.Value.errors
+                            $warns = $file.Value.warnings
+                            if ($errs -gt 0 -or $warns -gt 0) {
+                                $pendingContent += "`n**$relPath** → $errs error(s), $warns warning(s)`n"
+                                foreach ($msg in $file.Value.messages) {
+                                    $icon = if ($msg.type -eq "ERROR") { "🔴" } else { "🟡" }
+                                    $pendingContent += "- $icon L$($msg.line): ``$($msg.source)`` — $($msg.message)`n"
+                                }
+                            }
+                        }
+                    }
+                } catch { }
+            }
+        }
+    }
+}
+
+$pendingContent | Out-File -FilePath $DownloadsReport -Encoding UTF8
+Write-Ok "Pending fixes exported: $DownloadsReport"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ██  PHASE 6 — FINAL SUMMARY (FORCED PRINT ALL ERRORS)                       ██
+# ═══════════════════════════════════════════════════════════════════════════════
+
+$Duration = (Get-Date) - $StartTime
+
+Write-Banner "DONE! ALL $($validPlugins.Count) PLUGINS PROCESSED" "Green"
+
+Write-Host "  Results:" -ForegroundColor White
+Write-Host "  ─────────────────────────────────────────────────────────" -ForegroundColor DarkGray
+foreach ($s in $PluginSummary) {
+    $c = if ($s.Status -eq "CLEAN") { "Green" } else { "Yellow" }
+    $ic = if ($s.Status -eq "CLEAN") { "✔" } else { "⚠" }
+    Write-Host "  $ic " -NoNewline -ForegroundColor $c
+    Write-Host "$($s.Plugin.PadRight(26))" -NoNewline
+    Write-Host "E:$($s.Errors.ToString().PadRight(5))" -NoNewline -ForegroundColor $(if ($s.Errors -gt 0) {"Red"} else {"Green"})
+    Write-Host "W:$($s.Warnings)" -ForegroundColor $(if ($s.Warnings -gt 0) {"Yellow"} else {"Green"})
+}
+Write-Host "  ─────────────────────────────────────────────────────────" -ForegroundColor DarkGray
+Write-Host "  TOTAL: $TotalErrors errors | $TotalWarnings warnings | Time: $($Duration.ToString('hh\:mm\:ss'))" -ForegroundColor $(if ($TotalErrors -gt 0) {"Red"} else {"Green"})
+
+# ── FORCE PRINT ALL REMAINING ERRORS ─────────────────────────────────────────
+if ($TotalErrors -gt 0 -or $TotalWarnings -gt 0) {
+    Write-Host ""
+    Write-Banner "PENDING ERRORS — FULL LIST" "Red"
+
+    foreach ($plugin in $validPlugins) {
+        foreach ($standard in $Standards) {
+            $safePlugin = $plugin -replace '[^\w\-]', '_'
+            $safeStd    = $standard -replace '[^\w\-]', '_'
+            $postLog    = Join-Path $LogDir "${safePlugin}_${safeStd}_${Timestamp}_POST.json"
+
+            if (Test-Path $postLog) {
+                try {
+                    $jsonRaw   = Get-Content $postLog -Raw
+                    $jsonText  = Extract-JsonBlock $jsonRaw
+                    $json      = $jsonText | ConvertFrom-Json
+
+                    if ($json.totals.errors -gt 0 -or $json.totals.warnings -gt 0) {
+                        Write-Host ""
+                        Write-Host "  ┌── $plugin [$standard] ──" -ForegroundColor Cyan
+                        Write-Host "  │   Errors: $($json.totals.errors)  Warnings: $($json.totals.warnings)" -ForegroundColor $(if ($json.totals.errors -gt 0) {"Red"} else {"Yellow"})
+
+                        foreach ($file in $json.files.PSObject.Properties) {
+                            $relPath = $file.Name -replace [regex]::Escape($PluginsRoot), '...'
+                            if ($file.Value.errors -gt 0 -or $file.Value.warnings -gt 0) {
+                                Write-Host "  │" -ForegroundColor DarkGray
+                                Write-Host "  ├─ $relPath" -ForegroundColor White
+                                foreach ($msg in $file.Value.messages) {
+                                    $mc = if ($msg.type -eq "ERROR") { "Red" } else { "Yellow" }
+                                    $mi = if ($msg.type -eq "ERROR") { "✖" } else { "⚠" }
+                                    Write-Host "  │  $mi " -NoNewline -ForegroundColor $mc
+                                    Write-Host "L$($msg.line.ToString().PadRight(5))" -NoNewline -ForegroundColor Gray
+                                    Write-Host "$($msg.source)" -NoNewline -ForegroundColor DarkCyan
+                                    Write-Host " — $($msg.message)" -ForegroundColor DarkGray
+                                }
+                            }
+                        }
+                        Write-Host "  └────────────────────────────────────────────" -ForegroundColor DarkGray
+                    }
+                } catch {
+                    Write-Warn "  Could not parse: $postLog"
+                }
+            }
+        }
+    }
+}
+
+Write-Host ""
+Write-Host "  Output Files:" -ForegroundColor White
+Write-Host "    _correct.md           → Manual fix report (plugins folder)" -ForegroundColor Gray
+Write-Host "    _phpcs-logs\           → All detailed logs" -ForegroundColor Gray
+Write-Host "    Downloads\            → $DownloadsReport" -ForegroundColor Gray
+Write-Host ""

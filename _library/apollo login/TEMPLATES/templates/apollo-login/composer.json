@@ -1,0 +1,23 @@
+{
+    "name": "apollo/apollo-login",
+    "description": "Apollo Login - Auth, Multi-Step Registration, Aptitude Quiz, WP Hide Ghost",
+    "type": "wordpress-plugin",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Apollo::Rio",
+            "homepage": "https://apollo.rio.br"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Login\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}

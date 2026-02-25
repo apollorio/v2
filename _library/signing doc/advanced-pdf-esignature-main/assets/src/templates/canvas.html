@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Canvas Example</title>
+  <style>
+    canvas {
+      border: 1px solid #000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="myCanvas" width="600" height="300"></canvas>
+
+  <script>
+    var canvas = document.getElementById('myCanvas');
+    var ctx = canvas.getContext('2d');
+    var ctxRatio = {width: canvas.width, height: canvas.height};
+
+    ctx.beginPath();
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, ctxRatio.width * 0.35, ctxRatio.height * 0.15);
+    ctx.closePath();
+    ctx.fill();
+
+
+    // Draw the Client name
+    ctx.font = `${ctxRatio.width * 0.125}px Arial`;
+    ctx.fillStyle = "#333";
+    ctx.fillText("Remal Mahmud", ctxRatio.width * 0.05, ctxRatio.height * 0.6);
+    
+    // Draw the text
+    ctx.font = `${ctxRatio.width * 0.05}px Arial`;
+    ctx.fillStyle = "#fff";
+    ctx.fillText("Signature", ctxRatio.width * 0.07, ctxRatio.height * 0.15 * 0.666);
+  </script>
+</body>
+</html>

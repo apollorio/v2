@@ -1,0 +1,287 @@
+/**
+ * Apollo Search — Typeahead & List Filter Styles
+ *
+ * Reusable across all Apollo frontend templates and wp-admin.
+ *
+ * @package Apollo\Shortcode
+ * @since   1.0.0
+ */
+
+/* ─── Variables ──────────────────────────────────────────── */
+:root {
+    --as-primary: #f45f00;
+    --as-bg: #fff;
+    --as-border: #e2e8f0;
+    --as-text: #1a202c;
+    --as-text-muted: #718096;
+    --as-highlight: #FFF3E0;
+    --as-radius: 12px;
+    --as-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    --as-font: "Space Grotesk", system-ui, sans-serif;
+    --as-mono: "Space Mono", monospace;
+}
+
+/* ─── Search Wrapper ─────────────────────────────────────── */
+.apollo-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.apollo-search-wrap .apollo-search-icon {
+    position: absolute;
+    left: 14px;
+    font-size: 16px;
+    color: var(--as-text-muted);
+    pointer-events: none;
+    z-index: 2;
+    transition: color 0.2s;
+}
+
+.apollo-search-wrap input:focus ~ .apollo-search-icon,
+.apollo-search-wrap input:focus + .apollo-search-icon {
+    color: var(--as-primary);
+}
+
+.apollo-search-wrap [data-apollo-search],
+.apollo-search-wrap .apollo-search-input {
+    width: 100%;
+    padding: 10px 40px 10px 40px;
+    border: 1.5px solid var(--as-border);
+    border-radius: var(--as-radius);
+    font: 400 14px/1.5 var(--as-font);
+    color: var(--as-text);
+    background: var(--as-bg);
+    outline: none;
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.apollo-search-wrap [data-apollo-search]:focus {
+    border-color: var(--as-primary);
+    box-shadow: 0 0 0 3px rgba(244, 95, 0, 0.1);
+}
+
+.apollo-search-wrap [data-apollo-search]::placeholder {
+    color: var(--as-text-muted);
+}
+
+.apollo-search-wrap [data-apollo-search].has-selection {
+    padding-right: 40px;
+    font-weight: 500;
+    color: var(--as-text);
+    background: rgba(244, 95, 0, 0.04);
+    border-color: var(--as-primary);
+}
+
+/* ─── Spinner ────────────────────────────────────────────── */
+.apollo-search-spinner {
+    position: absolute;
+    right: 14px;
+    display: none;
+    color: var(--as-primary);
+    font-size: 16px;
+    z-index: 2;
+}
+
+.apollo-search-spinner i {
+    animation: apolloSearchSpin 0.8s linear infinite;
+}
+
+.apollo-search-wrap.is-loading .apollo-search-spinner {
+    display: block;
+}
+
+@keyframes apolloSearchSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* ─── Clear Button ───────────────────────────────────────── */
+.apollo-search-clear {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--as-text-muted);
+    font-size: 16px;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.apollo-search-clear:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--as-text);
+}
+
+/* ─── Dropdown ───────────────────────────────────────────── */
+.apollo-search-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--as-bg);
+    border: 1px solid var(--as-border);
+    border-radius: var(--as-radius);
+    box-shadow: var(--as-shadow);
+    max-height: 320px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1000;
+    display: none;
+    scrollbar-width: thin;
+}
+
+.apollo-search-dropdown.is-open {
+    display: block;
+    animation: apolloSearchDropIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes apolloSearchDropIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Search Item ────────────────────────────────────────── */
+.apollo-search-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.apollo-search-item:last-child {
+    border-bottom: none;
+}
+
+.apollo-search-item:hover,
+.apollo-search-item.is-active {
+    background: var(--as-highlight);
+}
+
+.apollo-search-item .search-item-icon {
+    font-size: 18px;
+    color: var(--as-primary);
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+}
+
+.apollo-search-item .search-item-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+.apollo-search-item .search-item-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--as-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.apollo-search-item .search-item-title mark {
+    background: rgba(244, 95, 0, 0.18);
+    color: inherit;
+    padding: 0 1px;
+    border-radius: 2px;
+}
+
+.apollo-search-item .search-item-subtitle {
+    font-size: 12px;
+    color: var(--as-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ─── Empty State ────────────────────────────────────────── */
+.apollo-search-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 16px;
+    color: var(--as-text-muted);
+    font-size: 13px;
+}
+
+.apollo-search-empty i {
+    font-size: 18px;
+}
+
+/* ─── List Filter (static) ───────────────────────────────── */
+.apollo-list-filter-empty {
+    text-align: center;
+    padding: 24px 16px;
+    color: var(--as-text-muted);
+    font-size: 14px;
+}
+
+.apollo-list-filter-empty i {
+    display: block;
+    font-size: 32px;
+    margin-bottom: 8px;
+    color: #ccc;
+}
+
+/* ─── WP Admin Compatibility ─────────────────────────────── */
+.wp-admin .apollo-search-wrap {
+    max-width: 400px;
+}
+
+.wp-admin .apollo-search-wrap [data-apollo-search] {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    padding: 8px 36px 8px 36px;
+    border-radius: 4px;
+    height: 32px;
+}
+
+.wp-admin .apollo-search-dropdown {
+    border-radius: 6px;
+    max-height: 280px;
+}
+
+.wp-admin .apollo-search-item {
+    padding: 8px 12px;
+    gap: 8px;
+}
+
+.wp-admin .apollo-search-item .search-item-icon {
+    font-size: 15px;
+}
+
+.wp-admin .apollo-search-item .search-item-title {
+    font-size: 13px;
+}
+
+.wp-admin .apollo-search-item .search-item-subtitle {
+    font-size: 11px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 600px) {
+    .apollo-search-dropdown {
+        max-height: 260px;
+    }
+
+    .apollo-search-item {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+}

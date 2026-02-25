@@ -1,0 +1,19 @@
+{
+	"name": "apollo/apollo-users",
+	"description": "Apollo Users: Profile pages, Ratings, Depoimentos, Account Management, Author Protection",
+	"version": "2.0.0",
+	"type": "wordpress-plugin",
+	"license": "proprietary",
+	"require": {
+		"php": ">=8.1"
+	},
+	"autoload": {
+		"psr-4": {
+			"Apollo\\Users\\": "src/"
+		},
+		"files": [
+			"includes/constants.php",
+			"includes/functions.php"
+		]
+	}
+}

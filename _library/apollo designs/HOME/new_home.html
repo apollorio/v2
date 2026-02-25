@@ -1,0 +1,1047 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#0A0A0A"/>
+  <title>APOLLO::RIO — Underground Culture Guide 2026</title>
+
+  <!--
+  ════════════════════════════════════════════════════════════════════
+  APOLLO ICON REGISTRY — Canonical RemixIcon mapping for all plugins
+  ────────────────────────────────────────────────────────────────────
+  Plugin               │ Primary Icon                │ Alt / Fill
+  ─────────────────────┼─────────────────────────────┼──────────────────────
+  apollo-core          │ ri-settings-3-line          │ ri-settings-3-fill
+  apollo-login         │ ri-login-circle-line        │ ri-login-circle-fill
+  apollo-users         │ ri-user-smile-line          │ ri-user-smile-fill
+  apollo-membership    │ ri-vip-crown-line           │ ri-vip-crown-fill
+  apollo-events        │ ri-calendar-line            │ ri-calendar-fill
+  apollo-djs           │ ri-sound-module-line        │ ri-sound-module-fill
+  apollo-loc           │ ri-map-pin-2-line           │ ri-map-pin-2-fill
+  apollo-classifieds   │ ri-token-swap-line          │ ri-token-swap-fill
+  apollo-suppliers     │ ri-store-2-line             │ ri-store-2-fill
+  apollo-social        │ ri-share-forward-line       │ ri-share-forward-fill
+  apollo-groups        │ ri-user-community-line      │ ri-user-community-fill
+  apollo-wow           │ ri-emotion-happy-line       │ ri-emotion-happy-fill
+  apollo-fav           │ ri-bookmark-line            │ ri-bookmark-fill
+  apollo-comment       │ ri-chat-quote-line          │ ri-chat-quote-fill
+  apollo-notif         │ ri-signal-tower-line        │ ri-signal-tower-fill
+  apollo-email         │ ri-mail-line                │ ri-mail-fill
+  apollo-chat          │ ri-message-3-line           │ ri-message-3-fill
+  apollo-shortcodes    │ ri-code-s-slash-line        │ ri-code-s-slash-fill
+  apollo-templates     │ ri-layout-masonry-line      │ ri-layout-masonry-fill
+  apollo-dashboard     │ ri-dashboard-line           │ ri-dashboard-fill
+  apollo-hub           │ ri-compass-3-line           │ ri-compass-3-fill
+  apollo-admin         │ ri-admin-line               │ ri-admin-fill
+  apollo-mod           │ ri-shield-check-line        │ ri-shield-check-fill
+  apollo-coauthor      │ ri-team-line                │ ri-team-fill
+  apollo-statistics    │ ri-bar-chart-box-line       │ ri-bar-chart-box-fill
+  apollo-cult          │ ri-fire-line                │ ri-fire-fill
+  apollo-pwa           │ ri-smartphone-line          │ ri-smartphone-fill
+  apollo-sign          │ ri-quill-pen-line           │ ri-quill-pen-fill
+  apollo-seo           │ ri-search-eye-line          │ ri-search-eye-fill
+  apollo-adverts       │ ri-advertisement-line       │ ri-advertisement-fill
+  apollo-gestor        │ ri-briefcase-line           │ ri-briefcase-fill
+  apollo-sheets        │ ri-file-list-3-line         │ ri-file-list-3-fill
+  apollo-docs          │ ri-book-open-line           │ ri-book-open-fill
+  apollo-runtime       │ ri-terminal-box-line        │ ri-terminal-box-fill
+  ─────────────────────┼─────────────────────────────┼──────────────────────
+  UI Actions           │ Icon                        │ Context
+  ─────────────────────┼─────────────────────────────┼──────────────────────
+  Profile              │ ri-user-smile-line/fill      │ navbar, panels
+  Chat                 │ ri-message-3-line/fill       │ navbar, panel-chat
+  Notifications        │ SVG broadcast/radar          │ navbar, panel-notif
+  Menu FAB             │ ri-apps-2-line               │ fixed bottom-right
+  Radio                │ custom SVG play/pause        │ sidebar widget
+  Events               │ ri-calendar-event-line       │ menu sheet
+  DJs & Artistas       │ ri-music-2-line              │ menu sheet
+  Espaços              │ ri-map-pin-2-line            │ menu sheet
+  Classificados        │ ri-price-tag-3-line          │ menu sheet
+  Acomoda              │ ri-home-heart-line           │ menu sheet
+  Login CTA            │ ri-login-circle-line         │ menu sheet
+  Logout               │ ri-logout-box-r-line         │ profile dropdown
+  Dashboard            │ ri-dashboard-line            │ profile dropdown
+  Verified             │ ri-shield-check-line         │ badges, disclaimer
+  Lock / gated         │ ri-lock-2-line               │ crash cards
+  Play                 │ ri-play-fill                 │ track overlay
+  Headphones           │ ri-headphone-line            │ track meta
+  Play count           │ ri-play-circle-line          │ track meta
+  Arrow down           │ ri-arrow-down-wide-line      │ scroll hint
+  Arrow left           │ ri-arrow-left-line           │ panel back
+  Arrow up             │ ri-arrow-up-line             │ panel close
+  ─────────────────────┼─────────────────────────────┼──────────────────────
+  Marquee Categories   │ Icon                        │ Feed Type
+  ─────────────────────┼─────────────────────────────┼──────────────────────
+  News                 │ ri-newspaper-line            │ fixed positions 1,7
+  Community            │ ri-user-community-fill       │ joins, groups
+  Tracks (Out Now)     │ ri-sound-module-line         │ new releases
+  Events               │ ri-calendar-line             │ upcoming
+  Classifieds          │ ri-token-swap-fill           │ repasses
+  ════════════════════════════════════════════════════════════════════
+  -->
+
+  <!--
+  ════════════════════════════════════════════════════════════════════
+  PHP MODULAR BREAKDOWN (for when this becomes /home in apollo plugin):
+  ────────────────────────────────────────────────────────────────────
+  PART 01  └─ apollo-home/templates/partials/head.php
+               wp_head(), CDN scripts, page CSS enqueue
+  PART 02  └─ apollo-home/templates/partials/persistent-ui.php
+               Navbar, Radio widget, Menu FAB, Menu Sheet
+               (These live OUTSIDE panels — always visible)
+  PART 03  └─ apollo-home/templates/panels/panel-home.php
+               <section data-panel="home"> wrapper
+  PART 04  └─ apollo-home/templates/partials/hero.php
+               Video hero, overlay, headline, scroll-hint
+  PART 05  └─ apollo-home/templates/partials/marquee.php
+               Animated ticker strip
+  PART 06  └─ apollo-home/templates/partials/tracks.php
+               Loops apollo_djs CPT cards (type=home)
+  PART 07  └─ apollo-home/templates/partials/events.php
+               Loops apollo_event CPT cards (type=home + v2)
+               REST: apollo/v1/events?per_page=6
+  PART 08  └─ apollo-home/templates/partials/classifieds.php
+               Loops apollo_classifieds CPT rows
+               REST: apollo/v1/classifieds?per_page=4
+  PART 09  └─ apollo-home/templates/partials/crash.php
+               Sleep/Crash grid — login-gated host info
+               REST: apollo/v1/loc?type=crash&per_page=5
+  PART 10  └─ apollo-home/templates/partials/map.php
+               Map explorer placeholder / future embed
+  PART 11  └─ apollo-home/templates/partials/footer.php
+               Footer grid + links
+  PART 12  └─ apollo-home/templates/panels/panel-chat.php
+               <section data-panel="chat"> — slides LEFT
+  PART 13  └─ apollo-home/templates/panels/panel-notif.php
+               <section data-panel="notif"> — slides UP
+  PART 14  └─ apollo-home/templates/partials/profile-dropdown.php
+               Navbar profile dropdown markup
+  PART 15  └─ apollo-home/assets/js/home.js  (enqueued via wp_enqueue_script)
+  ════════════════════════════════════════════════════════════════════
+  -->
+
+  <!-- PART 01 — Apollo CDN (GSAP 3.13, RemixIcon, jQuery 3.7.1, Translate i18n) -->
+  <!--
+    MOBILE-FIRST FIX: preconnect + early font CSS load.
+    The CDN core.js injects fonts dynamically, but on slow/mobile networks
+    this causes FOUT + invisible content. Load fonts directly here so the
+    browser starts fetching them in parallel with core.js.
+  -->
+<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
+  <!-- Apollo Panel Engine v2 — ALL pages include this for slide-tab UI -->
+  <script src="https://cdn.apollo.rio.br/v1.0.0/js/page-layout.js" defer></script>
+
+  <!-- Page stylesheet -->
+  <link rel="stylesheet" href="new_home.css"/>
+
+  <!-- Leaflet CSS — loaded only for map section -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+</head>
+<body>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PART 02 — PERSISTENT UI (always visible, outside all panels)
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ── NAVBAR ─────────────────────────────────────────────────── -->
+<!--
+  PHP: apollo-home/templates/partials/persistent-ui.php
+  Classes: nh-navbar / nh-navbar.scrolled (JS scroll-detection)
+  Panel routing via data-to + data-dir attributes (page-layout.js)
+  Profile uses native dropdown — no panel nav.
+-->
+<nav class="nh-navbar" id="nhNav" role="navigation" aria-label="Main navigation">
+
+  <div class="nh-nav-logo">
+    <i class="apollo" aria-label="Apollo Rio"></i>
+  </div>
+
+  <div class="nh-nav-actions">
+
+    <!-- CHAT — panel slides in from LEFT -->
+    <button class="nh-nav-btn"
+            data-to="chat"
+            data-dir="left"
+            aria-label="Abrir chat"
+            title="Chat">
+      <i class="ri-message-3-fill" aria-hidden="true"></i>
+    </button>
+
+    <!-- NOTIFICATIONS — panel slides in from TOP (UP) -->
+    <button class="nh-nav-btn nh-nav-btn--notif"
+            data-to="notif"
+            data-dir="up"
+            aria-label="Notificações"
+            title="Notificações">
+      <svg class="nh-nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.11629 20.0868C3.62137 18.2684 2 15.3236 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 15.3236 20.3786 18.2684 17.8837 20.0868L16.8692 18.348C18.7729 16.8856 20 14.5861 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 14.5861 5.2271 16.8856 7.1308 18.348L6.11629 20.0868ZM8.14965 16.6018C6.83562 15.5012 6 13.8482 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 13.8482 17.1644 15.5012 15.8503 16.6018L14.8203 14.8365C15.549 14.112 16 13.1087 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 13.1087 8.45105 14.112 9.17965 14.8365L8.14965 16.6018ZM11 13H13L14 22H10L11 13Z"/></svg>
+      <span class="nh-notif-dot" data-notif="true" aria-hidden="true"></span>
+    </button>
+
+    <!-- PROFILE — dropdown (no panel navigation) -->
+    <button class="nh-nav-btn"
+            id="nhProfileBtn"
+            aria-label="Meu perfil"
+            aria-expanded="false"
+            aria-haspopup="true"
+            title="Perfil">
+      <i class="ri-user-smile-line" aria-hidden="true"></i>
+    </button>
+
+    <!-- Profile dropdown (hidden until profileBtn clicked) -->
+    <div class="nh-menu-sheet" id="nhProfileSheet" aria-label="Menu de perfil" style="right:6px;bottom:auto;top:calc(100% + 10px);transform-origin:top right;">
+      <a href="/acesso" class="nh-sheet-item"><i class="ri-user-line"></i> Meu Perfil</a>
+      <a href="/dashboard" class="nh-sheet-item"><i class="ri-dashboard-line"></i> Dashboard</a>
+      <div class="nh-sheet-divider" aria-hidden="true"></div>
+      <a href="/acesso?action=logout" class="nh-sheet-item" style="color:var(--muted);">
+        <i class="ri-logout-box-r-line"></i> Sair
+      </a>
+    </div>
+
+  </div>
+</nav>
+
+
+<!-- ── RADIO WIDGET — synchronized playback engine ───────────── -->
+<!--
+  PHP: apollo-home/templates/partials/radio-widget.php
+  Loads 3-hour block JSON from assets.apollo.rio.br/radio/radio.XX.json
+  All users hear the same track at the same position (time-sync).
+  Starts paused — user clicks to play (browser autoplay policy).
+-->
+<aside class="nh-radio is-paused" id="nhRadio" aria-label="Rádio Apollo">
+  <button class="nh-radio-btn" id="nhRadioBtn" aria-label="Tocar rádio">
+    <svg id="nhRadioIcon" viewBox="0 0 24 24" aria-hidden="true">
+      <polygon points="5 3 19 12 5 21 5 3"></polygon>
+    </svg>
+  </button>
+  <div class="nh-radio-wave" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div class="nh-radio-info" aria-live="polite">
+    <span class="nh-radio-track">Apollo Radio</span>
+    <span class="nh-radio-artist">loading…</span>
+  </div>
+  <span class="nh-radio-time" id="nhRadioTime" aria-hidden="true"></span>
+  
+  <!-- Hidden SoundCloud Iframe Engine -->
+  <iframe id="sc-widget" width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/293&auto_play=false&hide_related=true&visual=false" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1;"></iframe>
+</aside>
+
+
+<!-- ── MENU APP FAB — bottom-right, always visible ─────────── -->
+<!--
+  PHP: apollo-home/templates/partials/menu-fab.php
+  Single circle button fixed bottom-right.
+  Opens .nh-menu-sheet#nhMenuSheet upward on click.
+  z-index: 9100 — above everything.
+-->
+<button class="nh-menu-fab"
+        id="nhMenuFab"
+        aria-label="Menu Apollo"
+        aria-expanded="false"
+        aria-haspopup="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="20" height="20" style="display:block;flex-shrink:0;pointer-events:none"><path d="M21 17C21 19.2091 19.2091 21 17 21C14.7909 21 13 19.2091 13 17C13 14.7909 14.7909 13 17 13C19.2091 13 21 14.7909 21 17ZM11 7C11 9.20914 9.20914 11 7 11C4.79086 11 3 9.20914 3 7C3 4.79086 4.79086 3 7 3C9.20914 3 11 4.79086 11 7ZM21 7C21 9.20914 19.2091 11 17 11C16.2584 11 15.5634 10.7972 14.9678 10.4453L10.4453 14.9678C10.7972 15.5634 11 16.2584 11 17C11 19.2091 9.20914 21 7 21C4.79086 21 3 19.2091 3 17C3 14.7909 4.79086 13 7 13C7.74116 13 8.43593 13.2022 9.03125 13.5537L13.5537 9.03125C13.2022 8.43593 13 7.74116 13 7C13 4.79086 14.7909 3 17 3C19.2091 3 21 4.79086 21 7Z"/></svg>
+</button>
+
+<!-- Upward sheet — slides from bottom to top on FAB click -->
+<div class="nh-menu-sheet" id="nhMenuSheet" role="menu" aria-label="Menu de navegação">
+  <a href="/eventos"       class="nh-sheet-item" role="menuitem"><i class="ri-calendar-event-line"></i>Eventos</a>
+  <a href="/djs"           class="nh-sheet-item" role="menuitem"><i class="ri-music-2-line"></i>DJs &amp; Artistas</a>
+  <a href="/criativo"      class="nh-sheet-item" role="menuitem"><i class="ri-map-pin-2-line"></i>Espaços</a>
+  <a href="/classificados" class="nh-sheet-item" role="menuitem"><i class="ri-price-tag-3-line"></i>Classificados</a>
+  <a href="/acomoda"       class="nh-sheet-item" role="menuitem"><i class="ri-home-heart-line"></i>Acomoda::Rio</a>
+  <div class="nh-sheet-divider" aria-hidden="true"></div>
+  <a href="/acesso" class="nh-sheet-item nh-sheet-item--cta" role="menuitem">
+    <i class="ri-login-circle-line"></i>Entrar / Cadastrar
+  </a>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PART 03 — PANEL: HOME (first panel = auto-activated by engine)
+     ═══════════════════════════════════════════════════════════════ -->
+<section data-panel="home" data-glyph="H">
+
+  <!-- PART 04 — HERO ──────────────────────────────────────────── -->
+  <!--
+    PHP: apollo-home/templates/partials/hero.php
+    Video sources from APOLLO CDN assets.
+    Headline / sub may be pulled from WP Customizer options.
+  -->
+  <div class="nh-hero">
+    <video class="nh-hero-vid" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+      <source src="https://assets.apollo.rio.br/vid/v2.webm" type="video/webm"/>
+      <source src="https://assets.apollo.rio.br/vid/v2.mp4"  type="video/mp4"/>
+    </video>
+    <div class="nh-hero-overlay" aria-hidden="true"></div>
+    <div class="nh-hero-content" style="width:100%!important;">
+      <h1 class="nh-hero-title ai">Não Apenas<br/>Veja.</h1>
+      <p class="nh-hero-sub ai" style="min-width:65%!important">The definitive guide to Rio's underground culture, soundscapes, and spaces.<br> 2026 Edition.</p>
+    </div>
+    <div class="nh-scroll-hint ai" aria-hidden="true">
+      <div class="nh-scroll-line"></div>
+      <i class="ri-arrow-down-wide-line"></i>
+    </div>
+  </div>
+
+
+  <!-- PART 05 — MARQUEE ───────────────────────────────────────── -->
+  <!--
+    PHP: apollo-home/templates/partials/marquee.php
+    Items may be pulled from WP options (apollo_marquee_items).
+    Duplicate set for seamless infinite scroll.
+  -->
+  <div class="nh-marquee-wrap" aria-hidden="true">
+    <div class="nh-marquee-content">
+      <!-- Fixed news slots (positions 1 & 7 = always news) -->
+      <div class="nh-marquee-item nh-marquee--news"><i class="ri-newspaper-line"></i>Apollo v6 Launched — New Design System</div>
+      <div class="nh-marquee-item nh-marquee--community"><i class="ri-user-community-fill"></i>@marina joined the community</div>
+      <div class="nh-marquee-item nh-marquee--track"><i class="ri-sound-module-line"></i>Out Now: "Noite Analógica" — Beatriz Santos</div>
+      <div class="nh-marquee-item nh-marquee--event"><i class="ri-calendar-line"></i>Warehouse 99 — Hoje 22h Zona Portuária</div>
+      <div class="nh-marquee-item nh-marquee--classified"><i class="ri-token-swap-fill"></i>Repasse: Gop Tun (Early Bird) R$ 80</div>
+      <div class="nh-marquee-item nh-marquee--community"><i class="ri-user-community-fill"></i>@lucas criou o grupo "Techno RJ"</div>
+      <!-- Duplicate for seamless scroll -->
+      <div class="nh-marquee-item nh-marquee--news"><i class="ri-newspaper-line"></i>Guia 2026 — Underground Culture Edition</div>
+      <div class="nh-marquee-item nh-marquee--community"><i class="ri-user-community-fill"></i>@dj_meton joined the community</div>
+      <div class="nh-marquee-item nh-marquee--track"><i class="ri-sound-module-line"></i>Out Now: "Zona Norte Groove" — Caio Ferreira</div>
+      <div class="nh-marquee-item nh-marquee--event"><i class="ri-calendar-line"></i>Analog Market — Amanhã Praça Tiradentes</div>
+      <div class="nh-marquee-item nh-marquee--classified"><i class="ri-token-swap-fill"></i>Repasse: Warehouse 99 (Entrada) R$ 40</div>
+      <div class="nh-marquee-item nh-marquee--community"><i class="ri-user-community-fill"></i>@renata depoimento em Lapa Arch Tour</div>
+    </div>
+  </div>
+
+
+  <!-- PART 06 — OUT NOW! TRACKS ──────────────────────────────── -->
+  <!--
+    PHP: apollo-home/templates/partials/tracks.php
+    Loop: WP_Query CPT=apollo_dj, orderby=date, posts_per_page=6
+    Card class: nh-track-card  (type="home")
+    Each card = apollo-home/templates/cards/card-track-home.php
+    REST: GET apollo/v1/djs?per_page=6&orderby=date
+  -->
+  <section class="section" id="tracks" aria-labelledby="tracks-title">
+    <div class="container">
+      <div class="nh-section-head ai">
+        <h2 id="tracks-title">Out Now!</h2>
+        <a href="/djs" aria-label="Ver todos os lançamentos">Explore All →</a>
+      </div>
+
+      <div class="nh-tracks-grid">
+
+        <!-- card-track-home.php × 5 -->
+        <article class="nh-track-card ai">
+          <div class="nh-track-artwork">
+            <img src="https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=400&q=75" alt="Faixa" loading="lazy"/>
+            <div class="nh-track-play-overlay" aria-hidden="true">
+              <button class="nh-track-play-btn" aria-label="Tocar faixa"><i class="ri-play-fill"></i></button>
+            </div>
+          </div>
+          <div class="nh-track-info">
+            <h4>Noite Analógica</h4>
+            <div class="nh-track-artist">Beatriz Santos</div>
+            <div class="nh-track-meta">
+              <span><i class="ri-headphone-line"></i>Deep House</span>
+              <span><i class="ri-play-circle-line"></i>4.2k</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="nh-track-card ai">
+          <div class="nh-track-artwork">
+            <img src="https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=400&q=75" alt="Faixa" loading="lazy"/>
+            <div class="nh-track-play-overlay" aria-hidden="true">
+              <button class="nh-track-play-btn" aria-label="Tocar faixa"><i class="ri-play-fill"></i></button>
+            </div>
+          </div>
+          <div class="nh-track-info">
+            <h4>Zona Norte Groove</h4>
+            <div class="nh-track-artist">Caio Ferreira</div>
+            <div class="nh-track-meta">
+              <span><i class="ri-headphone-line"></i>Funk Carioca</span>
+              <span><i class="ri-play-circle-line"></i>9.7k</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="nh-track-card ai">
+          <div class="nh-track-artwork">
+            <img src="https://images.unsplash.com/photo-1563198804-b144dfc84796?w=400&q=75" alt="Faixa" loading="lazy"/>
+            <div class="nh-track-play-overlay" aria-hidden="true">
+              <button class="nh-track-play-btn" aria-label="Tocar faixa"><i class="ri-play-fill"></i></button>
+            </div>
+          </div>
+          <div class="nh-track-info">
+            <h4>Lapa After</h4>
+            <div class="nh-track-artist">DJ Méton</div>
+            <div class="nh-track-meta">
+              <span><i class="ri-headphone-line"></i>Techno</span>
+              <span><i class="ri-play-circle-line"></i>2.1k</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="nh-track-card ai">
+          <div class="nh-track-artwork">
+            <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&q=75" alt="Faixa" loading="lazy"/>
+            <div class="nh-track-play-overlay" aria-hidden="true">
+              <button class="nh-track-play-btn" aria-label="Tocar faixa"><i class="ri-play-fill"></i></button>
+            </div>
+          </div>
+          <div class="nh-track-info">
+            <h4>Ipanema Nights</h4>
+            <div class="nh-track-artist">Renata Luz</div>
+            <div class="nh-track-meta">
+              <span><i class="ri-headphone-line"></i>Baile / House</span>
+              <span><i class="ri-play-circle-line"></i>7.5k</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="nh-track-card ai">
+          <div class="nh-track-artwork">
+            <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&q=75" alt="Faixa" loading="lazy"/>
+            <div class="nh-track-play-overlay" aria-hidden="true">
+              <button class="nh-track-play-btn" aria-label="Tocar faixa"><i class="ri-play-fill"></i></button>
+            </div>
+          </div>
+          <div class="nh-track-info">
+            <h4>Santa Teresa 3AM</h4>
+            <div class="nh-track-artist">Lucas Vieira</div>
+            <div class="nh-track-meta">
+              <span><i class="ri-headphone-line"></i>Ambient</span>
+              <span><i class="ri-play-circle-line"></i>1.8k</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Explore CTA card -->
+        <a href="/djs" class="nh-track-card nh-explore-card ai" aria-label="Ver todos os DJs">
+          <div class="xp-inner">
+            <i class="ri-arrow-right-up-line xp-icon" aria-hidden="true"></i>
+            <span class="xp-all">ALL</span>
+            <span class="xp-label">Releases</span>
+          </div>
+        </a>
+
+      </div><!-- /.nh-tracks-grid -->
+    </div>
+  </section>
+
+
+  <!-- PART 07 — EVENTS ────────────────────────────────────────── -->
+  <!--
+    PHP: apollo-home/templates/partials/events.php
+    Loop: WP_Query CPT=apollo_event, meta_key=event_date, orderby=meta_value
+    Card types:
+      - nh-event-card               → type="home"  (standard overlay)
+      - nh-event-card nh-event-card--v2 → type="v2" (inverse radius + orange top accent)
+    Each card = apollo-home/templates/cards/card-event-home.php
+                apollo-home/templates/cards/card-event-v2.php
+    REST: GET apollo/v1/events?per_page=6&orderby=event_date
+    NOTE: Do NOT conflict with apollo-events plugin classes.
+          All classes are prefixed nh- (new-home scope).
+  -->
+  <section class="section" id="events" aria-labelledby="events-title">
+    <div class="container">
+      <div class="nh-section-head ai">
+        <span class="grouped-left">
+          <h2 id="events-title">Events</h2>
+          <div class="nh-month-dropdown">
+            <button id="nhMonthTrigger" class="nh-month-trigger" aria-label="Selecionar mês">
+              <span class="nh-month-text">September</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <ul id="nhMonthMenu" class="nh-month-row"></ul>
+          </div>
+        </span>
+        <a href="/eventos" aria-label="Ver todos os eventos">Ver Todos →</a>
+      </div>
+
+      <div class="nh-events-grid">
+
+        <!-- a-eve-card — type="home" (Apollo standard event card) -->
+        <a href="#" class="a-eve-card ai">
+          <div class="a-eve-date"><span class="a-eve-date-day">14</span><span class="a-eve-date-month">set</span></div>
+          <div class="a-eve-media">
+            <img src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600&q=75" alt="Warehouse 99" loading="lazy"/>
+            <div class="a-eve-tags"><span class="a-eve-tag">Hoje</span><span class="a-eve-tag">Esgotado</span></div>
+          </div>
+          <div class="a-eve-content">
+            <h2 class="a-eve-title">Warehouse 99</h2>
+            <p class="a-eve-meta"><i class="ri-sound-module-fill" aria-hidden="true"></i><span>Marta Supernova, Leo Janeiro</span></p>
+            <p class="a-eve-meta"><i class="ri-map-pin-2-line" aria-hidden="true"></i><span>Galpão Industrial · Zona Portuária</span></p>
+            <p class="a-eve-meta"><i class="ri-music-2-line" aria-hidden="true"></i><span>Techno, Hardgroove, Industrial</span></p>
+          </div>
+        </a>
+
+        <a href="#" class="a-eve-card ai">
+          <div class="a-eve-date"><span class="a-eve-date-day">15</span><span class="a-eve-date-month">set</span></div>
+          <div class="a-eve-media">
+            <img src="https://images.unsplash.com/photo-1544211075-84620583cc72?w=600&q=75" alt="Analog Market" loading="lazy"/>
+            <div class="a-eve-tags"><span class="a-eve-tag">Amanhã</span></div>
+          </div>
+          <div class="a-eve-content">
+            <h2 class="a-eve-title">Analog Market</h2>
+            <p class="a-eve-meta"><i class="ri-sound-module-fill" aria-hidden="true"></i><span>DJ Méton, Caio Ferreira</span></p>
+            <p class="a-eve-meta"><i class="ri-map-pin-2-line" aria-hidden="true"></i><span>Praça Tiradentes · Centro</span></p>
+            <p class="a-eve-meta"><i class="ri-music-2-line" aria-hidden="true"></i><span>Swap Meet, Vinyl, Lo-Fi</span></p>
+          </div>
+        </a>
+
+        <a href="#" class="a-eve-card ai">
+          <div class="a-eve-date"><span class="a-eve-date-day">22</span><span class="a-eve-date-month">set</span></div>
+          <div class="a-eve-media">
+            <img src="https://images.unsplash.com/photo-1563198804-b144dfc84796?w=600&q=75" alt="Lapa Arch Tour" loading="lazy"/>
+            <div class="a-eve-tags"><span class="a-eve-tag">Sáb 22</span></div>
+          </div>
+          <div class="a-eve-content">
+            <h2 class="a-eve-title">Lapa Arch Tour</h2>
+            <p class="a-eve-meta"><i class="ri-sound-module-fill" aria-hidden="true"></i><span>Renata Luz, Beatriz Santos</span></p>
+            <p class="a-eve-meta"><i class="ri-map-pin-2-line" aria-hidden="true"></i><span>Arcos da Lapa · Centro</span></p>
+            <p class="a-eve-meta"><i class="ri-music-2-line" aria-hidden="true"></i><span>Walking, History, Samba</span></p>
+          </div>
+        </a>
+
+        <a href="#" class="a-eve-card ai">
+          <div class="a-eve-date"><span class="a-eve-date-day">22</span><span class="a-eve-date-month">set</span></div>
+          <div class="a-eve-media">
+            <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=75" alt="Gop Tun Rio" loading="lazy"/>
+            <div class="a-eve-tags"><span class="a-eve-tag">Sáb 22</span></div>
+          </div>
+          <div class="a-eve-content">
+            <h2 class="a-eve-title">Gop Tun Rio</h2>
+            <p class="a-eve-meta"><i class="ri-sound-module-fill" aria-hidden="true"></i><span>Lucas Vieira, DJ Tato</span></p>
+            <p class="a-eve-meta"><i class="ri-map-pin-2-line" aria-hidden="true"></i><span>Night Club Rio · Leblon</span></p>
+            <p class="a-eve-meta"><i class="ri-music-2-line" aria-hidden="true"></i><span>House, Disco, Funk</span></p>
+          </div>
+        </a>
+
+        <a href="#" class="a-eve-card ai">
+          <div class="a-eve-date"><span class="a-eve-date-day">23</span><span class="a-eve-date-month">set</span></div>
+          <div class="a-eve-media">
+            <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=75" alt="Acoustic Sundays" loading="lazy"/>
+            <div class="a-eve-tags"><span class="a-eve-tag">Dom 23</span></div>
+          </div>
+          <div class="a-eve-content">
+            <h2 class="a-eve-title">Acoustic Sundays</h2>
+            <p class="a-eve-meta"><i class="ri-sound-module-fill" aria-hidden="true"></i><span>Banda Carioca, Zé Neto</span></p>
+            <p class="a-eve-meta"><i class="ri-map-pin-2-line" aria-hidden="true"></i><span>Parque Lage · Jardim Botânico</span></p>
+            <p class="a-eve-meta"><i class="ri-music-2-line" aria-hidden="true"></i><span>Live, MPB, Bossa Nova</span></p>
+          </div>
+        </a>
+
+        <a href="#" class="a-eve-card ai">
+          <div class="a-eve-date"><span class="a-eve-date-day">24</span><span class="a-eve-date-month">set</span></div>
+          <div class="a-eve-media">
+            <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&q=75" alt="Neon Garden" loading="lazy"/>
+            <div class="a-eve-tags"><span class="a-eve-tag">Seg 24</span></div>
+          </div>
+          <div class="a-eve-content">
+            <h2 class="a-eve-title">Neon Garden</h2>
+            <p class="a-eve-meta"><i class="ri-sound-module-fill" aria-hidden="true"></i><span>DJ Méton, Sub Focus</span></p>
+            <p class="a-eve-meta"><i class="ri-map-pin-2-line" aria-hidden="true"></i><span>Club do Vinil · Botafogo</span></p>
+            <p class="a-eve-meta"><i class="ri-music-2-line" aria-hidden="true"></i><span>Drum &amp; Bass, Jungle, Liquid</span></p>
+          </div>
+        </a>
+
+        <a href="#" class="a-eve-card ai">
+          <div class="a-eve-date"><span class="a-eve-date-day">28</span><span class="a-eve-date-month">set</span></div>
+          <div class="a-eve-media">
+            <img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?w=600&q=75" alt="Void System" loading="lazy"/>
+            <div class="a-eve-tags"><span class="a-eve-tag">Sex 28</span></div>
+          </div>
+          <div class="a-eve-content">
+            <h2 class="a-eve-title">Void System</h2>
+            <p class="a-eve-meta"><i class="ri-sound-module-fill" aria-hidden="true"></i><span>Anderson Noise, Edu K</span></p>
+            <p class="a-eve-meta"><i class="ri-map-pin-2-line" aria-hidden="true"></i><span>Void · Lapa</span></p>
+            <p class="a-eve-meta"><i class="ri-music-2-line" aria-hidden="true"></i><span>Techno, EBM, Industrial</span></p>
+          </div>
+        </a>
+
+        <!-- Explore CTA card -->
+        <a href="/eventos" class="a-eve-card a-eve-explore ai" aria-label="Ver todos os eventos">
+          <div class="xp-inner">
+            <i class="ri-arrow-right-up-line xp-icon" aria-hidden="true"></i>
+            <span class="xp-all">ALL</span>
+            <span class="xp-label">Eventos</span>
+          </div>
+        </a>
+
+      </div><!-- /.nh-events-grid -->
+    </div>
+  </section>
+
+
+  <!-- PART 08 — CLASSIFIEDS / RESALE ─────────────────────────── -->
+  <!--
+    PHP: apollo-home/templates/partials/classifieds.php
+    Loop: WP_Query CPT=apollo_classified, posts_per_page=4
+    All rows link /acesso — seller identity hidden until login.
+    REST: GET apollo/v1/classifieds?per_page=4
+    Meta keys: classified_price, classified_event (from apollo-registry)
+  -->
+  <section class="section" id="resell" aria-labelledby="resell-title">
+    <div class="container">
+      <div class="nh-section-head ai">
+        <h2 id="resell-title">Classificados</h2>
+        <a href="/acesso"
+           aria-label="Anunciar ingresso"
+           style="font-family:var(--ff-mono);font-size:0.72rem;color:var(--muted);letter-spacing:0.02em;transition:color .25s;">
+          Sell Ticket +
+        </a>
+      </div>
+      <p class="nh-resale-intro ai">Marketplace peer-to-peer. Identidade do vendedor visível apenas para membros.</p>
+
+      <div class="nh-resale-list ai" role="list">
+
+        <a href="/acesso" class="nh-resale-row" role="listitem">
+          <div class="nh-resale-time" aria-label="10h42">10:42</div>
+          <div class="nh-resale-details">
+            <h3>Warehouse 99 (Entrada)</h3>
+            <span class="nh-resale-seller-hidden"><span class="nh-seller-text">●&ensp;●&ensp;●</span></span>
+          </div>
+          <div class="nh-resale-price-wrap">
+            <span class="nh-resale-price">R$ 40</span>
+            <span class="nh-badge nh-badge--verified">Verificado</span>
+          </div>
+        </a>
+
+        <a href="/acesso" class="nh-resale-row" role="listitem">
+          <div class="nh-resale-time" aria-label="09h15">09:15</div>
+          <div class="nh-resale-details">
+            <h3>Gop Tun (Early Bird)</h3>
+            <span class="nh-resale-seller-hidden"><span class="nh-seller-text">●&ensp;●&ensp;●</span></span>
+          </div>
+          <div class="nh-resale-price-wrap">
+            <span class="nh-resale-price">R$ 80</span>
+            <span class="nh-badge">Não verificado</span>
+          </div>
+        </a>
+
+        <a href="/acesso" class="nh-resale-row" role="listitem">
+          <div class="nh-resale-time" aria-label="08h50">08:50</div>
+          <div class="nh-resale-details">
+            <h3>Analog Market (2×)</h3>
+            <span class="nh-resale-seller-hidden"><span class="nh-seller-text">●&ensp;●&ensp;●</span></span>
+          </div>
+          <div class="nh-resale-price-wrap">
+            <span class="nh-resale-price">R$ 60</span>
+            <span class="nh-badge nh-badge--verified">Verificado</span>
+          </div>
+        </a>
+
+        <a href="/acesso" class="nh-resale-row" role="listitem">
+          <div class="nh-resale-time" aria-label="07h30">07:30</div>
+          <div class="nh-resale-details">
+            <h3>Neon Garden (VIP)</h3>
+            <span class="nh-resale-seller-hidden"><span class="nh-seller-text">●&ensp;●&ensp;●</span></span>
+          </div>
+          <div class="nh-resale-price-wrap">
+            <span class="nh-resale-price">R$ 120</span>
+            <span class="nh-badge nh-badge--verified">Verificado</span>
+          </div>
+        </a>
+
+        <a href="/acesso" class="nh-resale-row" role="listitem">
+          <div class="nh-resale-time" aria-label="06h10">06:10</div>
+          <div class="nh-resale-details">
+            <h3>Void System (Pista)</h3>
+            <span class="nh-resale-seller-hidden"><span class="nh-seller-text">●&ensp;●&ensp;●</span></span>
+          </div>
+          <div class="nh-resale-price-wrap">
+            <span class="nh-resale-price">R$ 95</span>
+            <span class="nh-badge nh-badge--accent">Urgente</span>
+          </div>
+        </a>
+
+        <!-- ALL Tickets Re-sell CTA -->
+        <a href="/repasse" class="nh-resale-row nh-resale-row--all" role="listitem" aria-label="Ver todos os ingressos">
+          <div>
+            <p class="nh-rall-label">Marketplace</p>
+            <p class="nh-rall-title">ALL Tickets Re-sell</p>
+          </div>
+          <i class="ri-arrow-right-up-line nh-rall-icon" aria-hidden="true"></i>
+        </a>
+
+      </div><!-- /.nh-resale-list -->
+
+      <aside class="nh-disclaimer ai" role="note">
+        <div class="nh-disclaimer-accent" aria-hidden="true"></div>
+        <div class="nh-disclaimer-body">
+          <div class="nh-disclaimer-header">
+            <i class="ri-shield-check-fill" aria-hidden="true"></i>
+            <h4>Segurança em Primeiro Lugar</h4>
+          </div>
+          <p>Apollo é uma ponte de conexão. Não processamos pagamentos. Sempre verifique a reputação do vendedor. Encontre-se em local público.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+
+  <!-- PART 09 — CRASH / SLEEP ────────────────────────────────── -->
+  <!--
+    PHP: apollo-home/templates/partials/crash.php
+    Loop: WP_Query CPT=apollo_loc, meta_key=loc_type=crash, posts_per_page=5
+    Host identity gated — login required to see contact.
+    REST: GET apollo/v1/loc?type=crash&per_page=5
+    Meta keys: loc_price, loc_type, loc_neighborhood (from apollo-registry)
+    NOTE: Use "loc" not "venue/location" — FORBIDDEN_TERMS enforced.
+  -->
+  <section class="section" id="crash" aria-labelledby="crash-title">
+    <div class="container">
+      <div class="nh-section-head ai">
+        <h2 id="crash-title">Acomoda::Rio</h2>
+        <a href="/acomoda" aria-label="Ver todos os espaços">Ver Todos →</a>
+      </div>
+
+      <div class="nh-crash-grid">
+
+        <!-- card: loc type=crash — apollo-home/templates/cards/card-crash-home.php -->
+        <a href="/acesso" class="nh-crash-card ai">
+          <div class="nh-crash-img-wrap">
+            <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=75" class="nh-crash-img" alt="Loft Artístico" loading="lazy"/>
+            <div class="nh-crash-login-hint" aria-hidden="true"><i class="ri-lock-2-line"></i></div>
+          </div>
+          <div class="nh-crash-info">
+            <div class="nh-crash-info-header">
+              <h3>Loft Artístico — Sofá</h3>
+              <span class="nh-crash-price">R$ 90</span>
+            </div>
+            <p class="nh-crash-meta">Santa Teresa · Sofá</p>
+          </div>
+        </a>
+
+        <a href="/acesso" class="nh-crash-card ai">
+          <div class="nh-crash-img-wrap">
+            <img src="https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=600&q=75" class="nh-crash-img" alt="Quarto Ensolarado" loading="lazy"/>
+            <div class="nh-crash-login-hint" aria-hidden="true"><i class="ri-lock-2-line"></i></div>
+          </div>
+          <div class="nh-crash-info">
+            <div class="nh-crash-info-header">
+              <h3>Quarto Ensolarado</h3>
+              <span class="nh-crash-price">R$ 150</span>
+            </div>
+            <p class="nh-crash-meta">Copacabana · Quarto Privativo</p>
+          </div>
+        </a>
+
+        <a href="/acesso" class="nh-crash-card ai">
+          <div class="nh-crash-img-wrap">
+            <img src="https://images.unsplash.com/photo-1505693416388-b0346ef414b9?w=600&q=75" class="nh-crash-img" alt="Colchão no Chão" loading="lazy"/>
+            <div class="nh-crash-login-hint" aria-hidden="true"><i class="ri-lock-2-line"></i></div>
+          </div>
+          <div class="nh-crash-info">
+            <div class="nh-crash-info-header">
+              <h3>Colchão no Chão</h3>
+              <span class="nh-crash-price">R$ 50</span>
+            </div>
+            <p class="nh-crash-meta">Botafogo · Espaço no Chão</p>
+          </div>
+        </a>
+
+        <!-- Host CTA card — black bg, hover primary, notranslate -->
+        <a href="/acesso" class="nh-crash-card nh-crash-card--cta ai" aria-label="Anuncie seu espaço" translate="no">
+          <span class="nh-cta-title" translate="no">Host Your Spot</span>
+          <span class="nh-cta-sub" translate="no">Join the network.</span>
+          <span class="nh-cta-ptbr" translate="no">Anuncie seu espaço.</span>
+        </a>
+
+        <a href="/acesso" class="nh-crash-card ai">
+          <div class="nh-crash-img-wrap">
+            <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&q=75" class="nh-crash-img" alt="Studio Ipanema" loading="lazy"/>
+            <div class="nh-crash-login-hint" aria-hidden="true"><i class="ri-lock-2-line"></i></div>
+          </div>
+          <div class="nh-crash-info">
+            <div class="nh-crash-info-header">
+              <h3>Studio Ipanema</h3>
+              <span class="nh-crash-price">R$ 200</span>
+            </div>
+            <p class="nh-crash-meta">Ipanema · Apartamento Completo</p>
+          </div>
+        </a>
+
+        <a href="/acesso" class="nh-crash-card ai">
+          <div class="nh-crash-img-wrap">
+            <img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600&q=75" class="nh-crash-img" alt="Quarto Acolhedor" loading="lazy"/>
+            <div class="nh-crash-login-hint" aria-hidden="true"><i class="ri-lock-2-line"></i></div>
+          </div>
+          <div class="nh-crash-info">
+            <div class="nh-crash-info-header">
+              <h3>Quarto Acolhedor</h3>
+              <span class="nh-crash-price">R$ 110</span>
+            </div>
+            <p class="nh-crash-meta">Flamengo · Quarto Privativo</p>
+          </div>
+        </a>
+
+        <a href="/acesso" class="nh-crash-card ai">
+          <div class="nh-crash-img-wrap">
+            <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=75" class="nh-crash-img" alt="Terrçao com Vista" loading="lazy"/>
+            <div class="nh-crash-login-hint" aria-hidden="true"><i class="ri-lock-2-line"></i></div>
+          </div>
+          <div class="nh-crash-info">
+            <div class="nh-crash-info-header">
+              <h3>Terraço com Vista</h3>
+              <span class="nh-crash-price">R$ 180</span>
+            </div>
+            <p class="nh-crash-meta">Tijuca · Espaço Completo</p>
+          </div>
+        </a>
+
+        <a href="/acesso" class="nh-crash-card ai">
+          <div class="nh-crash-img-wrap">
+            <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=75" class="nh-crash-img" alt="Quarto DJ Friendly" loading="lazy"/>
+            <div class="nh-crash-login-hint" aria-hidden="true"><i class="ri-lock-2-line"></i></div>
+          </div>
+          <div class="nh-crash-info">
+            <div class="nh-crash-info-header">
+              <h3>Quarto DJ Friendly</h3>
+              <span class="nh-crash-price">R$ 70</span>
+            </div>
+            <p class="nh-crash-meta">Madureira · Quarto Privativo</p>
+          </div>
+        </a>
+
+      </div><!-- /.nh-crash-grid -->
+    </div>
+  </section>
+
+
+  <!-- PART 10 — MAP EXPLORER ──────────────────────────────────── -->
+  <!--
+    PHP: apollo-home/templates/partials/map.php
+    Leaflet.js map — CARTO Positron Light tiles.
+    Pulsing orange markers = simulated apollo_event CPT locations.
+    Locations from: GET apollo/v1/events?fields=id,lat,lng,title&per_page=20
+    FORBIDDEN: do not use "venue" or "location" — use "loc"
+  -->
+  <section class="section" id="map" aria-labelledby="map-title">
+    <div class="container">
+
+      <div class="nh-section-head ai" style="margin-bottom:24px;">
+        <h2 id="map-title">Explorer</h2>
+      </div>
+
+      <!-- Map wrapper -->
+      <div class="nh-map-wrap">
+        <div id="nhMap"
+             class="nh-map-canvas"
+             data-lat="-22.9502"
+             data-lng="-43.1903"
+             data-zoom="12"
+             role="region"
+             aria-label="Mapa de eventos no Rio de Janeiro">
+        </div>
+
+
+      </div>
+
+    </div>
+  </section>
+
+
+
+  <!-- Text footer -->
+  <footer class="nh-footer">
+
+    <!-- PART 11 — FOOTER SVG BG ─────────────────────────────────
+         aprio-ft-v2 is position:absolute inset:0 z-index:0
+         It paints the Apollo wordmark BEHIND all footer content.
+         footer itself has no background — bg comes from page or
+         the gradient inside this div.
+         PHP: apollo-home/templates/partials/footer.php
+    -->
+    <!-- SVG Apollo Logo Footer — visual mark, sits BEHIND content -->
+    <div class="aprio-ft-v2" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 702.646 186.076" preserveAspectRatio="xMidYMax meet" xml:space="preserve" style="shape-rendering:geometricPrecision;text-rendering:geometricPrecision;image-rendering:optimizeQuality;fill-rule:evenodd;clip-rule:evenodd">
+      <g>
+        <path d="M190.339 77.131c-3.03-19.698 10.386-35.841 26.537-38.295 32.333-4.913 49.321 31.891 31.757 52.379-4.405 5.138-10.321 10.91-20.461 12.342-19.496 2.753-35.377-10.451-37.833-26.426zm-.191 51.243c2.223.595 5.294 2.42 7.625 3.384 41.906 17.323 90.36-12.602 90.363-60.959.002-44.339-42.895-73.945-82.515-62.877-6.143 1.716-10.628 4.614-15.549 6.068l-.086-8.007c-2.815-.659-30.086-.664-32.906-.018l.17 179.549c2.289.745 29.92.737 32.796.048l.102-57.188zM97.789 75.98c-2.067 16.382-17.516 29.961-36.583 27.732-8.386-.98-16.01-5.298-21.232-11.624-17.779-21.539-1.961-57.555 30.492-53.353C87.233 40.906 100.16 57.18 97.789 75.98zm.115 52.557.132 7.931 32.931.209-.064-130.916-32.834-.103-.088 8.159c-6.414-.859-31.3-19.488-67.581 1.939-39.214 23.158-41.681 84.783-.435 110.523 8.759 5.467 20.132 10.092 33.021 10.391 6.899.16 12.846-.477 19.316-2.209 6.92-1.854 13.797-5.786 15.602-5.924zM669.464 75.98c-2.082 16.381-17.514 29.969-36.598 27.731-17.117-2.008-30.709-17.133-28.305-37.523 3.238-27.456 40.777-38.195 58.197-15.441 4.878 6.371 8.049 14.658 6.706 25.233zm-97.73 1.727c1.517 10.02 3.378 16.638 7.699 24.694 11.569 21.564 37.237 37.366 64.287 33.978 37.212-4.662 62.323-36.862 58.552-71.724-6.286-58.136-78.174-79.226-115.065-36.12-8.5 9.932-18.384 29.944-15.473 49.172zM359.31 38.807c19.268-2.899 35.816 10.334 38.014 26.806 2.675 20.054-10.634 35.659-26.955 37.953-19.625 2.758-35.319-10.621-37.766-26.536-3.056-19.87 10.565-35.794 26.707-38.223zm-59.331 40.627c2.804 19.334 11.869 32.828 23.131 42.124 55.133 45.508 134.387-18.025 98.608-83.068-3.941-7.165-9.148-12.539-15.075-17.749-11.088-9.746-29.98-17.271-49.736-14.586-36.395 4.945-62.053 37.933-56.928 73.279zM443.11.166V50.65c0 17.136-1.075 30.853 5.067 45.432 8.69 20.63 30.126 41.165 60.561 40.564l-.049-32.604c-21.745-1.252-32.614-15.153-32.597-36.122.018-22.558 0-45.118 0-67.912L443.11.166zM507.255.003V50.65c0 17.035-1.123 31.134 5.178 45.688 5.419 12.517 13.202 21.832 22.406 28.212 7.139 4.949 26.313 14.235 38.043 11.832l-.044-32.064c-8.489-2.264-14.091-.463-23.77-10.694-6.571-6.947-8.848-12.537-8.832-25.128.029-22.805.001-45.612.001-68.496l-32.982.003z"/>
+      </g>
+    </svg>
+    </div><!-- /.aprio-ft-v2 -->
+
+    <!-- Footer text content — sits ABOVE the SVG bg via z-index -->
+    <div class="container">
+      <div class="nh-footer-grid">
+        <div class="nh-footer-brand">
+          <h1>APOLLO::RIO</h1>
+          <p>Rede de hospitalidade descentralizada e arquivo cultural. Construído pela comunidade.</p>
+        </div>
+        <div class="nh-footer-links">
+          <ul>
+            <li><a href="/manifesto">Manifesto</a></li>
+            <li><a href="/seguranca">Segurança</a></li>
+            <li><a href="https://instagram.com/apollorio" rel="noopener noreferrer" target="_blank">Instagram</a></li>
+            <li><a href="/contato">Contato</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="nh-footer-bottom">
+        <span>&copy; 2024–2026 APOLLO PROJECT</span>
+        <span>RIO DE JANEIRO, BRASIL</span>
+      </div>
+    </div>
+
+  </footer>
+
+</section>
+<!-- END data-panel="home" -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PART 12 — PANEL: CHAT (slides in from LEFT <<<)
+     data-dir="left" = page-layout.js slides from left edge
+     ═══════════════════════════════════════════════════════════════ -->
+<!--
+  PHP: apollo-home/templates/panels/panel-chat.php
+  Full chat UI = apollo-chat plugin provides the template part.
+  Hook: do_action('apollo/chat/render_panel')
+-->
+<section data-panel="chat" data-glyph="C">
+  <div class="container" style="padding-top:calc(80px + var(--safe-top));">
+    <button data-back="1" class="return-back" aria-label="Voltar">
+      <i class="ri-corner-up-right-line"></i>
+    </button>
+    <p class="ai font-mono text-sm text-muted">HERE /*chat page</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PART 13 — PANEL: NOTIFICATIONS (slides in from TOP ^^^^)
+     data-dir="up" = page-layout.js slides down from top edge
+     ═══════════════════════════════════════════════════════════════ -->
+<!--
+  PHP: apollo-home/templates/panels/panel-notif.php
+  Notifications from: GET apollo/v1/notif?user_id={id}&per_page=20
+  Hook: do_action('apollo/notif/render_panel')
+-->
+<section data-panel="notif" data-glyph="N">
+  <div class="container" style="padding-top:calc(80px + var(--safe-top));">
+    <button data-back="1" class="return-back" style="margin-bottom:28px;" aria-label="Fechar notificações">
+      <i class="ri-corner-up-right-line"></i>
+    </button>
+    <p class="ai font-mono text-sm text-muted">/notificacoes</p>
+  </div>
+</section>
+
+
+<!-- PART 15 — Page Script -->
+<script src="new_home.js"></script>
+
+<!-- PART 10 — Leaflet JS + Map Init -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ─── Simulated event data (replace with REST GET apollo/v1/events) ─── */
+  const EVENTS = [
+    { lat: -22.9133, lng: -43.1787, title: 'Baile da Lapa',        tag: 'Dom 21h' },
+    { lat: -22.9711, lng: -43.1822, title: 'Jazz Night Copa',       tag: 'Sex 23h' },
+    { lat: -22.9863, lng: -43.2001, title: 'Sunset Session',        tag: 'Sáb 17h' },
+    { lat: -22.9796, lng: -43.2211, title: 'Club Underground',      tag: 'Sex 00h' },
+    { lat: -22.9248, lng: -43.1765, title: 'Arte & Baile · StaTe',  tag: 'Sáb 20h' },
+    { lat: -23.0086, lng: -43.3223, title: 'Pool Rave Barra',       tag: 'Dom 15h' },
+    { lat: -22.9463, lng: -43.1875, title: 'Festival Indie Bota',   tag: 'Sex 19h' },
+    { lat: -22.9226, lng: -43.1765, title: 'Samba da Glória',       tag: 'Sáb 18h' },
+    { lat: -22.9682, lng: -43.1747, title: 'Flamengo Open Air',     tag: 'Dom 16h' },
+    { lat: -22.9411, lng: -43.2293, title: 'Gávea Night Market',    tag: 'Sex 20h' },
+  ];
+
+  /* ─── Wait for Leaflet ─── */
+  function waitForLeaflet(cb, n) {
+    n = n || 0;
+    if (typeof L !== 'undefined') { cb(); }
+    else if (n < 80) { setTimeout(function () { waitForLeaflet(cb, n + 1); }, 50); }
+  }
+
+  waitForLeaflet(function () {
+    var el = document.getElementById('nhMap');
+    if (!el) return;
+
+    var lat  = parseFloat(el.dataset.lat)  || -22.9502;
+    var lng  = parseFloat(el.dataset.lng)  || -43.1903;
+    var zoom = parseInt(el.dataset.zoom, 10) || 12;
+
+    /* ─── Map instance ─── */
+    var map = L.map(el, {
+      center: [lat, lng],
+      zoom: zoom,
+      zoomControl: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      touchZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      dragging: true
+    });
+
+    /* ─── CARTO Positron Light tiles ─── */
+    L.tileLayer(
+      'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+      {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
+      }
+    ).addTo(map);
+
+    /* ─── Hide Leaflet attribution bar ─── */
+    var attrib = el.querySelector('.leaflet-control-attribution');
+    if (attrib) attrib.style.display = 'none';
+
+    /* ─── Pulsing zone marker — ring only, no dot, no popup (logged-off view) ─── */
+    function makePulseIcon() {
+      return L.divIcon({
+        className: '',
+        html: '<div class="nh-map-pulse-wrap"><div class="nh-map-pulse-ring nh-pulse-a"></div><div class="nh-map-pulse-ring nh-pulse-b"></div></div>',
+        iconSize: [80, 80],
+        iconAnchor: [40, 40]
+      });
+    }
+
+    /* ─── Add markers (no popup — area indicators only for anonymous users) ─── */
+    EVENTS.forEach(function (ev) {
+      L.marker([ev.lat, ev.lng], { icon: makePulseIcon() }).addTo(map);
+    });
+
+    /* ─── Expose instance ─── */
+    window.ApolloMapHome = map;
+  });
+
+  /* ─── CARTO tile enforcer (in case OSM slips through) ─── */
+  (function () {
+    var observer = new MutationObserver(function (muts) {
+      muts.forEach(function (m) {
+        m.addedNodes.forEach(function (node) {
+          if (node.tagName === 'IMG' && node.classList.contains('leaflet-tile')) {
+            if (node.src && node.src.includes('openstreetmap.org')) {
+              node.src = node.src
+                .replace('tile.openstreetmap.org', 'a.basemaps.cartocdn.com/light_all')
+                .replace(/\.png$/, '.png');
+            }
+          }
+        });
+      });
+    });
+    function observeTiles() {
+      document.querySelectorAll('.leaflet-tile-pane').forEach(function (pane) {
+        observer.observe(pane, { childList: true, subtree: true });
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', observeTiles);
+    } else { observeTiles(); }
+  })();
+
+})();
+</script>
+
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d39ba95cdd1705d',t:'MTc3MjA0ODk5Ng=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v67327c56f0bb4ef8b305cae61679db8f1769101564043" integrity="sha512-rdcWY47ByXd76cbCFzznIcEaCN71jqkWBBqlwhF1SY7KubdLKZiEGeP7AyieKZlGP9hbY/MhGrwXzJC/HulNyg==" data-cf-beacon='{"version":"2024.11.0","token":"6f9fe350d9f7425796d640adb85decb2","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

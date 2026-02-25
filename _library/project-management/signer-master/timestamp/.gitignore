@@ -1,0 +1,9 @@
+/target
+/.project
+/.classpath
+/.settings
+/.externalToolBuilders
+/target/
+/pom.xml.releaseBackup
+/chain-icp-brasil-homolog/novascadeias
+/chain-icp-brasil-homolog/novosp7bs

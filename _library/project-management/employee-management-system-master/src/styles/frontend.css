@@ -1,0 +1,334 @@
+/* Frontend Global Styles */
+.emplmasy-frontend-wrapper {
+    padding: 12px;
+    max-width: 600px;
+    margin: 12px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Welcome Section */
+.emplmasy-frontend-wrapper .welcome-section {
+    margin-bottom: 12px;
+    text-align: center;
+    padding: 12px;
+    background: linear-gradient(135deg, #2271b1, #135e96);
+    border-radius: 10px;
+    color: #fff;
+}
+
+.emplmasy-frontend-wrapper .welcome-section h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.emplmasy-frontend-wrapper .current-date {
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 4px;
+    font-size: 13px;
+}
+
+/* Stats Cards */
+.emplmasy-frontend-wrapper .dashboard-stats-wrapper {
+    margin-bottom: 12px;
+}
+
+.emplmasy-frontend-wrapper .dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.emplmasy-frontend-wrapper .stat-card {
+    background: #fff;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.emplmasy-frontend-wrapper .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.emplmasy-frontend-wrapper .stat-content {
+    padding: 10px;
+}
+
+.emplmasy-frontend-wrapper .stat-header {
+    display: flex;
+    align-itemplmasy: center;
+    margin-bottom: 12px;
+}
+
+.emplmasy-frontend-wrapper .stat-icon {
+    font-size: 18px;
+    margin-right: 8px;
+    background: #f0f5fa;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-itemplmasy: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+.emplmasy-frontend-wrapper .stat-label {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.emplmasy-frontend-wrapper .stat-value {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 4px 0;
+    color: #1e1e1e;
+}
+
+.emplmasy-frontend-wrapper .stat-trend {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-itemplmasy: center;
+    gap: 4px;
+}
+
+.emplmasy-frontend-wrapper .stat-trend.positive {
+    color: #059669;
+    background: #ecfdf5;
+}
+
+.emplmasy-frontend-wrapper .stat-trend.negative {
+    color: #dc2626;
+    background: #fef2f2;
+}
+
+/* Sales Form */
+.emplmasy-frontend-wrapper .sales-form {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    width: 100%;
+    overflow: hidden;
+}
+
+.emplmasy-frontend-wrapper .sales-form .components-card-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.emplmasy-frontend-wrapper .sales-form .components-card-header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e1e1e;
+}
+
+.emplmasy-frontend-wrapper .sales-form .components-card-body {
+    padding: 16px;
+}
+
+.emplmasy-frontend-wrapper .sales-report-form {
+    display: grid;
+    gap: 16px;
+    width: 100%;
+}
+
+/* Form Row Styles */
+.emplmasy-frontend-wrapper .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.emplmasy-frontend-wrapper .form-group {
+    width: 100%;
+}
+
+.emplmasy-frontend-wrapper .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #4b5563;
+}
+
+.emplmasy-frontend-wrapper .form-group input,
+.emplmasy-frontend-wrapper .form-group textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.emplmasy-frontend-wrapper .form-group input:focus,
+.emplmasy-frontend-wrapper .form-group textarea:focus {
+    border-color: #2271b1;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.1);
+}
+
+.emplmasy-frontend-wrapper .form-group textarea {
+    min-height: 70px;
+    resize: vertical;
+}
+
+/* Submit Button */
+.emplmasy-frontend-wrapper .button.button-primary {
+    background: #2271b1;
+    border: none;
+    color: #fff;
+    padding: 8px 16px;
+    height: auto;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-itemplmasy: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.emplmasy-frontend-wrapper .button.button-primary:hover {
+    background: #135e96;
+    transform: translateY(-1px);
+}
+
+.emplmasy-frontend-wrapper .button.button-primary:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Notice Styles */
+.emplmasy-frontend-wrapper .notice {
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.emplmasy-frontend-wrapper .notice-success {
+    background: #ecfdf5;
+    border: 1px solid #059669;
+    color: #059669;
+}
+
+.emplmasy-frontend-wrapper .notice-error {
+    background: #fef2f2;
+    border: 1px solid #dc2626;
+    color: #dc2626;
+}
+
+/* Loading State */
+.emplmasy-frontend-wrapper .emplmasy-loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 782px) {
+    .emplmasy-frontend-wrapper {
+        margin: 10px;
+        padding: 10px;
+        max-width: calc(100% - 24px);
+    }
+
+    .emplmasy-frontend-wrapper .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .emplmasy-frontend-wrapper .form-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .emplmasy-frontend-wrapper .welcome-section {
+        padding: 10px;
+    }
+
+    .emplmasy-frontend-wrapper .welcome-section h1 {
+        font-size: 17px;
+    }
+
+    .emplmasy-frontend-wrapper .stat-value {
+        font-size: 16px;
+    }
+
+    .emplmasy-frontend-wrapper .sales-form .components-card-body {
+        padding: 12px;
+    }
+
+    .emplmasy-frontend-wrapper .form-group textarea {
+        min-height: 50px;
+    }
+}
+
+/* Add a new breakpoint for very small screens */
+@media screen and (max-width: 480px) {
+    .emplmasy-frontend-wrapper {
+        margin: 6px;
+        padding: 6px;
+    }
+
+    .emplmasy-frontend-wrapper .stat-content {
+        padding: 6px;
+    }
+
+    .emplmasy-frontend-wrapper .sales-form .components-card-body {
+        padding: 10px;
+    }
+
+    .emplmasy-frontend-wrapper .form-group input,
+    .emplmasy-frontend-wrapper .form-group textarea {
+        padding: 6px 10px;
+    }
+}
+
+/* Access Denied Styles */
+.emplmasy-frontend-wrapper .access-denied {
+    text-align: center;
+    padding: 32px 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.emplmasy-frontend-wrapper .access-denied .notice {
+    display: inline-flex;
+    margin: 0 auto 16px;
+    padding: 10px 20px;
+}
+
+.emplmasy-frontend-wrapper .access-denied-help {
+    color: #6b7280;
+    margin: 0;
+    font-size: 14px;
+}
+
+.emplmasy-frontend-wrapper .amount-input-wrapper {
+    position: relative;
+    display: flex;
+    align-itemplmasy: center;
+}
+
+.emplmasy-frontend-wrapper .currency-symbol {
+    font-size: 20px;
+    color: #555;
+    padding: 0 8px;
+    line-height: 40px;
+}

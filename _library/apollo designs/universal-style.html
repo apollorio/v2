@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Apollo | Universal Style — Design System Toolkit</title>
+
+    <!-- Fallback Remix Icons (backup if CDN blocked by CORS/iframe) -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- ═══════════════════════════════════════════
+         APOLLO CDN — Single Source of Truth
+         Injects inline: Base Stylesheet.css + GSAP 3.14.2
+         + RemixIcon + jQuery 4.0 + Popper + Dark Theme
+         + Reveal-Up + Translate + Tracker + Logo Morphing
+         ═══════════════════════════════════════════ -->
+    <script src="https://cdn.apollo.rio.br/v1.0.0/cdn.js" fetchpriority="high"></script>
+
+    <!-- Universal Style — Component Stylesheet -->
+    <link rel="stylesheet" href="universal-style.css">
+
+    <style>
+        /* ═══════════════════════════════════════════
+           PAGE-LEVEL OVERRIDES (preview only)
+           ═══════════════════════════════════════════ */
+
+        /* DVH TIP: Always use dvh for full-height layouts.
+           100vh on iOS Safari includes the URL bar height,
+           causing overflow. 100dvh adapts dynamically.
+           This page itself uses min-height: 100dvh. */
+
+        body {
+            min-height: 100dvh;
+        }
+
+        /* Inline form demo area */
+        .inline-form-demo {
+            background: var(--white-1, #fff);
+            border: 1px solid var(--border, #00000027);
+            border-radius: var(--radius-sm, 10px);
+            padding: 40px 32px 24px;
+            margin-bottom: 32px;
+        }
+
+        .inline-form-demo__label {
+            font-family: var(--ff-mono, "Space Mono", monospace);
+            font-size: 9px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted, rgba(19,21,23,.31));
+            margin-bottom: 24px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         HERO — Toolkit Introduction
+         ═══════════════════════════════════════════════════════════════ -->
+
+    <div class="toolkit-page">
+
+        <header class="toolkit-hero">
+            <div class="toolkit-hero__label">Apollo Design System</div>
+            <h1 class="toolkit-hero__title">Universal<br>Style Toolkit</h1>
+            <p class="toolkit-hero__desc">
+                Catálogo visual de componentes do Apollo. Cards, formulários, selects, notificações
+                — tudo usando as variáveis do CDN como base única.
+            </p>
+        </header>
+
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             TIP: DVH vs VH
+             ═══════════════════════════════════════════════════════════════ -->
+
+        <div class="toolkit-tip">
+            <div class="toolkit-tip__title"><i class="ri-error-warning-line"></i> Dica Importante — dvh, não vh!</div>
+            <div class="toolkit-tip__text">
+                Sempre use <code>100dvh</code> ao invés de <code>100vh</code> para layouts full-height.
+                No Safari iOS, <code>100vh</code> inclui a altura da barra de URL, causando overflow e scroll indesejado.
+                <code>dvh</code> (Dynamic Viewport Height) se adapta automaticamente quando a barra some/aparece.
+                <br><br>
+                <strong>Regras:</strong><br>
+                ✓ Modais: <code>height: 100dvh</code><br>
+                ✓ Overlays: <code>min-height: 100dvh</code><br>
+                ✓ Formulários full-screen: <code>height: 100dvh</code><br>
+                ✗ Nunca: <code>height: 100vh</code> em elementos fixos/modais
+            </div>
+        </div>
+
+        <div class="toolkit-tip">
+            <div class="toolkit-tip__title"><i class="ri-code-s-slash-line"></i> Como usar</div>
+            <div class="toolkit-tip__text">
+                1. Carregue o CDN Apollo: <code>&lt;script src="https://cdn.apollo.rio.br/v1.0.0/core.js"&gt;</code><br>
+                2. Importe o stylesheet: <code>&lt;link rel="stylesheet" href="universal-style.css"&gt;</code><br>
+                3. Use as classes e variáveis CSS diretamente no HTML.<br>
+                4. O CDN injeta automaticamente: reset, tipografia, cores, dark mode e utilitários.
+            </div>
+        </div>
+
+
+        <hr class="toolkit-divider">
+
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             SECTION 1 — NOTIFICATION CARDS
+             ═══════════════════════════════════════════════════════════════ -->
+
+        <section class="toolkit-section">
+            <span class="toolkit-section__badge">Componente — Notificações</span>
+            <h2 class="toolkit-section__title">Notification Cards</h2>
+            <p class="toolkit-section__desc">
+                Cards com swipe-to-delete, ícone lateral, linha de destaque laranja no hover
+                e animação de remoção em cascata. Arraste para a esquerda para revelar o botão de excluir.
+            </p>
+
+            <div class="ntf-list">
+                <div class="ntf-list__header">
+                    <span class="ntf-list__title">Notificações</span>
+                    <button class="ntf-list__clear" id="clearAllBtn">Limpar Tudo</button>
+                </div>
+
+                <div id="notifications-list">
+                    <!-- Item 1 -->
+                    <div class="ntf-item">
+                        <div class="ntf-actions">
+                            <button class="ntf-del-btn"><i class="ri-delete-bin-fill"></i></button>
+                        </div>
+                        <div class="ntf-content">
+                            <div class="ntf-icon"><i class="ri-calendar-event-fill"></i></div>
+                            <div class="ntf-text">
+                                <div class="ntf-title">Sunset Theory Vol. 04</div>
+                                <div class="ntf-desc">O cronograma do evento foi atualizado. O set do artista Leo Janeiro foi movido para 01:30.</div>
+                                <div class="ntf-time"><i class="tempo-v"></i>&nbsp;<span class="time-ago">10</span><span class="when-ago">min</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="ntf-item">
+                        <div class="ntf-actions">
+                            <button class="ntf-del-btn"><i class="ri-delete-bin-fill"></i></button>
+                        </div>
+                        <div class="ntf-content">
+                            <div class="ntf-icon"><i class="i-apollo-s"></i></div>
+                            <div class="ntf-text">
+                                <div class="ntf-title">Apollo System</div>
+                                <div class="ntf-desc">O painel XML está fora do ar, conecte o transmissor multiplataforma imediatamente.</div>
+                                <div class="ntf-time"><i class="tempo-v"></i>&nbsp;<span class="time-ago">2</span><span class="when-ago">h</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 3 -->
+                    <div class="ntf-item">
+                        <div class="ntf-actions">
+                            <button class="ntf-del-btn"><i class="ri-delete-bin-fill"></i></button>
+                        </div>
+                        <div class="ntf-content">
+                            <div class="ntf-icon"><i class="ri-error-warning-fill"></i></div>
+                            <div class="ntf-text">
+                                <div class="ntf-title">Orçamento Estourado</div>
+                                <div class="ntf-desc">Atenção: Os custos com fornecedores ultrapassaram o limite planejado em R$ 1.200.</div>
+                                <div class="ntf-time"><i class="tempo-v"></i>&nbsp;<span class="time-ago">1</span><span class="when-ago">d</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item 4 -->
+                    <div class="ntf-item">
+                        <div class="ntf-actions">
+                            <button class="ntf-del-btn"><i class="ri-delete-bin-fill"></i></button>
+                        </div>
+                        <div class="ntf-content">
+                            <div class="ntf-icon"><i class="ri-team-line"></i></div>
+                            <div class="ntf-text">
+                                <div class="ntf-title">Nova Permissão</div>
+                                <div class="ntf-desc">Rafael Valle alterou seu acesso para "Gestor". Você já pode visualizar a aba financeira.</div>
+                                <div class="ntf-time"><i class="tempo-v"></i>&nbsp;<span class="time-ago">2</span><span class="when-ago">d</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="ntf-empty" id="emptyState">
+                    <i class="ri-checkbox-circle-line"></i>
+                    <p>Tudo limpo por aqui</p>
+                    <span>Nenhuma nova notificação</span>
+                </div>
+            </div>
+        </section>
+
+
+        <hr class="toolkit-divider">
+
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             SECTION 2 — FORM BASE (Inline Preview + Modal Trigger)
+             ═══════════════════════════════════════════════════════════════ -->
+
+        <section class="toolkit-section">
+            <span class="toolkit-section__badge">Componente — Formulários</span>
+            <h2 class="toolkit-section__title">Form Base</h2>
+            <p class="toolkit-section__desc">
+                Inputs com floating labels, borda inferior e animação no foco.
+                O modal desliza da direita com overlay blur. Clique no botão para testar.
+            </p>
+
+            <div class="toolkit-tip">
+                <div class="toolkit-tip__title"><i class="ri-lightbulb-line"></i> Form Tips</div>
+                <div class="toolkit-tip__text">
+                    • O modal usa <code>height: 100dvh</code> para nunca estourar no mobile.<br>
+                    • O <code>submit-btn</code> usa <code>margin-top: auto</code> para colar no fundo do modal via flexbox.<br>
+                    • Use <code>placeholder=" "</code> (espaço) nos inputs para ativar <code>:not(:placeholder-shown)</code>.<br>
+                    • Overlays devem ter <code>backdrop-filter: blur()</code> + <code>opacity</code> transition.
+                </div>
+            </div>
+
+            <!-- Inline form preview -->
+            <div class="inline-form-demo">
+                <span class="inline-form-demo__label">Preview — Inputs Inline</span>
+
+                <form autocomplete="off">
+                    <div class="input-group">
+                        <input type="text" class="apollo-input" placeholder=" " required>
+                        <label class="apollo-label">Nome Completo</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="email" class="apollo-input" placeholder=" " required>
+                        <label class="apollo-label">E-mail Corporativo</label>
+                    </div>
+
+                    <!-- Select Type Main — Travado (inside form) -->
+                    <div class="input-group apollo-select-travado" data-select="travado">
+                        <input type="hidden" name="assunto" required>
+                        <button type="button" class="apollo-select-travado__trigger" data-placeholder>
+                            <span class="apollo-select-travado__value">Assunto</span>
+                        </button>
+                        <label class="apollo-label">Assunto</label>
+                        <svg class="apollo-select-palette__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        <div class="apollo-select-palette__dropdown">
+                            <div class="apollo-select-palette__options">
+                                <div class="apollo-select-palette__option" data-value="parceria" data-name="Sobre Parceria">
+                                    <span><span class="apollo-select-palette__opt-name">Sobre Parceria</span></span>
+                                    <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                </div>
+                                <div class="apollo-select-palette__option" data-value="problema" data-name="Problema ou Denúncia">
+                                    <span><span class="apollo-select-palette__opt-name">Problema ou Denúncia</span></span>
+                                    <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                </div>
+                                <div class="apollo-select-palette__option" data-value="suporte" data-name="Suporte Técnico">
+                                    <span><span class="apollo-select-palette__opt-name">Suporte Técnico</span></span>
+                                    <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                </div>
+                                <div class="apollo-select-palette__option" data-value="elogio" data-name="Elogio ou Crítica">
+                                    <span><span class="apollo-select-palette__opt-name">Elogio ou Crítica</span></span>
+                                    <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="text" class="apollo-input" placeholder=" " required>
+                        <label class="apollo-label">Mensagem</label>
+                    </div>
+
+                    <button type="button" class="submit-btn" style="margin-top: 8px;">
+                        <span>Enviar Agora</span>
+                        <i class="ri-send-plane-fill"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Modal Trigger Button -->
+            <button class="form-trigger" id="formTrigger">
+                <i class="ri-add-line"></i>
+                <span>Abrir Form Modal</span>
+            </button>
+        </section>
+
+
+        <hr class="toolkit-divider">
+
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             SECTION 3 — SELECT TYPE MAIN (Travado / Locked)
+             ═══════════════════════════════════════════════════════════════ -->
+
+        <section class="toolkit-section">
+            <span class="toolkit-section__badge">Type Main — Travado</span>
+            <h2 class="toolkit-section__title">Select Travado</h2>
+            <p class="toolkit-section__desc">
+                Select não-editável com dropdown customizado. O usuário não digita — apenas clica para
+                escolher entre opções fixas. Mesmo visual do Select Padrão, mas "travado" (locked).
+            </p>
+
+            <div class="input-group apollo-select-travado" data-select="travado">
+                <!-- Click-only trigger (non-editable) -->
+                <button type="button" class="apollo-select-travado__trigger" data-placeholder>
+                    <span class="apollo-select-travado__value">Assunto</span>
+                </button>
+                <label class="apollo-label">Assunto</label>
+
+                <!-- Chevron -->
+                <svg class="apollo-select-palette__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+
+                <!-- Dropdown — same style as Padrão -->
+                <div class="apollo-select-palette__dropdown">
+                    <div class="apollo-select-palette__options">
+                        <div class="apollo-select-palette__option" data-value="parceria" data-name="Sobre Parceria">
+                            <span><span class="apollo-select-palette__opt-name">Sobre Parceria</span></span>
+                            <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-palette__option" data-value="problema" data-name="Problema ou Denúncia">
+                            <span><span class="apollo-select-palette__opt-name">Problema ou Denúncia</span></span>
+                            <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-palette__option" data-value="suporte" data-name="Suporte Técnico">
+                            <span><span class="apollo-select-palette__opt-name">Suporte Técnico</span></span>
+                            <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-palette__option" data-value="elogio" data-name="Elogio ou Crítica">
+                            <span><span class="apollo-select-palette__opt-name">Elogio ou Crítica</span></span>
+                            <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <hr class="toolkit-divider">
+
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             SECTION 4 — SELECT TYPE 2 (Padrão / Standard)
+             ═══════════════════════════════════════════════════════════════ -->
+
+        <section class="toolkit-section">
+            <span class="toolkit-section__badge">Type 2 — Padrão</span>
+            <h2 class="toolkit-section__title">Select Padrão</h2>
+            <p class="toolkit-section__desc">
+                Select oficial do Apollo. Input que filtra enquanto digita — dropdown sem barra de busca interna,
+                a filtragem acontece direto no trigger. Inclui swatch de cor e animação stagger.
+            </p>
+
+            <div class="input-group apollo-select-palette" data-select="palette">
+                <!-- Swatch after selection -->
+                <span class="apollo-select-palette__active-swatch"></span>
+
+                <!-- Writable input trigger -->
+                <input
+                    type="text"
+                    class="apollo-select-palette__input"
+                    placeholder=" "
+                    autocomplete="off"
+                >
+                <label class="apollo-label">Escolha uma cor</label>
+
+                <!-- Chevron -->
+                <svg class="apollo-select-palette__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+
+                <!-- Dropdown — no search inside -->
+                <div class="apollo-select-palette__dropdown">
+                    <div class="apollo-select-palette__options">
+                        <div class="apollo-select-palette__option" data-value="#5790E6" data-name="eyes" data-desc="by kersheys">
+                            <span class="apollo-select-palette__swatch" style="background:#5790E6"></span>
+                            <span><span class="apollo-select-palette__opt-name">eyes</span><span class="apollo-select-palette__opt-desc">by kersheys</span></span>
+                            <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-palette__option" data-value="#8773EB" data-name="status" data-desc="by grandiloquent">
+                            <span class="apollo-select-palette__swatch" style="background:#8773EB"></span>
+                            <span><span class="apollo-select-palette__opt-name">status</span><span class="apollo-select-palette__opt-desc">by grandiloquent</span></span>
+                            <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-palette__option" data-value="#B27CD9" data-name="costume party" data-desc="by lemonpaste">
+                            <span class="apollo-select-palette__swatch" style="background:#B27CD9"></span>
+                            <span><span class="apollo-select-palette__opt-name">costume party</span><span class="apollo-select-palette__opt-desc">by lemonpaste</span></span>
+                            <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-palette__option" data-value="#E884B0" data-name="musk stix" data-desc="by the rusty wench">
+                            <span class="apollo-select-palette__swatch" style="background:#E884B0"></span>
+                            <span><span class="apollo-select-palette__opt-name">musk stix</span><span class="apollo-select-palette__opt-desc">by the rusty wench</span></span>
+                            <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-palette__option" data-value="#EDA180" data-name="cymbalic" data-desc="by clairyfairy">
+                            <span class="apollo-select-palette__swatch" style="background:#EDA180"></span>
+                            <span><span class="apollo-select-palette__opt-name">cymbalic</span><span class="apollo-select-palette__opt-desc">by clairyfairy</span></span>
+                            <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                    </div>
+                    <div class="apollo-select-palette__empty">Nenhum resultado</div>
+                </div>
+            </div>
+        </section>
+
+
+        <hr class="toolkit-divider">
+
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             SECTION 5 — SELECT TYPE 3 (Glass Panel)
+             ═══════════════════════════════════════════════════════════════ -->
+
+        <section class="toolkit-section">
+            <span class="toolkit-section__badge">Type 3 — Glass Panel</span>
+            <h2 class="toolkit-section__title">Select Glassmorphism</h2>
+            <p class="toolkit-section__desc">
+                Painel flutuante com backdrop-blur, borda arredondada e busca interna no dropdown.
+                Full-feature: keyboard navigation, stagger animation, swatch preview.
+            </p>
+
+            <div class="apollo-select-glass" data-select="glass">
+                <button class="apollo-select-glass__trigger" data-placeholder aria-haspopup="listbox" aria-expanded="false">
+                    <span class="apollo-select-glass__swatch"></span>
+                    <span class="apollo-select-glass__label">Escolha uma cor</span>
+                    <svg class="apollo-select-glass__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="apollo-select-glass__dropdown" role="listbox">
+                    <div class="apollo-select-glass__search-wrap">
+                        <svg class="apollo-select-glass__search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input class="apollo-select-glass__search" type="text" placeholder="Buscar…" autocomplete="off">
+                    </div>
+                    <div class="apollo-select-glass__options">
+                        <div class="apollo-select-glass__option" role="option" data-value="#5790E6" data-name="eyes" data-desc="by kersheys">
+                            <span class="apollo-select-glass__opt-swatch" style="background:#5790E6"></span>
+                            <span><span class="apollo-select-glass__opt-name">eyes</span><span class="apollo-select-glass__opt-desc">by kersheys</span></span>
+                            <svg class="apollo-select-glass__opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-glass__option" role="option" data-value="#8773EB" data-name="status" data-desc="by grandiloquent">
+                            <span class="apollo-select-glass__opt-swatch" style="background:#8773EB"></span>
+                            <span><span class="apollo-select-glass__opt-name">status</span><span class="apollo-select-glass__opt-desc">by grandiloquent</span></span>
+                            <svg class="apollo-select-glass__opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-glass__option" role="option" data-value="#B27CD9" data-name="costume party" data-desc="by lemonpaste">
+                            <span class="apollo-select-glass__opt-swatch" style="background:#B27CD9"></span>
+                            <span><span class="apollo-select-glass__opt-name">costume party</span><span class="apollo-select-glass__opt-desc">by lemonpaste</span></span>
+                            <svg class="apollo-select-glass__opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-glass__option" role="option" data-value="#E884B0" data-name="musk stix" data-desc="by the rusty wench">
+                            <span class="apollo-select-glass__opt-swatch" style="background:#E884B0"></span>
+                            <span><span class="apollo-select-glass__opt-name">musk stix</span><span class="apollo-select-glass__opt-desc">by the rusty wench</span></span>
+                            <svg class="apollo-select-glass__opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-glass__option" role="option" data-value="#EDA180" data-name="cymbalic" data-desc="by clairyfairy">
+                            <span class="apollo-select-glass__opt-swatch" style="background:#EDA180"></span>
+                            <span><span class="apollo-select-glass__opt-name">cymbalic</span><span class="apollo-select-glass__opt-desc">by clairyfairy</span></span>
+                            <svg class="apollo-select-glass__opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                    </div>
+                    <div class="apollo-select-glass__empty">Nenhum resultado</div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+    <!-- end .toolkit-page -->
+
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         FORM MODAL (slides from right)
+         ═══════════════════════════════════════════════════════════════ -->
+
+    <div class="form-overlay" id="apolloOverlay"></div>
+    <div class="apollo-modal" id="apolloModal">
+        <button class="modal-close" id="apolloClose">
+            <i class="ri-close-line"></i>
+        </button>
+        <div class="modal-header">
+            <h2>Contato</h2>
+            <h1>Como podemos<br>ajudar você?</h1>
+        </div>
+
+        <div class="success-view">
+            <i class="ri-checkbox-circle-line success-icon"></i>
+            <h3>Mensagem Enviada</h3>
+            <p>Nossa equipe entrará em contato em breve.</p>
+        </div>
+
+        <form id="apolloForm" autocomplete="off">
+            <div class="input-group">
+                <input type="text" class="apollo-input" placeholder=" " required>
+                <label class="apollo-label">Nome Completo</label>
+            </div>
+
+            <div class="input-group">
+                <input type="email" class="apollo-input" placeholder=" " required>
+                <label class="apollo-label">E-mail Corporativo</label>
+            </div>
+
+            <div class="input-group apollo-select-travado" data-select="travado">
+                <input type="hidden" name="assunto" required>
+                <button type="button" class="apollo-select-travado__trigger" data-placeholder>
+                    <span class="apollo-select-travado__value">Assunto</span>
+                </button>
+                <label class="apollo-label">Assunto</label>
+                <svg class="apollo-select-palette__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                <div class="apollo-select-palette__dropdown">
+                    <div class="apollo-select-palette__options">
+                        <div class="apollo-select-palette__option" data-value="parceria" data-name="Sobre Parceria">
+                            <span><span class="apollo-select-palette__opt-name">Sobre Parceria</span></span>
+                            <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-palette__option" data-value="problema" data-name="Problema ou Denúncia">
+                            <span><span class="apollo-select-palette__opt-name">Problema ou Denúncia</span></span>
+                            <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-palette__option" data-value="suporte" data-name="Suporte Técnico">
+                            <span><span class="apollo-select-palette__opt-name">Suporte Técnico</span></span>
+                            <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="apollo-select-palette__option" data-value="elogio" data-name="Elogio ou Crítica">
+                            <span><span class="apollo-select-palette__opt-name">Elogio ou Crítica</span></span>
+                            <svg class="apollo-select-palette__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <input type="text" class="apollo-input" placeholder=" " required>
+                <label class="apollo-label">Mensagem</label>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <span>Enviar Agora</span>
+                <i class="ri-send-plane-fill"></i>
+            </button>
+        </form>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         JAVASCRIPT — All Component Interactions
+         ═══════════════════════════════════════════════════════════════ -->
+    <script>
+    /* ═══════════════════════════════════════════
+       INITIALIZATION GUARD
+       Waits for Apollo CDN or falls back after 1s
+       ═══════════════════════════════════════════ */
+    (() => {
+        let initialized = false;
+
+        function initAll() {
+            if (initialized) return;
+            initialized = true;
+            console.log('%c[Apollo Toolkit]%c Initializing all components…', 'color:#f45f00;font-weight:bold', 'color:inherit');
+
+            initNotifications();
+            initFormModal();
+            initSelectTravado();
+            initSelectPalette();
+            initSelectGlass();
+
+            console.log('%c[Apollo Toolkit]%c Ready.', 'color:#f45f00;font-weight:bold', 'color:inherit');
+        }
+
+        // Listen for Apollo CDN
+        window.addEventListener('apollo:ready', () => initAll());
+
+        // Fallback
+        if (window.Ap_IsReady) {
+            initAll();
+        } else {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => {
+                    if (!initialized) {
+                        console.warn('[Fallback] Apollo CDN not detected. Initializing manually.');
+                        initAll();
+                    }
+                }, 1000);
+            });
+        }
+
+        // Suppress cross-origin Script errors (sandbox/iframe)
+        window.addEventListener('error', (e) => {
+            if (e.message === 'Script error.') {
+                e.preventDefault();
+            }
+        });
+
+
+        /* ─────────────────────────────────────────
+           1. NOTIFICATION SWIPE-TO-DELETE
+           ───────────────────────────────────────── */
+        function initNotifications() {
+            const list = document.getElementById('notifications-list');
+            const emptyState = document.getElementById('emptyState');
+            const clearAllBtn = document.getElementById('clearAllBtn');
+            if (!list || !emptyState || !clearAllBtn) return;
+
+            const REVEAL_THRESHOLD = 80;
+            const DELETE_THRESHOLD = window.innerWidth * 0.45;
+
+            const checkEmpty = () => {
+                const remaining = list.querySelectorAll('.ntf-item:not(.deleting)');
+                if (remaining.length === 0) {
+                    emptyState.classList.add('visible');
+                    clearAllBtn.style.display = 'none';
+                }
+            };
+
+            const bindSwipe = (item) => {
+                const content = item.querySelector('.ntf-content');
+                const delBtn = item.querySelector('.ntf-del-btn');
+                if (!content || !delBtn) return;
+
+                let startX = 0, currentX = 0, isDragging = false;
+
+                const triggerDelete = () => {
+                    item.classList.add('deleting');
+                    content.style.transform = 'translateX(0px)';
+                    setTimeout(() => { item.remove(); checkEmpty(); }, 300);
+                };
+
+                delBtn.addEventListener('click', triggerDelete);
+
+                content.addEventListener('pointerdown', (e) => {
+                    isDragging = true;
+                    startX = e.clientX - currentX;
+                    content.classList.add('dragging');
+                    content.setPointerCapture(e.pointerId);
+                });
+
+                content.addEventListener('pointermove', (e) => {
+                    if (!isDragging) return;
+                    let x = e.clientX - startX;
+                    if (x > 0) x = 0;
+                    currentX = x;
+                    content.style.transform = `translateX(${currentX}px)`;
+
+                    // Position delete icon centered in the visible red strip
+                    const visibleWidth = Math.abs(currentX);
+                    const iconCenter = (visibleWidth - 48) / 2; // 48 = btn width
+                    item.querySelector('.ntf-actions').style.setProperty('--icon-right', Math.max(iconCenter, 12) + 'px');
+                });
+
+                const handleUp = (e) => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    content.classList.remove('dragging');
+                    try {
+                        if (content.hasPointerCapture(e.pointerId)) content.releasePointerCapture(e.pointerId);
+                    } catch (_) {}
+
+                    if (currentX < -DELETE_THRESHOLD) {
+                        content.style.transition = 'transform 0.2s ease-out, opacity 0.2s ease-out';
+                        content.style.transform = 'translateX(-100vw)';
+                        content.style.opacity = '0';
+                        setTimeout(triggerDelete, 200);
+                    } else if (currentX < -(REVEAL_THRESHOLD / 2)) {
+                        currentX = -REVEAL_THRESHOLD;
+                        content.style.transition = 'transform 0.3s cubic-bezier(0.16,1,0.3,1)';
+                        content.style.transform = `translateX(${currentX}px)`;
+                        setTimeout(() => { content.style.transition = ''; }, 300);
+                    } else {
+                        currentX = 0;
+                        content.style.transition = 'transform 0.3s cubic-bezier(0.16,1,0.3,1)';
+                        content.style.transform = 'translateX(0px)';
+                        setTimeout(() => { content.style.transition = ''; }, 300);
+                    }
+                };
+
+                content.addEventListener('pointerup', handleUp);
+                content.addEventListener('pointercancel', handleUp);
+            };
+
+            document.querySelectorAll('.ntf-item').forEach(bindSwipe);
+
+            clearAllBtn.addEventListener('click', () => {
+                const items = list.querySelectorAll('.ntf-item');
+                items.forEach((item, i) => {
+                    setTimeout(() => {
+                        item.classList.add('deleting');
+                        setTimeout(() => item.remove(), 300);
+                    }, i * 80);
+                });
+                setTimeout(checkEmpty, (items.length * 80) + 300);
+            });
+        }
+
+
+        /* ─────────────────────────────────────────
+           2. FORM MODAL (Slide-In)
+           ───────────────────────────────────────── */
+        function initFormModal() {
+            const body = document.body;
+            const trigger = document.getElementById('formTrigger');
+            const closeBtn = document.getElementById('apolloClose');
+            const overlay = document.getElementById('apolloOverlay');
+            const form = document.getElementById('apolloForm');
+            const modal = document.getElementById('apolloModal');
+            if (!trigger || !modal) return;
+
+            function openForm() {
+                body.classList.add('apollo-open');
+                trigger.style.opacity = '0';
+                trigger.style.pointerEvents = 'none';
+            }
+
+            function closeForm() {
+                body.classList.remove('apollo-open');
+                trigger.style.opacity = '1';
+                trigger.style.pointerEvents = 'all';
+                setTimeout(() => {
+                    modal.classList.remove('form-submitted');
+                    if (form) form.reset();
+                }, 600);
+            }
+
+            trigger.addEventListener('click', openForm);
+            if (closeBtn) closeBtn.addEventListener('click', closeForm);
+            if (overlay) overlay.addEventListener('click', closeForm);
+
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    modal.classList.add('form-submitted');
+                    setTimeout(closeForm, 2500);
+                });
+            }
+        }
+
+
+        /* ─────────────────────────────────────────
+           3a. SELECT TYPE MAIN — Travado (Locked)
+           Click-only dropdown, no typing/filtering.
+           Reuses .apollo-select-palette__* markup.
+           ───────────────────────────────────────── */
+        function initSelectTravado() {
+            document.querySelectorAll('.apollo-select-travado').forEach((root) => {
+                const trigger = root.querySelector('.apollo-select-travado__trigger');
+                const valueEl = root.querySelector('.apollo-select-travado__value');
+                const options = root.querySelectorAll('.apollo-select-palette__option');
+                if (!trigger || !valueEl) return;
+
+                function open()   { root.classList.add('is-open'); }
+                function close()  { root.classList.remove('is-open'); }
+                function toggle() { root.classList.contains('is-open') ? close() : open(); }
+
+                function select(opt) {
+                    options.forEach(o => o.classList.remove('is-selected'));
+                    opt.classList.add('is-selected');
+                    const name = opt.dataset.name || opt.textContent.trim();
+                    const value = opt.dataset.value || name;
+                    valueEl.textContent = name;
+                    trigger.removeAttribute('data-placeholder');
+                    root.classList.add('has-value');
+
+                    // Populate hidden input (for form submission)
+                    const hidden = root.querySelector('input[type="hidden"]');
+                    if (hidden) hidden.value = value;
+
+                    close();
+                    trigger.focus();
+                }
+
+                trigger.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
+
+                trigger.addEventListener('keydown', (e) => {
+                    const vis = [...options];
+                    const focused = vis.find(o => o.classList.contains('is-focused'));
+                    let idx = vis.indexOf(focused);
+
+                    if (['ArrowDown', 'Enter', ' '].includes(e.key) && !root.classList.contains('is-open')) {
+                        e.preventDefault(); open(); return;
+                    }
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        vis.forEach(o => o.classList.remove('is-focused'));
+                        idx = idx < vis.length - 1 ? idx + 1 : 0;
+                        vis[idx]?.classList.add('is-focused');
+                        vis[idx]?.scrollIntoView({ block: 'nearest' });
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        vis.forEach(o => o.classList.remove('is-focused'));
+                        idx = idx > 0 ? idx - 1 : vis.length - 1;
+                        vis[idx]?.classList.add('is-focused');
+                        vis[idx]?.scrollIntoView({ block: 'nearest' });
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (focused) select(focused);
+                    } else if (e.key === 'Escape') {
+                        close();
+                    }
+                });
+
+                options.forEach((opt) => {
+                    opt.addEventListener('click', (e) => { e.stopPropagation(); select(opt); });
+                    opt.addEventListener('mouseenter', () => {
+                        options.forEach(o => o.classList.remove('is-focused'));
+                        opt.classList.add('is-focused');
+                    });
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!root.contains(e.target)) close();
+                });
+            });
+        }
+
+
+        /* ─────────────────────────────────────────
+           3. SELECT TYPE 2 — Palette (Writable)
+           ───────────────────────────────────────── */
+        function initSelectPalette() {
+            document.querySelectorAll('.apollo-select-palette').forEach((root) => {
+                const input = root.querySelector('.apollo-select-palette__input');
+                const options = root.querySelectorAll('.apollo-select-palette__option');
+                const empty = root.querySelector('.apollo-select-palette__empty');
+                const swatch = root.querySelector('.apollo-select-palette__active-swatch');
+                if (!input) return;
+
+                function open() { root.classList.add('is-open'); }
+                function close() { root.classList.remove('is-open'); }
+
+                function filter() {
+                    const q = input.value.toLowerCase().trim();
+                    let visible = 0;
+                    options.forEach((opt) => {
+                        const text = ((opt.dataset.name || '') + ' ' + (opt.dataset.desc || '')).toLowerCase();
+                        const show = !q || text.includes(q);
+                        opt.hidden = !show;
+                        if (show) visible++;
+                    });
+                    if (empty) empty.classList.toggle('is-visible', visible === 0);
+                }
+
+                function select(opt) {
+                    options.forEach(o => o.classList.remove('is-selected'));
+                    opt.classList.add('is-selected');
+                    input.value = opt.dataset.name || '';
+                    root.classList.add('has-value');
+                    if (swatch) swatch.style.background = opt.dataset.value || '';
+                    close();
+                }
+
+                input.addEventListener('focus', open);
+                input.addEventListener('input', () => { open(); filter(); });
+
+                options.forEach((opt) => {
+                    opt.addEventListener('click', (e) => { e.stopPropagation(); select(opt); });
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    const vis = [...options].filter(o => !o.hidden);
+                    const focused = vis.find(o => o.classList.contains('is-focused'));
+                    let idx = vis.indexOf(focused);
+
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        vis.forEach(o => o.classList.remove('is-focused'));
+                        idx = idx < vis.length - 1 ? idx + 1 : 0;
+                        vis[idx]?.classList.add('is-focused');
+                        vis[idx]?.scrollIntoView({ block: 'nearest' });
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        vis.forEach(o => o.classList.remove('is-focused'));
+                        idx = idx > 0 ? idx - 1 : vis.length - 1;
+                        vis[idx]?.classList.add('is-focused');
+                        vis[idx]?.scrollIntoView({ block: 'nearest' });
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (focused) select(focused);
+                    } else if (e.key === 'Escape') {
+                        close();
+                        input.blur();
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!root.contains(e.target)) close();
+                });
+            });
+        }
+
+
+        /* ─────────────────────────────────────────
+           4. SELECT TYPE 3 — Glass Panel
+           ───────────────────────────────────────── */
+        function initSelectGlass() {
+            document.querySelectorAll('.apollo-select-glass').forEach((root) => {
+                const trigger = root.querySelector('.apollo-select-glass__trigger');
+                const search = root.querySelector('.apollo-select-glass__search');
+                const options = root.querySelectorAll('.apollo-select-glass__option');
+                const empty = root.querySelector('.apollo-select-glass__empty');
+                const swatchEl = root.querySelector('.apollo-select-glass__swatch');
+                const labelEl = root.querySelector('.apollo-select-glass__label');
+                if (!trigger) return;
+
+                function open() {
+                    root.classList.add('is-open');
+                    trigger.setAttribute('aria-expanded', 'true');
+                    if (search) { search.value = ''; filter(); }
+                    requestAnimationFrame(() => search?.focus());
+                }
+
+                function close() {
+                    root.classList.remove('is-open');
+                    trigger.setAttribute('aria-expanded', 'false');
+                    options.forEach(o => o.classList.remove('is-focused'));
+                }
+
+                function toggle() { root.classList.contains('is-open') ? close() : open(); }
+
+                function filter() {
+                    const q = (search?.value || '').toLowerCase().trim();
+                    let visible = 0;
+                    options.forEach((opt) => {
+                        const text = ((opt.dataset.name || '') + ' ' + (opt.dataset.desc || '')).toLowerCase();
+                        const show = !q || text.includes(q);
+                        opt.hidden = !show;
+                        if (show) visible++;
+                    });
+                    if (empty) empty.classList.toggle('is-visible', visible === 0);
+                    options.forEach(o => o.classList.remove('is-focused'));
+                }
+
+                function select(opt) {
+                    options.forEach(o => o.classList.remove('is-selected'));
+                    opt.classList.add('is-selected');
+                    const name = opt.dataset.name || '';
+                    const desc = opt.dataset.desc || '';
+
+                    trigger.removeAttribute('data-placeholder');
+                    let html = '<span class="apollo-select-glass__label-name">' + name + '</span>';
+                    if (desc) html += '<span class="apollo-select-glass__label-desc">' + desc + '</span>';
+                    if (labelEl) labelEl.innerHTML = html;
+
+                    const optSwatch = opt.querySelector('.apollo-select-glass__opt-swatch');
+                    if (swatchEl && optSwatch) {
+                        swatchEl.style.background = optSwatch.style.background || '';
+                    }
+
+                    close();
+                    trigger.focus();
+                }
+
+                trigger.addEventListener('click', toggle);
+
+                trigger.addEventListener('keydown', (e) => {
+                    if (['ArrowDown', 'Enter', ' '].includes(e.key)) { e.preventDefault(); open(); }
+                    if (e.key === 'Escape') close();
+                });
+
+                if (search) {
+                    search.addEventListener('input', filter);
+                    search.addEventListener('keydown', (e) => {
+                        const vis = [...options].filter(o => !o.hidden);
+                        const focused = vis.find(o => o.classList.contains('is-focused'));
+                        let idx = vis.indexOf(focused);
+
+                        if (e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            vis.forEach(o => o.classList.remove('is-focused'));
+                            idx = idx < vis.length - 1 ? idx + 1 : 0;
+                            vis[idx]?.classList.add('is-focused');
+                            vis[idx]?.scrollIntoView({ block: 'nearest' });
+                        } else if (e.key === 'ArrowUp') {
+                            e.preventDefault();
+                            vis.forEach(o => o.classList.remove('is-focused'));
+                            idx = idx > 0 ? idx - 1 : vis.length - 1;
+                            vis[idx]?.classList.add('is-focused');
+                            vis[idx]?.scrollIntoView({ block: 'nearest' });
+                        } else if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (focused) select(focused);
+                        } else if (e.key === 'Escape') {
+                            close();
+                            trigger.focus();
+                        }
+                    });
+                }
+
+                options.forEach((opt) => {
+                    opt.addEventListener('click', () => select(opt));
+                    opt.addEventListener('mouseenter', () => {
+                        options.forEach(o => o.classList.remove('is-focused'));
+                        opt.classList.add('is-focused');
+                    });
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!root.contains(e.target)) close();
+                });
+            });
+        }
+
+    })();
+    </script>
+
+</body>
+</html>

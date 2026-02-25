@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+   "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" []>
+<chapter id="timestamp-funcionalidades">
+
+    <title id="funcionalidades">Funcionalidades</title>
+
+    <section id="ts-cades">
+        <title>Carimbo de tempo com componente <emphasis>policy-impl-cades</emphasis></title>
+
+	<sectioninfo>
+            A forma mais prática e comum de uso é a obtenção do carimbo durante o processo de geração de assinatura.
+            O Demoiselle Signer provê o componente chamado policy-impl-cades que faz a geração da assinatura no padrão CAdES.
+            Portanto, para requisitar o carimbo, basta utilizar a política para <ulink url="http://www.iti.gov.br/icp-brasil/autoridades-certificadoras-do-tempo/85-artefatos-de-assinatura-digital/139-assinatura-digital-com-referencia-de-tempo-ad-rt">Assinatura digital com Referência de Tempo (AD-RT)</ulink>
+            É possível inclusive definir um certificado diferente para a requisição do Carimbo.  
+	</sectioninfo>
+	<para>O código abaixo demostra como pode ser feita a chamada:</para>
+        
+
+        <programlisting role="JAVA"><![CDATA[
+			PKCS7Signer signer = PKCS7Factory.getInstance().factoryDefault();
+			
+			Certificate[] certificateToTimeStamp = // Certificado que irá requisitar o carimbo
+			signer.setCertificatesForTimeStamp(certificateToTimeStamp);
+			PrivateKey privateKeyToTimeStamp = // Chave privada que irá requisitar o carimbo
+			signer.setPrivateKeyForTimeStamp(privateKeyToTimeStamp);
+			// Para utilizar a API de Carimbo do Tempo do SERPRO
+			TimeStampConfig.getInstance().setApiSERPRO(true);
+			// Credenciais para utilizar a API de Carimbo do Tempo do SERPRO
+			TimeStampConfig.getInstance().setClientCredentials("de acordo com a documentação: https://doc-apitimestamp.estaleiro.serpro.gov.br/quick_start/#como-autenticar-na-api-carimbo-do-tempo");
+						
+			Certificate[] certificateToSign = // Certificado que irá gerar a Assinatura
+			PrivateKey privateKeyToSign = // Chave privada que irá gerar a Assinatura
+			signer.setCertificates(certificateToSign);
+		    signer.setPrivateKey(privateKeyToSign);
+			// usando a politica com carimbo de tempo
+			signer.setSignaturePolicy(PolicyFactory.Policies.AD_RT_CADES_2_2);
+			// Assinatura desatachada
+			byte[] signature = signer.doDetachedSign(fileToSign);
+]]></programlisting>
+</section>
+
+<section id="ts-pades">
+        <title>Carimbo de tempo com componente <emphasis>policy-impl-pades</emphasis></title>
+
+	<sectioninfo>
+            Assim como o Demoiselle Signer provê o componente chamado policy-impl-cades que faz a geração da assinatura no padrão CAdES. 
+            Há o equivalente para PAdES.
+	</sectioninfo>
+	<para>O código abaixo demostra como pode ser feita a chamada neste caso, lembrando que o componente não anexa a assinatura no documento PDF:</para>
+        
+        <programlisting role="JAVA"><![CDATA[
+            PAdESSigner signerPades = new PAdESSigner();
+            Certificate[] certificateToTimeStamp = // Certificado que irá requisitar o carimbo
+			signerPades.setCertificatesForTimeStamp(certificateToTimeStamp);
+			PrivateKey privateKeyToTimeStamp = // Chave privada que irá requisitar o carimbo
+			signerPades.setPrivateKeyForTimeStamp(privateKeyToTimeStamp);
+			
+			// Para utilizar a API de Carimbo do Tempo do SERPRO
+			TimeStampConfig.getInstance().setApiSERPRO(true);
+			// Credenciais para utilizar a API de Carimbo do Tempo do SERPRO
+			TimeStampConfig.getInstance().setClientCredentials("de acordo com a documentação: https://doc-apitimestamp.estaleiro.serpro.gov.br/quick_start/#como-autenticar-na-api-carimbo-do-tempo");
+			
+			Certificate[] certificateToSign = // Certificado que irá gerar a Assinatura
+			PrivateKey privateKeyToSign = // Chave privada que irá gerar a Assinatura
+			
+			
+			signerPades.setCertificates(certificateToSign);
+		    signerPades.setPrivateKey(privateKeyToSign);
+			// usando a politica com carimbo de tempo
+			signerPades.setSignaturePolicy(PolicyFactory.Policies.AD_RT_PADES_1_1);
+			// Assinatura desatachada
+			byte[] signature = signerPades.doDetachedSign(fileToSign);
+]]></programlisting>
+</section>
+
+
+<section id="ts-xades">
+        <title>Carimbo de tempo com componente <emphasis>policy-impl-xades</emphasis></title>
+
+	<sectioninfo>
+            Assim como o Demoiselle Signer provê o componente chamado policy-impl-cades que faz a geração da assinatura no padrão CAdES e PAdES. 
+            Há o equivalente para XAdES que é o padrão de Assinaturas em XML
+	</sectioninfo>
+	<para>O código abaixo demostra como pode ser feita a chamada neste caso:</para>
+        
+        <programlisting role="JAVA"><![CDATA[
+            XMLSigner xmlSigner = new XMLSigner();
+            // Para utilizar a API de Carimbo do Tempo do SERPRO
+			TimeStampConfig.getInstance().setApiSERPRO(true);
+			// Credenciais para utilizar a API de Carimbo do Tempo do SERPRO
+			TimeStampConfig.getInstance().setClientCredentials("de acordo com a documentação: https://doc-apitimestamp.estaleiro.serpro.gov.br/quick_start/#como-autenticar-na-api-carimbo-do-tempo");
+			// usando a politica com carimbo de tempo
+			xmlSigner.setPolicyId(XMLPoliciesOID.AD_RT_XADES_2_4.getOID());
+			// Assinando o Documento XML
+			Document doc = xmlSigner.signEnveloped(true, newFile.getPath());
+]]></programlisting>
+</section>
+    <section>
+        <title>Requisições de carimbo de tempo</title>
+		<sectioninfo>
+			O componente provê tambem outras forma de obter o carimbo de tempo.			
+		</sectioninfo>
+		<section>
+		<title>Para uma assinatura padrão CAdES</title>
+		<sectioninfo>Casos onde já existe um arquivo de assinatura no padrão CADeS</sectioninfo>
+		<para>Para obter um carimbo de tempo para uma assinatura CADeS, basta enviar o conteúdo da assinatura.
+		O retorno será a assinatura com o carimbo embutido, veja no exemplo abaixo:</para>
+		<programlisting role="JAVA"><![CDATA[
+			byte[] signatureFile = // array de bytes do conteúdo a ser assinado e carimbado
+			CAdESTimeStampSigner varCAdESTimeStampSigner = new CAdESTimeStampSigner();
+			varCAdESTimeStampSigner.setCertificates(CertificateChain);
+			varCAdESTimeStampSigner.setPrivateKey(PrivateKey);
+			byte[] signatureWithTimeStamp = varCAdESTimeStampSigner
+					.doTimeStampForSignature(signatureFile);			
+]]></programlisting>
+		</section>
+		<section>
+		<title>Para um conteúdo</title>
+		<sectioninfo>Gera o carimbo para o contéudo de uma informação</sectioninfo>
+		<para>É possível também obter o carimbo para o conteúdo de uma informação. Neste caso o carimbo não estará associado à assinatura</para>
+		<note>A ICP-Brasil não traz nenhuma norma relativa a este tipo de carimbo, o que existe são as política para assinatura.</note>
+		<para>O código abaixo demosntra como é feita a requisição.
+		O retorno é o arquivo do tipo TimeStampToken descrito na <ulink url="https://www.ietf.org/rfc/rfc3161.txt">RFC 3161</ulink> </para>
+		<programlisting role="JAVA"><![CDATA[
+			byte[] content = // array de bytes do conteúdo
+			CAdESTimeStampSigner varCAdESTimeStampSigner = new CAdESTimeStampSigner();
+			varCAdESTimeStampSigner.setCertificates(CertificateChain);
+			varCAdESTimeStampSigner.setPrivateKey(PrivateKey);
+			byte[] timeStampForContent = varCAdESTimeStampSigner.doTimeStampForContent(content);
+]]></programlisting>
+		</section>		
+		<section>
+		<title>Para o resumo (hash) de um conteúdo</title>
+		<sectioninfo>O carimbo pode ser gerado enviando o resumo já calculado do conteúdo, evitando o envio de muitos dados</sectioninfo>
+		<para>A outra funcionalidade disponível permite enviar o resumo já calculado.</para>
+		<programlisting role="JAVA"><![CDATA[
+		byte[] hash = // array de bytes do hash
+		CAdESTimeStampSigner varCAdESTimeStampSigner = new CAdESTimeStampSigner();
+		varCAdESTimeStampSigner.setCertificates(CertificateChain);
+		varCAdESTimeStampSigner.setPrivateKey(PrivateKey);
+		byte[] timeStampForContent = varCAdESTimeStampSigner.doTimeStampFromHashContent(hash);
+			
+]]></programlisting>
+		</section>
+	</section>
+	<section>
+        <title>Validdação do Carimbo de tempo </title>
+
+	<sectioninfo>
+            Assim como na geração os componetes policy-impl-cades, policy-impl-pades e policy-impl-pades já estão preparados para fazer a validação da assinatura que contenha um carimbo de tempo.
+	</sectioninfo>
+	<para>Veja a sessão de <link linkend="policy-impl-cades-funcionalidades-validar">Validação</link></para>
+	        
+</section>
+    <section>
+        <title>Validações de carimbo de tempo</title>
+		<sectioninfo>
+			Usando o componente para validar a assinatura com carimbo			
+		</sectioninfo>
+		<section>
+		<title>Para uma assinatura padrão CAdES</title>
+		<sectioninfo>Para validar um carimbo de tempo, ou mais, embutido em uma assinatura CAdES, é preciso enviar o conteúdo da assinatura.</sectioninfo>
+				<programlisting role="JAVA"><![CDATA[
+			byte[] signatureFile = // array de bytes da Assinatura
+			PAdESTimeStampSigner varPAdESTimeStampSigner = new PAdESTimeStampSigner();
+			List<Timestamp> listTimeStamp = varPAdESTimeStampSigner.checkTimeStampOnSignature(signatureFile);
+			if (!listTimeStamp.isEmpty()){
+				for (Timestamp ts : listTimeStamp){
+					System.out.println(ts.toString());
+				}
+			}			
+]]></programlisting>
+		</section>
+		<section>
+		<title>Para uma assinatura padrão PAdES</title>
+		<sectioninfo>Para validar um carimbo de tempo, ou mais, embutido em uma assinatura PAdES, é preciso enviar o conteúdo da assinatura.</sectioninfo>
+				<programlisting role="JAVA"><![CDATA[
+			byte[] signatureFile = // array de bytes da Assinatura
+			CAdESTimeStampSigner varCAdESTimeStampSigner = new CAdESTimeStampSigner();
+			List<Timestamp> listTimeStamp = varCAdESTimeStampSigner.checkTimeStampOnSignature(signatureFile);
+			if (!listTimeStamp.isEmpty()){
+				for (Timestamp ts : listTimeStamp){
+					System.out.println(ts.toString());
+				}
+			}			
+]]></programlisting>
+		</section>
+		<section>
+		<title>Para uma assinatura padrão XAdES</title>
+		<sectioninfo>Para validar um carimbo de tempo, ou mais, embutido em uma assinatura XAdES, basta enviar o documento XML Assinado.</sectioninfo>
+				<programlisting role="JAVA"><![CDATA[
+			String xmlFile = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><raiz>\n"
+				+ " <documento>um documento</documento>\n"
+				+ " <conteudo>texto para assinar</conteudo>\n"
+				+ "<ds:Signature xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:xades=\"http://uri.etsi.org/01903/v1.3.2#\" Id=\"id-1627489348420\"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\"/><ds:SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#rsa-sha256\"/><ds:Reference Id=\"r-id-1\" Type=\"\" URI=\"\"><ds:Transforms><ds:Transform Algorithm=\"http://www.w3.org/TR/1999/REC-xpath-19991116\"><ds:XPath>not(ancestor-or-self::ds:Signature)</ds:XPath></ds:Transform><ds:Transform Algorithm=\"http://www.w3.org/2001/10/xml-exc-c14n#WithComments\"/></ds:Transforms><ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><ds:DigestValue>qn1BYlIwhsH+KmBZcD75UN3vk20QAWE78YzQKUPFCVs=</ds:DigestValue></ds:Reference><ds:Reference Type=\"http://uri.etsi.org/01903#SignedProperties\" URI=\"#xades-id-1627489348420\"><ds:Transforms><ds:Transform Algorithm=\"http://www.w3.org/2001/10/xml-exc-c14n#WithComments\"/></ds:Transforms><ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><ds:DigestValue>IxtHn5zB7PF9qIrUz4rNVCquNmch9TTZw/GSMpHTh1U=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue Id=\"value-id-1627489348420\">HQiKQxLJ7C01NVwUn9b0dD8qNYZoSW1ozH89kgDT71sqWzgZ9MTiUX+ByMl/7CLIGyOz4iaK0GrOeZAIZn+nswA/InYCNtnUigniXNUOwbixGVZdeB/7mTDep9gW6oE9Jipv3L6Rnx+5PyJSMkZqW69LKCdOaMPKkI8XNcShKjJnHFgczbNdoqc9GuCCFJsswSravqAAC7jQNIsZBdyTz/u/xmQe9O9n0xvfbwzzz0LWl0XyjuA1b90ZNaEgeHGxQNBh0tCOu9iwGbAZxLyduH+exHLNUdHBcLtNZh+xtRwAWgCUjSTxsTpvK9dlnPGEakBhoAnveO7eylpaQ+opGQ==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509SubjectName>CN=EMERSON SACHIO SAITO:80621732915, OU=RFB e-CPF A3, OU=ARSERPRO, OU=Secretaria da Receita Federal do Brasil - RFB, O=ICP-Brasil, C=BR</ds:X509SubjectName><ds:X509Certificate>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</ds:X509Certificate></ds:X509Data></ds:KeyInfo><ds:Object><xades:QualifyingProperties Target=\"#id-1627489348420\"><xades:SignedProperties Id=\"xades-id-1627489348420\"><xades:SignedSignatureProperties><xades:SigningTime>2021-07-28T13:22:30Z</xades:SigningTime><xades:SigningCertificate><xades:Cert><xades:CertDigest><ds:DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/><ds:DigestValue>njzMA7rYCCQaHU0+7s+o58o5Jgw=</ds:DigestValue></xades:CertDigest><xades:IssuerSerial><ds:X509IssuerName>CN=Autoridade Certificadora SERPRORFBv5, OU=Secretaria da Receita Federal do Brasil - RFB, O=ICP-Brasil, C=BR</ds:X509IssuerName><ds:X509SerialNumber>17347171</ds:X509SerialNumber></xades:IssuerSerial></xades:Cert></xades:SigningCertificate><xades:SignaturePolicyIdentifier><xades:SignaturePolicyId><xades:SigPolicyId><xades:Identifier Qualifier=\"OIDAsURN\">urn:oid:2.16.76.1.7.1.7.2.4</xades:Identifier></xades:SigPolicyId><ds:Transforms><ds:Transform Algorithm=\"http://www.w3.org/2001/10/xml-exc-c14n#WithComments\"/></ds:Transforms><xades:SigPolicyHash><ds:DigestMethod Algorithm=\"http://www.w3.org/2001/04/xmlenc#sha256\"/><ds:DigestValue>fQ9XHn48E2jgyG/zu02V5o5Ib5KXcRygVhCHA38CO1E=</ds:DigestValue></xades:SigPolicyHash><xades:SigPolicyQualifiers><xades:SigPolicyQualifier><xades:SPURI>http://politicas.icpbrasil.gov.br/PA_AD_RT_v2_4.xml</xades:SPURI></xades:SigPolicyQualifier></xades:SigPolicyQualifiers></xades:SignaturePolicyId></xades:SignaturePolicyIdentifier></xades:SignedSignatureProperties><xades:SignedDataObjectProperties><xades:DataObjectFormat ObjectReference=\"#r-id-1\"><xades:MimeType>text/xml</xades:MimeType></xades:DataObjectFormat></xades:SignedDataObjectProperties></xades:SignedProperties><xades:UnsignedProperties><xades:UnsignedSignatureProperties><xades:SignatureTimeStamp><ds:CanonicalizationMethod Algorithm=\"http://www.w3.org/2001/10/xml-exc-c14n#WithComments\"/><xades:EncapsulatedTimeStamp Id=\"TimeStampid-1627489348420\">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</xades:EncapsulatedTimeStamp></xades:SignatureTimeStamp></xades:UnsignedSignatureProperties></xades:UnsignedProperties></xades:QualifyingProperties></ds:Object></ds:Signature></raiz>";
+            byte[] contentXml = xmlFile.getBytes();
+			XMLChecker xadesChecker = new XMLChecker();
+			if (xadesChecker.check(contentXml)) {
+				List<XMLSignatureInformations> results = new ArrayList<XMLSignatureInformations>();
+				results = xadesChecker.getSignaturesInfo();				
+            ...
+]]></programlisting>
+		</section>
+		<section>
+		<title>Para um conteúdo</title>
+		<sectioninfo>Validar o carimbo para o contéudo de uma informação</sectioninfo>
+		<para>Para validar o carimbo associado a um contéudo, é preciso enviar ao componente, o contéudo e a assinatura, conforme o código abaixo:</para>
+		
+		<programlisting role="JAVA"><![CDATA[
+			byte[] timeStampFile = // array de bytes da Assinatura
+			byte[] content = // array de bytes do conteúdo assinado
+			CAdESTimeStampSigner varCAdESTimeStampSigner = new CAdESTimeStampSigner();
+			Timestamp varTimeStamp = varCAdESTimeStampSigner.checkTimeStampWithContent(timeStampFile, content);
+]]></programlisting>
+		</section>		
+		<section>
+		<title>Para o resumo (hash) de um conteúdo</title>
+		<sectioninfo>Da mesma forma como na obtenção do carimbo, a validação  pode ser feita enviando o resumo já calculado do conteúdo</sectioninfo>
+		<programlisting role="JAVA"><![CDATA[
+		byte[] timeStampFile = // array de bytes da Assinatura
+		byte[] hash = // array de bytes do hash do conteúdo
+		CAdESTimeStampSigner varCAdESTimeStampSigner = new CAdESTimeStampSigner();
+		Timestamp varTimeStamp = varCAdESTimeStampSigner.checkTimeStampWithHash(timeStampFile, hash);			
+]]></programlisting>
+		</section>
+		<section>
+		<title>Definir timeout e tentativas de conexão</title>
+		<sectioninfo>Na versão atual é possível definir um tempo limite para conexão da requisição do carimbo do tempo e também a quantidade 
+		de tentativas antes de gerar uma exeção</sectioninfo>
+		<programlisting role="JAVA"><![CDATA[
+			TimeStampConfig tsConfig = TimeStampConfig.getInstance();
+			tsConfig.setTimeOut(3000); // valor em milisegundos
+			tsConfig.setConnectReplay(3);			
+]]></programlisting>
+		</section>
+	</section>
+</chapter>

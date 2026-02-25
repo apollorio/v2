@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Gestor — Apollo</title>
+    <!--
+        GESTOR apollo v4 — Event Planning & Staff Management for Rio
+        PHP: template-parts/gestor/main.php
+        PLUGINS: wp-project-manager-develop, employee-management-system-master, upstream gantt, upstream cmb2, upstream custom-reminders
+        DESIGN: APOLLO SILENT LUXURY (5 Laws enforced)
+        TERMINOLOGY: PROJECT=EVENTO | TASK=TAREFA | STAFF/TEAM=TIME
+        PERMISSION: ADM > Gestor > Team Gestor > Team
+        Personal Staff + Budget = ONLY Gestor + ADM, NEVER between team
+    -->
+    <!-- CDN Script of Apollo loads: injected inline Base Stylesheet.css (style /style before</head>) + GSAP Animate v3.13.0 + RemixIcon + jQuery v4.0.0 + Tracking script + //   + Popper Positioning + Dark Theme + Reveal-Up + Translate --><script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
+    <style>/* ═══════════════════════════════════════════════════════════════
+   GESTOR apollo v4 — Event Planning for Rio
+   DESIGN: APOLLO SILENT LUXURY (5 Laws)
+   PLUGINS: wp-project-manager-develop, employee-management-system-master, upstream gantt, upstream cmb2, upstream custom-reminders
+   PERMISSION: ADM > Gestor > Team Gestor > Team
+   PROJECT=EVENTO(frontend) | TASK=TAREFA(frontend) | STAFF=TIME(frontend)
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+    --bg:#ffffff;--sf:#fafafa;--sf2:#f2f2f3;--sf3:#e8e8e9;
+    --ink:#121214;--smoke:#666666;--ghost:#999;--mist:#bbb;--faint:#ddd;--whisper:#eee;
+    --brd:rgba(0,0,0,.08);--brd-h:rgba(0,0,0,.14);
+    --primary:#f45f00;--primary-l:#ff864012;--primary-m:#ff864030;
+    --ff:"Space Grotesk",system-ui,sans-serif;--mono:"Space Mono",monospace;--fun:"Shrikhand",cursive;
+    --r:18px;--rlg:24px;--pill:100px;--ease:cubic-bezier(.16,1,.3,1);
+    --hd:52px;--tab:46px;
+    --s-plan:#6366f1;--s-prep:#d97706;--s-live:#16a34a;--s-done:#64748b;--s-cancel:#dc2626;
+    --p-urg:#dc2626;--p-high:#ea580c;--p-med:#d97706;--p-low:#94a3b8;
+    --role-adm:#7c3aed;--role-gestor:#121214;--role-tgestor:#64748b;--role-team:#94a3b8;
+}
+*{box-sizing:border-box;margin:0;padding:0;outline:none}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{text-decoration:none;color:inherit}button{border:none;background:none;cursor:pointer;font-family:inherit;font-size:inherit}ul,ol{list-style:none}img{display:block;max-width:100%}
+::selection{background:var(--primary-m)}
+::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--brd-h);border-radius:4px}
+
+/* ═══ APOLLO ICON SYSTEM (SVG mask) ═══ */
+[data-apollo-icon]{display:inline-flex;width:20px;height:20px;background:currentColor;-webkit-mask-image:var(--apollo-mask);mask-image:var(--apollo-mask);-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;-webkit-mask-position:center;mask-position:center;vertical-align:middle;flex-shrink:0}
+.tab [data-apollo-icon]{width:22px;height:22px}
+
+/* ═══ TOOLTIPS ═══ */
+[data-tooltip]{position:relative}
+[data-tooltip]::after{content:attr(data-tooltip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);font-family:var(--mono);font-size:9px;letter-spacing:.02em;color:#fff;background:var(--ink);padding:4px 10px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s var(--ease);z-index:999}
+[data-tooltip]:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
+[data-tooltip-pos="bottom"]::after{bottom:auto;top:calc(100% + 8px);transform:translateX(-50%) translateY(-4px)}
+[data-tooltip-pos="bottom"]:hover::after{transform:translateX(-50%) translateY(0)}
+
+/* ═══ LOADER ═══ */
+.loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;transition:opacity .5s,transform .5s var(--ease)}
+.loader.out{opacity:0;transform:scale(1.02);pointer-events:none}
+.loader-logo{display:flex;align-items:baseline;gap:3px}
+.loader-logo .gl{font-size:22px;font-weight:800;text-transform:uppercase;letter-spacing:-.03em;color:var(--ink)}
+.loader-logo .ga{font-family:var(--fun);font-size:12px;color:var(--ink)}
+.loader-bar{width:80px;height:1.5px;background:var(--sf2);border-radius:2px;overflow:hidden;position:relative;margin-top:8px}
+.loader-bar::after{content:'';position:absolute;left:0;top:0;height:100%;width:30%;background:var(--ink);border-radius:2px;animation:lslide .7s ease-in-out infinite alternate}
+@keyframes lslide{from{left:0}to{left:70%}}
+
+/* ═══ HEADER ═══ */
+.hd{position:sticky;top:0;z-index:200;height:var(--hd);background:rgba(255,255,255,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 16px;gap:10px}
+.hd-logo{display:flex;align-items:baseline;gap:3px;flex-shrink:0}
+.hd-logo .gl{font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.02em;color:var(--ink)}
+.hd-logo .ga{font-family:var(--fun);font-size:10px;color:var(--ink)}
+/* Event selector as <select> */
+.hd-evento-wrap{position:relative;flex-shrink:0}
+.hd-evento-select{height:30px;background:var(--sf);border:1px solid var(--brd);border-radius:var(--pill);padding:0 28px 0 10px;font-family:var(--mono);font-size:10px;color:var(--smoke);appearance:none;cursor:pointer;transition:.15s;min-width:180px}
+.hd-evento-select:focus{border-color:var(--brd-h);color:var(--ink);background:var(--bg)}
+.hd-evento-arrow{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--mist);pointer-events:none}
+.hd-search{flex:1;max-width:240px;position:relative;margin-left:auto}
+.hd-search input{width:100%;height:30px;background:var(--sf);border:1px solid var(--brd);border-radius:var(--pill);padding:0 10px 0 30px;font-size:11px;color:var(--ink);transition:.2s}
+.hd-search input:focus{border-color:var(--brd-h);background:var(--bg)}
+.hd-search input::placeholder{color:var(--mist)}
+.hd-search>i{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--mist);pointer-events:none}
+.hd-search .sc{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:8px;color:var(--faint);border:1px solid var(--brd);padding:1px 4px;border-radius:3px;line-height:1.2}
+.hd-acts{display:flex;align-items:center;gap:4px}
+.icon-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:10px;color:var(--ghost);font-size:17px;position:relative;transition:.15s}
+.icon-btn:hover{background:var(--sf);color:var(--ink)}
+.icon-btn .dot{position:absolute;top:5px;right:5px;width:5px;height:5px;background:var(--primary);border-radius:50%;border:1.5px solid var(--bg)}
+.user-av{width:26px;height:26px;border-radius:50%;overflow:hidden;border:1px solid var(--brd);flex-shrink:0;cursor:pointer}
+.user-av img{width:100%;height:100%;object-fit:cover;filter:grayscale(100%);transition:filter .3s}
+.user-av:hover img{filter:grayscale(0)}
+
+/* ═══ TABS — ICONS ONLY w/ Apollo mask icons ═══ */
+.tabs{position:sticky;top:var(--hd);z-index:180;height:var(--tab);background:var(--bg);border-bottom:1px solid var(--brd);display:flex;align-items:stretch;justify-content:center;gap:0}
+.tab{width:52px;display:flex;align-items:center;justify-content:center;color:var(--mist);font-size:19px;border-bottom:2px solid transparent;transition:.15s;position:relative}
+.tab:hover{color:var(--ink);background:var(--sf)}
+.tab.on{color:var(--ink);border-bottom-color:var(--ink)}
+.tab .cnt{position:absolute;top:6px;right:4px;font-family:var(--mono);font-size:7px;font-weight:700;background:var(--sf2);color:var(--ghost);padding:1px 4px;border-radius:var(--pill);line-height:1.2}
+.tab.on .cnt{background:var(--ink);color:#fff}
+.tab .lock{position:absolute;top:6px;left:6px;font-size:8px;color:var(--mist)}
+
+/* ═══ PERMISSIONS ═══ */
+.perm{display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 8px;border-radius:var(--pill);border:1px solid}
+.perm i,[data-apollo-icon]{font-style:normal}
+.perm-adm{background:#f5f3ff;color:var(--role-adm);border-color:#e9d5ff}
+.perm-gestor{background:var(--sf);color:var(--ink);border-color:var(--brd)}
+.perm-tgestor{background:var(--sf);color:var(--smoke);border-color:var(--brd)}
+.perm-team{background:var(--sf2);color:var(--ghost);border-color:var(--whisper)}
+.vis-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--sf);border:1px solid var(--brd);border-radius:10px;margin-bottom:14px;font-family:var(--mono);font-size:10px;color:var(--smoke)}
+.vis-bar i{font-size:14px;color:var(--ghost)}
+.vis-bar .vis-roles{display:flex;gap:4px;margin-left:auto;align-items:center;flex-wrap:wrap}
+.vis-bar.restricted{border-color:rgba(220,38,38,.15);background:#fef2f2}
+.vis-bar.restricted>i{color:var(--p-urg)}
+
+/* ═══ PANELS ═══ */
+.main{min-height:calc(100vh - var(--hd) - var(--tab))}
+.panel{display:none;animation:panelIn .35s var(--ease)}
+.panel.on{display:block}
+@keyframes panelIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.section{padding:20px 16px}
+.sec-head{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.sec-title{font-size:15px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:6px}
+.sec-sub{font-family:var(--mono);font-size:10px;color:var(--ghost)}
+
+/* ═══ STAT CARDS — TODO 01 FIX: explicit display, visibility, opacity ═══ */
+.stats{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px;visibility:visible!important;opacity:1!important;position:relative;z-index:1;overflow:visible}
+.stat{display:block!important;visibility:visible!important;opacity:1!important;background:var(--sf);border:1px solid var(--brd);border-radius:var(--r);padding:14px;transition:.2s;overflow:visible;position:relative;min-height:80px}
+.stat:hover{border-color:var(--brd-h);transform:translateY(-1px)}
+.stat-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:8px;background:var(--sf2);color:var(--ink)}
+.stat-val{font-size:24px;font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--ink)}
+.stat-label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--ghost);margin-top:2px}
+
+/* ═══ OVERVIEW EVENT CARDS ═══ */
+.ov-cols{display:flex;gap:10px;overflow-x:auto;padding-bottom:12px}
+.ov-col{min-width:200px;flex:1}
+.ov-col-head{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.ov-minicard{background:var(--bg);border:1px solid var(--brd);border-radius:var(--r);padding:10px;margin-bottom:5px;transition:.15s}
+.ov-minicard:hover{border-color:var(--brd-h)}
+.ov-minicard-title{font-size:12px;font-weight:700}
+.ov-minicard-meta{font-family:var(--mono);font-size:9px;color:var(--ghost);display:flex;align-items:center;gap:3px;margin-top:2px}
+.ov-minicard-meta i{font-size:10px}
+
+/* ═══ SINGLE EVENT VIEW ═══ */
+.ev-single{padding:20px 16px}
+.ev-single-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.ev-single-title{font-size:18px;font-weight:800;letter-spacing:-.02em}
+.ev-single-meta{font-family:var(--mono);font-size:10px;color:var(--ghost)}
+.task-list{display:flex;flex-direction:column;gap:0}
+.task-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--brd);transition:.1s;cursor:pointer}
+.task-row:hover{background:var(--sf);margin:0 -8px;padding:10px 8px;border-radius:8px}
+.task-chk{width:16px;height:16px;border:1.5px solid var(--brd-h);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;flex-shrink:0}
+.task-chk.done{background:var(--ink);border-color:var(--ink)}
+.task-chk.done::after{content:'✓';color:#fff;font-size:9px;font-weight:700}
+.task-row-info{flex:1;min-width:0}
+.task-row-title{font-size:12px;font-weight:600}
+.task-row-title.done{text-decoration:line-through;color:var(--ghost)}
+.task-row-sub{font-family:var(--mono);font-size:9px;color:var(--mist)}
+.task-row-date{font-family:var(--mono);font-size:9px;color:var(--ghost)}
+.task-row-date.overdue{color:var(--p-urg)}
+
+/* ═══ EVENT KANBAN ═══ */
+.ev-kanban{display:flex;gap:10px;padding:0 16px 20px;overflow-x:auto;min-height:380px;align-items:flex-start}
+.ev-col{min-width:250px;max-width:280px;flex:1;display:flex;flex-direction:column}
+.ev-col-head{display:flex;align-items:center;gap:6px;padding:6px 0 8px}
+.ev-col-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ev-col-name{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--smoke)}
+.ev-col-count{font-family:var(--mono);font-size:9px;color:var(--mist);margin-left:auto}
+.ev-col-add{width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:var(--mist);font-size:14px;transition:.15s}
+.ev-col-add:hover{background:var(--sf);color:var(--ink)}
+.ev-list{display:flex;flex-direction:column;gap:8px;flex:1;min-height:50px;padding:4px;border-radius:10px;transition:background .2s}
+.ev-list.drag-over{background:var(--primary-l)}
+.ev-card{background:var(--bg);border:1px solid var(--brd);border-radius:var(--r);padding:14px;cursor:grab;transition:.2s}
+.ev-card:active{cursor:grabbing}
+.ev-card:hover{border-color:var(--brd-h);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.03)}
+.ev-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.ev-card-id{font-family:var(--mono);font-size:9px;color:var(--mist)}
+.ev-card-date{font-family:var(--mono);font-size:9px;color:var(--smoke);display:flex;align-items:center;gap:3px}
+.ev-card-date i{font-size:11px}
+.ev-card-title{font-size:13px;font-weight:700;line-height:1.25;margin-bottom:4px}
+.ev-card-venue{font-family:var(--mono);font-size:10px;color:var(--ghost);display:flex;align-items:center;gap:3px;margin-bottom:8px}
+.ev-card-venue i{font-size:12px}
+.ev-card-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px}
+.etag{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:var(--pill);font-weight:700;background:var(--sf2);color:var(--smoke);border:1px solid var(--brd)}
+.ev-card-bottom{display:flex;align-items:center;justify-content:space-between}
+.ev-card-team{display:flex}
+.ev-card-team .tav{width:20px;height:20px;border-radius:50%;overflow:hidden;border:2px solid var(--bg);margin-left:-4px}
+.ev-card-team .tav:first-child{margin-left:0}
+.ev-card-team .tav img{width:100%;height:100%;object-fit:cover;filter:grayscale(100%);transition:filter .3s}
+.ev-card:hover .tav img{filter:grayscale(0)}
+.ev-card-budget{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ghost);display:flex;align-items:center;gap:3px}
+.ev-card-budget i{font-size:10px}
+.ev-prog{margin-top:8px}.ev-prog-track{height:3px;background:var(--sf2);border-radius:var(--pill);overflow:hidden}
+.ev-prog-fill{height:100%;border-radius:var(--pill);transition:width .8s var(--ease)}
+.ev-prog-info{font-family:var(--mono);font-size:8px;color:var(--mist);margin-top:3px;display:flex;justify-content:space-between}
+
+/* ═══ STAFF/TIME ═══ */
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.staff-card{background:var(--bg);border:1px solid var(--brd);border-radius:var(--r);padding:16px;text-align:center;transition:.2s}
+.staff-card:hover{border-color:var(--brd-h);transform:translateY(-1px)}
+.staff-av{width:44px;height:44px;border-radius:50%;overflow:hidden;margin:0 auto 8px;border:1px solid var(--brd)}
+.staff-av img{width:100%;height:100%;object-fit:cover;filter:grayscale(100%);transition:filter .3s}
+.staff-card:hover .staff-av img{filter:grayscale(0)}
+.staff-name{font-size:13px;font-weight:700;margin-bottom:1px}
+.staff-func{font-family:var(--mono);font-size:9px;color:var(--ghost);margin-bottom:8px}
+.staff-role-badge{display:flex;justify-content:center;margin-bottom:8px}
+.staff-stats{display:flex;justify-content:center;gap:12px}
+.staff-stat{text-align:center}.staff-stat .v{font-size:14px;font-weight:800}.staff-stat .l{font-family:var(--mono);font-size:7px;text-transform:uppercase;color:var(--mist)}
+.staff-pix{display:flex;align-items:center;justify-content:center;gap:5px;padding:6px 8px;background:var(--sf);border:1px solid var(--brd);border-radius:8px;margin-top:8px;font-family:var(--mono);font-size:9px;color:var(--smoke);cursor:pointer;transition:.15s}
+.staff-pix:hover{border-color:var(--brd-h)}
+.staff-pix i{font-size:12px;color:var(--ink)}
+
+/* ═══ FINANCEIRO ═══ */
+.fin-grid{display:grid;grid-template-columns:1fr 320px;gap:14px}
+@media(max-width:900px){.fin-grid{grid-template-columns:1fr}}
+.fin-table{width:100%;border-collapse:collapse}
+.fin-table th{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.06em;color:var(--mist);text-align:left;padding:8px;border-bottom:1px solid var(--brd);background:var(--bg)}
+.fin-table td{padding:8px;border-bottom:1px solid var(--brd);font-size:12px}
+.fin-table tr:hover td{background:var(--sf)}
+.fin-st{font-family:var(--mono);font-size:8px;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:var(--pill);display:inline-flex;align-items:center;gap:3px}
+.fin-st.paid{background:var(--sf2);color:var(--s-live)}.fin-st.pend{background:var(--sf2);color:var(--s-prep)}.fin-st.late{background:var(--sf2);color:var(--p-urg)}
+.fin-pix{font-family:var(--mono);font-size:9px;color:var(--ghost);display:flex;align-items:center;gap:3px}
+.fin-pix i{font-size:11px}
+.fin-sum{background:var(--sf);border:1px solid var(--brd);border-radius:var(--rlg);padding:18px}
+.fin-sum-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--brd)}
+.fin-sum-row:last-child{border-bottom:none}
+.fin-sum-k{font-family:var(--mono);font-size:11px;color:var(--smoke)}
+.fin-sum-v{font-family:var(--mono);font-size:12px;font-weight:700}
+.fin-sum-v.big{font-size:18px;letter-spacing:-.02em}
+.divider, .divisor, .separator {height:1px;background:var(--white-10);max-width: 85%; margin: 30px auto 60px auto; mix-blend-mode: hard-light;}
+
+/* ═══ FORNECEDORES + MODAL (from pasted01) ═══ */
+.sup-list{display:flex;flex-direction:column;gap:6px}
+.sup-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--brd);border-radius:var(--r);transition:.15s;cursor:pointer}
+.sup-row:hover{border-color:var(--brd-h);transform:translateY(-1px)}
+.sup-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:var(--sf);color:var(--smoke)}
+.sup-info{flex:1;min-width:0}.sup-name{font-size:12px;font-weight:700}.sup-type{font-family:var(--mono);font-size:9px;color:var(--ghost)}
+.sup-contact{font-family:var(--mono);font-size:9px;color:var(--mist);display:flex;align-items:center;gap:3px}.sup-contact i{font-size:11px}
+.sup-val{font-family:var(--mono);font-size:11px;font-weight:700}.sup-status{font-family:var(--mono);font-size:8px;font-weight:700;text-transform:uppercase}
+/* Modal */
+.modal-overlay{position:fixed;inset:0;z-index:1000;background:rgba(255,255,255,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s var(--ease)}
+#modal-toggle:checked~.panel .modal-overlay{opacity:1;pointer-events:auto}
+#modal-toggle:checked~.panel .modal-overlay .modal-card{transform:scale(1);opacity:1}
+.modal-card{width:500px;max-width:90%;background:var(--bg);border:1px solid var(--brd);border-radius:var(--rlg);box-shadow:0 20px 40px -10px rgba(0,0,0,.08);padding:24px;transform:scale(.96);opacity:0;transition:.3s var(--ease);display:flex;flex-direction:column;gap:16px}
+.modal-h{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.modal-select-wrap{position:relative}
+.modal-select{width:100%;height:40px;background:var(--sf);border:1px solid var(--brd);border-radius:8px;padding:0 12px;font-family:var(--ff);font-size:13px;color:var(--ink);appearance:none;cursor:pointer}
+.modal-select:focus{border-color:var(--brd-h);background:var(--bg)}
+.modal-select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--ghost);pointer-events:none}
+.usr-list{display:flex;flex-direction:column;gap:2px;max-height:300px;overflow-y:auto;margin:0 -8px;padding:0 8px}
+.usr-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:8px;transition:.15s;border-bottom:1px solid var(--brd)}
+.usr-row:last-child{border-bottom:none}.usr-row:hover{background:var(--sf)}
+.usr-info{display:flex;align-items:center;gap:10px}
+.usr-av{width:32px;height:32px;border-radius:50%;background:var(--sf2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--smoke);border:1px solid var(--brd)}
+.usr-det{display:flex;flex-direction:column}.usr-n{font-size:12px;font-weight:600;color:var(--ink)}.usr-d{font-family:var(--mono);font-size:9px;color:var(--mist);text-transform:uppercase;letter-spacing:.05em}
+.usr-acts{display:flex;gap:4px;opacity:0;transition:.2s}.usr-row:hover .usr-acts{opacity:1}
+.btn-perm-add{background:var(--ink);color:#fff;height:36px;padding:0 16px;border-radius:8px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;transition:.2s;justify-content:center}
+.btn-perm-add:hover{background:var(--primary)}
+
+/* ═══ CRONOGRAMA ═══ */
+.crono{padding:20px 16px 40px}
+.crono-ev{margin-bottom:20px}
+.crono-ev-head{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.crono-ev-title{font-size:13px;font-weight:700}
+.crono-ev-date{font-family:var(--mono);font-size:9px;color:var(--ghost)}
+.crono-phases{display:flex;flex-direction:column;gap:5px}
+.crono-phase{display:flex;align-items:center;gap:8px}
+.crono-phase-handle{cursor:grab;color:var(--mist);font-size:13px;transition:.15s;flex-shrink:0}
+.crono-phase-handle:hover{color:var(--ink)}.crono-phase-handle:active{cursor:grabbing}
+.crono-phase-label{font-family:var(--mono);font-size:10px;width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;color:var(--smoke);display:flex;align-items:center;gap:3px}
+.crono-phase-label i{font-size:12px;color:var(--mist)}
+.crono-track{flex:1;height:8px;background:var(--sf2);border-radius:var(--pill);overflow:hidden}
+.crono-fill{height:100%;border-radius:var(--pill);transition:width 1s var(--ease)}
+.crono-pct{font-family:var(--mono);font-size:9px;font-weight:700;width:30px;text-align:right;flex-shrink:0}
+/* Milestones — TODO 07 FIX: explicit display+visibility */
+.ms-section{display:block!important;visibility:visible!important;opacity:1!important;margin-top:14px}
+.ms{display:flex!important;visibility:visible!important;opacity:1!important;align-items:center;gap:8px;padding:8px 12px;background:var(--bg);border:1px dashed var(--brd);border-radius:10px;margin-bottom:6px;transition:.15s}
+.ms:hover{border-style:solid;border-color:var(--brd-h)}
+.ms-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:var(--sf);color:var(--smoke)}
+.ms-info{flex:1}.ms-name{font-size:11px;font-weight:600}.ms-date{font-family:var(--mono);font-size:9px;color:var(--ghost)}
+.ms-chk{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--brd-h);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;flex-shrink:0}
+.ms-chk.done{background:var(--ink);border-color:var(--ink)}
+.ms-chk.done::after{content:'✓';color:#fff;font-size:10px;font-weight:700}
+
+/* ═══ MS PLANNER / GANTT (from pasted02) ═══ */
+.ms-container{border:1px solid var(--brd);border-radius:var(--rlg);background:var(--bg);margin-bottom:24px;overflow:hidden;display:flex;flex-direction:column;height:480px}
+.ms-toolbar{padding:10px 16px;border-bottom:1px solid var(--brd);background:var(--sf);display:flex;align-items:center;justify-content:space-between}
+.ms-body{display:flex;flex:1;overflow:hidden}
+.ms-side{width:260px;flex-shrink:0;border-right:1px solid var(--brd);background:var(--bg);display:flex;flex-direction:column;z-index:10;box-shadow:4px 0 12px rgba(0,0,0,.02)}
+.ms-side-head{height:40px;border-bottom:1px solid var(--brd);background:var(--sf2);display:flex;align-items:center;padding:0 12px;font-family:var(--mono);font-size:9px;text-transform:uppercase;color:var(--mist);font-weight:700;letter-spacing:.05em}
+.ms-task-row{height:40px;border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 12px;gap:8px;font-size:11px;color:var(--ink);transition:.1s}
+.ms-task-row:hover{background:var(--sf)}.ms-task-row.group{background:var(--sf2);font-weight:700;color:var(--smoke)}
+.ms-time-wrap{flex:1;overflow:auto;position:relative;background:var(--bg);background-image:linear-gradient(90deg,var(--brd) 1px,transparent 1px);background-size:40px 100%}
+.ms-time-head{display:flex;height:40px;border-bottom:1px solid var(--brd);background:var(--sf);position:sticky;top:0;z-index:5;width:max-content}
+.ms-day{width:40px;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;border-right:1px solid var(--brd);font-family:var(--mono);flex-shrink:0}
+.ms-day-n{font-size:10px;font-weight:700;color:var(--smoke)}.ms-day-l{font-size:8px;color:var(--mist);text-transform:uppercase}
+.ms-day.wk{background:rgba(0,0,0,.02)}
+.ms-chart-row{height:40px;border-bottom:1px dashed var(--sf2);position:relative;width:max-content;min-width:100%}
+.g-bar{position:absolute;top:8px;bottom:8px;border-radius:6px;display:flex;align-items:center;padding:0 8px;font-size:9px;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.1);cursor:grab;transition:transform .1s,box-shadow .1s;z-index:2}
+.g-bar:hover{transform:translateY(-1px);box-shadow:0 4px 8px rgba(0,0,0,.15);z-index:3}
+.g-bar.plan{background:var(--ink)}.g-bar.proc{background:var(--smoke)}.g-bar.wait{background:var(--mist);color:var(--ink);border:1px solid var(--brd)}.g-bar.crit{background:var(--p-urg)}
+.g-fill{position:absolute;left:0;top:0;bottom:0;background:rgba(255,255,255,.15);pointer-events:none}
+.g-dep{position:absolute;height:1px;background:var(--mist);top:50%;z-index:1}
+.g-dep::after{content:'';position:absolute;right:0;top:-3px;width:0;height:0;border-top:3px solid transparent;border-bottom:3px solid transparent;border-left:3px solid var(--mist)}
+.ms-today-line{position:absolute;top:0;bottom:0;width:2px;background:var(--primary);z-index:4;pointer-events:none}
+.ms-today-label{position:absolute;top:4px;left:4px;background:var(--primary);color:#fff;font-family:var(--mono);font-size:8px;padding:2px 4px;border-radius:2px}
+
+/* ═══ SLIDE-OVER ═══ */
+.so-bg{position:fixed;inset:0;background:rgba(18,18,20,.1);z-index:499;opacity:0;pointer-events:none;transition:.3s}
+.so-bg.open{opacity:1;pointer-events:auto}
+.so{position:fixed;top:0;right:0;width:460px;max-width:100%;height:100vh;background:var(--bg);z-index:500;transform:translateX(100%);transition:transform .4s var(--ease);box-shadow:-12px 0 40px rgba(0,0,0,.04);display:flex;flex-direction:column;border-left:1px solid var(--brd)}
+.so.open{transform:translateX(0)}
+.so-head{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--brd);flex-shrink:0}
+.so-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:var(--ghost);font-size:16px;transition:.15s}
+.so-close:hover{background:var(--sf);color:var(--ink)}
+.so-head-id{font-family:var(--mono);font-size:9px;color:var(--mist)}
+.so-head-acts{margin-left:auto;display:flex;gap:2px}
+.so-body{flex:1;overflow-y:auto;padding:18px 16px 30px}
+.so-title{font-size:18px;font-weight:800;line-height:1.2;margin-bottom:3px;letter-spacing:-.02em}
+.so-venue{font-family:var(--mono);font-size:10px;color:var(--ghost);display:flex;align-items:center;gap:4px;margin-bottom:14px}.so-venue i{font-size:12px}
+.so-meta{display:grid;grid-template-columns:80px 1fr;gap:5px 8px;margin-bottom:16px}
+.so-meta-k{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.05em;color:var(--mist);padding-top:3px}
+.so-meta-v{font-size:12px;display:flex;align-items:center;gap:4px}
+.so-desc{font-size:13px;line-height:1.6;color:var(--smoke);padding-bottom:14px;border-bottom:1px solid var(--brd);margin-bottom:14px}
+.so-sec{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--mist);margin-bottom:8px;margin-top:14px}
+.so-task{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--brd)}.so-task:last-child{border-bottom:none}
+.so-task-chk{width:15px;height:15px;border:1.5px solid var(--brd-h);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;flex-shrink:0}
+.so-task-chk.done{background:var(--ink);border-color:var(--ink)}.so-task-chk.done::after{content:'✓';color:#fff;font-size:8px;font-weight:700}
+.so-task-text{font-size:11px;flex:1}.so-task-text.done{text-decoration:line-through;color:var(--ghost)}
+.so-footer{padding:10px 16px;border-top:1px solid var(--brd);display:flex;gap:6px;flex-shrink:0}
+.so-footer input{flex:1;height:32px;background:var(--sf);border:1px solid var(--brd);border-radius:var(--pill);padding:0 12px;font-size:11px}
+.so-footer input:focus{border-color:var(--brd-h)}
+.so-footer .send{width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.15s;flex-shrink:0}
+.so-footer .send:hover{background:var(--primary)}
+
+/* ═══ EMPTY + UTILITIES ═══ */
+.empty{text-align:center;padding:40px 16px}.empty i{font-size:36px;color:var(--faint);margin-bottom:8px;display:block}.empty h3{font-size:14px;font-weight:700;margin-bottom:3px}.empty p{font-family:var(--mono);font-size:10px;color:var(--ghost);max-width:200px;margin:0 auto}
+.mono{font-family:var(--mono)}.bold{font-weight:700}.flex{display:flex}.gap4{gap:4px}.gap6{gap:6px}.gap8{gap:8px}.aic{align-items:center}.jcsb{justify-content:space-between}
+.sdot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.mt8{margin-top:8px}.mt14{margin-top:14px}.mb8{margin-bottom:8px}.mb14{margin-bottom:14px}
+.seeall{font-family:var(--mono);font-size:9px;color:var(--ghost);cursor:pointer;transition:.15s;margin-left:auto}.seeall:hover{color:var(--ink)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@media(max-width:640px){.ev-kanban{flex-direction:column}.ev-col{min-width:100%;max-width:100%}.fin-grid{grid-template-columns:1fr}.staff-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}.ms-side{width:180px}}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div class="loader" id="loader">
+    <div class="loader-logo"><span class="gl">Gestor</span><span class="ga">apollo</span></div>
+    <div class="loader-bar"></div>
+</div>
+
+<!-- ═══ HEADER ═══ -->
+<header class="hd">
+    <div class="hd-logo"><span class="gl">Gestor</span><span class="ga">apollo</span></div>
+
+    <!-- TODO 02: Event selector as <select> with Overview first -->
+    <!-- PHP: options from WP_Query event_listing CPT where user=gestor -->
+    <div class="hd-evento-wrap">
+        <select class="hd-evento-select" id="evSelect">
+            <option value="overview" selected>Overview Eventos</option>
+            <optgroup label="Preparando">
+                <option value="ev-004">⬤ Festa Rara · 27 Fev</option>
+                <option value="ev-005">⬤ Dismantle · 01 Mar</option>
+            </optgroup>
+            <optgroup label="Planejando">
+                <option value="ev-006">○ Industrial Complex · 12 Mar</option>
+                <option value="ev-007">○ Sunset Theory · 22 Mar</option>
+            </optgroup>
+            <optgroup label="Concluídos">
+                <option value="ev-002">✓ Miscelânea Festival</option>
+                <option value="ev-001">✓ AfterLove NYE</option>
+            </optgroup>
+        </select>
+        <i class="ri-arrow-down-s-line hd-evento-arrow"></i>
+    </div>
+
+    <div class="hd-search"><i class="ri-search-line"></i><input type="text" placeholder="Buscar…"><span class="sc">⌘K</span></div>
+    <div class="hd-acts">
+        <button class="icon-btn" data-tooltip="Notificações"><i class="ri-notification-3-line"></i><span class="dot"></span></button>
+        <button class="icon-btn" data-tooltip="Ajuda"><i class="ri-question-line"></i></button>
+        <button class="icon-btn" data-tooltip="Configurações"><i class="ri-settings-3-line"></i></button>
+        <button class="icon-btn" data-tooltip="Novo Evento" style="background:var(--ink);color:#fff;border-radius:8px"><i class="ri-add-line"></i></button>
+        <div class="user-av" data-tooltip="Perfil"><img src="https://i.pravatar.cc/64?img=12" alt="Gestor"></div>
+    </div>
+</header>
+
+<!-- ═══ TABS — Apollo SVG mask icons (TODO 0) ═══ -->
+<!-- data-icon-active = -s (solid), data-icon-inactive = -v (void) -->
+<nav class="tabs">
+    <button class="tab on" data-tab="overview" data-tooltip="Overview"
+        data-icon-active="https://assets.apollo.rio.br/i/gestor-s.svg"
+        data-icon-inactive="https://assets.apollo.rio.br/i/gestor-v.svg">
+        <i data-apollo-icon="gestor" style="--apollo-mask:url('https://assets.apollo.rio.br/i/gestor-s.svg')!important"></i>
+    </button>
+    <button class="tab" data-tab="kanban" data-tooltip="Kanban"
+        data-icon-active="https://assets.apollo.rio.br/i/kanban-view-s.svg"
+        data-icon-inactive="https://assets.apollo.rio.br/i/kanban-view-v.svg">
+        <i data-apollo-icon="kanban-view" style="--apollo-mask:url('https://assets.apollo.rio.br/i/kanban-view-v.svg')!important"></i>
+        <span class="cnt">6</span>
+    </button>
+    <button class="tab" data-tab="equipe" data-tooltip="Time"
+        data-icon-active="https://assets.apollo.rio.br/i/team-s.svg"
+        data-icon-inactive="https://assets.apollo.rio.br/i/team-v.svg">
+        <i data-apollo-icon="team" style="--apollo-mask:url('https://assets.apollo.rio.br/i/team-v.svg')!important"></i>
+        <span class="cnt">8</span>
+    </button>
+    <button class="tab" data-tab="financeiro" data-tooltip="Financeiro"
+        data-icon-active="https://assets.apollo.rio.br/i/money-dollar-box-s.svg"
+        data-icon-inactive="https://assets.apollo.rio.br/i/money-dollar-box-v.svg">
+        <i class="ri-money-dollar-box-line"></i>
+        <span class="lock"><i class="ri-eye-line"></i></span>
+    </button>
+    <button class="tab" data-tab="fornecedores" data-tooltip="Fornecedores"
+        data-icon-active="https://assets.apollo.rio.br/i/contacts-book-3-s.svg"
+        data-icon-inactive="https://assets.apollo.rio.br/i/contacts-book-3-v.svg">
+        <i data-apollo-icon="contacts-book-3" style="--apollo-mask:url('https://assets.apollo.rio.br/i/contacts-book-3-v.svg')!important"></i>
+    </button>
+    <button class="tab" data-tab="cronograma" data-tooltip="Cronograma"
+        data-icon-active="https://assets.apollo.rio.br/i/server-s.svg"
+        data-icon-inactive="https://assets.apollo.rio.br/i/server-v.svg">
+        <i class="ri-server-v"></i>
+    </button>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<!-- Hidden checkbox for modal toggle (TODO 05 fornecedores) -->
+<input type="checkbox" id="modal-toggle" style="display:none">
+
+<div class="main">
+
+<!-- ═══ OVERVIEW PANEL ═══ -->
+<div class="panel on" id="p-overview">
+<div class="section">
+
+    <!-- OVERVIEW ALL EVENTS (shown when select = "Overview Eventos") -->
+    <div id="overviewContent">
+        <!-- TODO 01 FIX: stats with forced visibility via CSS + JS -->
+        <div class="sec-head">
+            <div class="sec-title">
+                <i data-apollo-icon="gestor" style="--apollo-mask:url('https://assets.apollo.rio.br/i/gestor-s.svg')!important;width:18px;height:18px"></i>
+                Overview
+            </div>
+            <div class="sec-sub">Todos os eventos</div>
+        </div>
+        <div class="stats" style="display:grid!important;visibility:visible!important;opacity:1!important">
+            <div class="stat" style="display:block!important;visibility:visible!important;opacity:1!important">
+                <div class="stat-icon"><i class="ri-calendar-event-line"></i></div>
+                <div class="stat-val">6</div>
+                <div class="stat-label">Eventos ativos</div>
+            </div>
+            <div class="stat" style="display:block!important;visibility:visible!important;opacity:1!important">
+                <div class="stat-icon"><i class="ri-check-double-line"></i></div>
+                <div class="stat-val">23</div>
+                <div class="stat-label">Tarefas prontas</div>
+            </div>
+            <div class="stat" style="display:block!important;visibility:visible!important;opacity:1!important">
+                <div class="stat-icon"><i class="ri-error-warning-line"></i></div>
+                <div class="stat-val">4</div>
+                <div class="stat-label">Atrasadas</div>
+            </div>
+            <div class="stat" style="display:block!important;visibility:visible!important;opacity:1!important">
+                <div class="stat-icon"><i class="ri-team-line"></i></div>
+                <div class="stat-val">8</div>
+                <div class="stat-label">Time total</div>
+            </div>
+            <div class="stat" data-tooltip="Só Gestor + ADM" style="display:block!important;visibility:visible!important;opacity:1!important">
+                <div class="stat-icon"><i class="ri-money-dollar-circle-line"></i></div>
+                <div class="stat-val">R$ 18k</div>
+                <div class="stat-label"><i class="ri-eye-line" style="font-size:9px;margin-right:2px"></i> Budget</div>
+            </div>
+        </div>
+
+        <!-- Quick event overview cards -->
+        <div class="sec-head" style="margin-top:8px">
+            <div class="sec-title" style="font-size:13px">Próximos Eventos</div>
+            <div class="sec-sub">duplo-clique para detalhes</div>
+            <span class="seeall">Ver todos →</span>
+        </div>
+        <div class="ov-cols">
+            <div class="ov-col">
+                <div class="ov-col-head"><span class="sdot" style="background:var(--s-plan)"></span><span class="mono" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--smoke)">Planejando</span><span class="mono" style="font-size:8px;color:var(--mist);margin-left:auto">2</span></div>
+                <div class="ov-minicard"><div class="ov-minicard-title">Industrial Complex</div><div class="ov-minicard-meta"><i class="ri-calendar-line"></i> 12 Mar · BCo. Makers</div></div>
+                <div class="ov-minicard"><div class="ov-minicard-title">Sunset Theory</div><div class="ov-minicard-meta"><i class="ri-calendar-line"></i> 22 Mar · Praia Vermelha</div></div>
+            </div>
+            <div class="ov-col">
+                <div class="ov-col-head"><span class="sdot" style="background:var(--s-prep)"></span><span class="mono" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--smoke)">Preparando</span><span class="mono" style="font-size:8px;color:var(--mist);margin-left:auto">2</span></div>
+                <div class="ov-minicard" style="border-left:2px solid var(--s-prep)"><div class="ov-minicard-title">Festa Rara</div><div class="ov-minicard-meta"><i class="ri-calendar-line"></i> 27 Fev · Casa França-Brasil</div><div style="margin-top:5px"><div class="ev-prog-track"><div class="ev-prog-fill" style="width:65%;background:var(--ink)"></div></div></div></div>
+                <div class="ov-minicard" style="border-left:2px solid var(--s-prep)"><div class="ov-minicard-title">Dismantle Mainstage</div><div class="ov-minicard-meta"><i class="ri-calendar-line"></i> 01 Mar · Armazém Utopia</div><div style="margin-top:5px"><div class="ev-prog-track"><div class="ev-prog-fill" style="width:40%;background:var(--ink)"></div></div></div></div>
+            </div>
+            <div class="ov-col">
+                <div class="ov-col-head"><span class="sdot" style="background:var(--s-done)"></span><span class="mono" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--smoke)">Concluídos</span><span class="mono" style="font-size:8px;color:var(--mist);margin-left:auto">2</span></div>
+                <div class="ov-minicard" style="opacity:.5"><div class="ov-minicard-title">Miscelânea Festival</div><div class="ov-minicard-meta"><i class="ri-check-line" style="color:var(--s-live)"></i> 08 Fev · Concluído</div></div>
+                <div class="ov-minicard" style="opacity:.5"><div class="ov-minicard-title">AfterLove NYE</div><div class="ov-minicard-meta"><i class="ri-check-line" style="color:var(--s-live)"></i> 01 Jan · Concluído</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SINGLE EVENT VIEW (TODO 03 — shown when specific event selected) -->
+    <div id="singleContent" style="display:none">
+        <div class="sec-head">
+            <div class="sec-title">
+                <i data-apollo-icon="gestor" style="--apollo-mask:url('https://assets.apollo.rio.br/i/gestor-s.svg')!important;width:18px;height:18px"></i>
+                <span id="singleName">Festa Rara</span>
+            </div>
+            <div class="sec-sub" id="singleDate">27 Fev 2026 · Casa França-Brasil</div>
+        </div>
+
+        <!-- Single event stats -->
+        <div class="stats" style="display:grid!important;visibility:visible!important;opacity:1!important">
+            <div class="stat" style="display:block!important;visibility:visible!important;opacity:1!important">
+                <div class="stat-icon"><i class="ri-list-check-2"></i></div>
+                <div class="stat-val" id="sStat1">20</div>
+                <div class="stat-label">Total tarefas</div>
+            </div>
+            <div class="stat" style="display:block!important;visibility:visible!important;opacity:1!important">
+                <div class="stat-icon"><i class="ri-check-double-line"></i></div>
+                <div class="stat-val" id="sStat2">13</div>
+                <div class="stat-label">Concluídas</div>
+            </div>
+            <div class="stat" style="display:block!important;visibility:visible!important;opacity:1!important">
+                <div class="stat-icon"><i class="ri-time-line"></i></div>
+                <div class="stat-val" id="sStat3">7</div>
+                <div class="stat-label">Pendentes</div>
+            </div>
+            <div class="stat" style="display:block!important;visibility:visible!important;opacity:1!important">
+                <div class="stat-icon"><i class="ri-team-line"></i></div>
+                <div class="stat-val" id="sStat4">8</div>
+                <div class="stat-label">Time</div>
+            </div>
+        </div>
+
+        <!-- Single event meta row -->
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;padding:12px 14px;background:var(--sf);border-radius:12px;border:1px solid var(--brd)">
+            <div><div class="mono" style="font-size:8px;text-transform:uppercase;color:var(--mist);margin-bottom:2px">Status</div><div style="font-size:12px;font-weight:700;display:flex;align-items:center;gap:4px"><span class="sdot" style="background:var(--s-prep)"></span> <span id="singleStatus">Preparando</span></div></div>
+            <div><div class="mono" style="font-size:8px;text-transform:uppercase;color:var(--mist);margin-bottom:2px">Tarefas</div><div style="font-size:12px;font-weight:700" id="singleTasks">13/20 tarefas</div></div>
+            <div><div class="mono" style="font-size:8px;text-transform:uppercase;color:var(--mist);margin-bottom:2px"><i class="ri-eye-line" style="font-size:9px"></i> Budget</div><div style="font-size:12px;font-weight:700" id="singleBudget">R$ 6.500</div></div>
+            <div><div class="mono" style="font-size:8px;text-transform:uppercase;color:var(--mist);margin-bottom:2px">Time</div><div style="font-size:12px;font-weight:700" id="singleTeam">8 membros</div></div>
+        </div>
+
+        <!-- Upcoming open tasks -->
+        <div class="sec-head"><div class="sec-title" style="font-size:13px"><i class="ri-list-check-2" style="font-size:15px"></i> Tarefas pendentes</div></div>
+        <div class="task-list">
+            <div class="task-row"><div class="task-chk"></div><div class="task-row-info"><div class="task-row-title">Finalizar arte dos flyers</div><div class="task-row-sub">Design · Marta</div></div><div class="task-row-date overdue">19 Fev</div></div>
+            <div class="task-row"><div class="task-chk"></div><div class="task-row-info"><div class="task-row-title">Abrir venda de ingressos</div><div class="task-row-sub">Produção · Valle</div></div><div class="task-row-date">20 Fev</div></div>
+            <div class="task-row"><div class="task-chk"></div><div class="task-row-info"><div class="task-row-title">Confirmar DJ set times</div><div class="task-row-sub">Lineup · Raí</div></div><div class="task-row-date">22 Fev</div></div>
+            <div class="task-row"><div class="task-chk"></div><div class="task-row-info"><div class="task-row-title">Passagem de som + montagem</div><div class="task-row-sub">Técnica · Leo</div></div><div class="task-row-date">26 Fev</div></div>
+            <div class="task-row"><div class="task-chk"></div><div class="task-row-info"><div class="task-row-title">Briefing segurança</div><div class="task-row-sub">Operações · Pedro</div></div><div class="task-row-date">26 Fev</div></div>
+            <div class="task-row"><div class="task-chk"></div><div class="task-row-info"><div class="task-row-title">Estoque bar confirmado</div><div class="task-row-sub">Bar · Julia</div></div><div class="task-row-date">26 Fev</div></div>
+            <div class="task-row"><div class="task-chk"></div><div class="task-row-info"><div class="task-row-title">Setup iluminação cenográfica</div><div class="task-row-sub">Visual · Dani</div></div><div class="task-row-date">26 Fev</div></div>
+        </div>
+    </div>
+
+</div>
+</div>
+<!-- ═══ KANBAN (was Eventos) ═══ -->
+<div class="panel" id="p-kanban">
+<div class="section" style="padding-bottom:0">
+    <div class="sec-head">
+        <div class="sec-title">
+            <i data-apollo-icon="kanban-view" style="--apollo-mask:url('https://assets.apollo.rio.br/i/kanban-view-s.svg')!important;width:18px;height:18px"></i>
+            Kanban
+        </div>
+        <div class="sec-sub">arraste para mudar status</div>
+    </div>
+</div>
+<div class="ev-kanban">
+    <!-- PLANEJANDO -->
+    <div class="ev-col">
+        <div class="ev-col-head"><span class="ev-col-dot" style="background:var(--s-plan)"></span><span class="ev-col-name">Planejando</span><span class="ev-col-count">2</span><button class="ev-col-add" data-tooltip="Novo evento"><i class="ri-add-line"></i></button></div>
+        <div class="ev-list">
+            <div class="ev-card">
+                <div class="ev-card-top"><span class="ev-card-id">EV-006</span><span class="ev-card-date"><i class="ri-calendar-line"></i> 12 Mar</span></div>
+                <div class="ev-card-title">Industrial Complex</div>
+                <div class="ev-card-venue"><i class="ri-map-pin-line"></i> BCo. Makers · Santo Cristo</div>
+                <div class="ev-card-tags"><span class="etag">Rave</span><span class="etag">Techno</span></div>
+                <div class="ev-card-bottom">
+                    <div class="ev-card-team"><div class="tav"><img src="https://i.pravatar.cc/44?img=12"></div><div class="tav"><img src="https://i.pravatar.cc/44?img=5"></div></div>
+                    <span class="ev-card-budget"><i class="ri-eye-line"></i> R$ 4.200</span>
+                </div>
+                <div class="ev-prog"><div class="ev-prog-track"><div class="ev-prog-fill" style="width:15%;background:var(--s-plan)"></div></div><div class="ev-prog-info"><span>3/20</span><span>15%</span></div></div>
+            </div>
+            <div class="ev-card">
+                <div class="ev-card-top"><span class="ev-card-id">EV-007</span><span class="ev-card-date"><i class="ri-calendar-line"></i> 22 Mar</span></div>
+                <div class="ev-card-title">Sunset Theory</div>
+                <div class="ev-card-venue"><i class="ri-map-pin-line"></i> Praia Vermelha · Urca</div>
+                <div class="ev-card-tags"><span class="etag">House</span><span class="etag">Food</span></div>
+                <div class="ev-card-bottom">
+                    <div class="ev-card-team"><div class="tav"><img src="https://i.pravatar.cc/44?img=25"></div></div>
+                    <span class="ev-card-budget"><i class="ri-eye-line"></i> R$ 2.800</span>
+                </div>
+                <div class="ev-prog"><div class="ev-prog-track"><div class="ev-prog-fill" style="width:8%;background:var(--s-plan)"></div></div><div class="ev-prog-info"><span>1/12</span><span>8%</span></div></div>
+            </div>
+        </div>
+    </div>
+    <!-- PREPARANDO -->
+    <div class="ev-col">
+        <div class="ev-col-head"><span class="ev-col-dot" style="background:var(--s-prep)"></span><span class="ev-col-name">Preparando</span><span class="ev-col-count">2</span><button class="ev-col-add" data-tooltip="Novo evento"><i class="ri-add-line"></i></button></div>
+        <div class="ev-list">
+            <div class="ev-card" style="border-left:2px solid var(--s-prep)">
+                <div class="ev-card-top"><span class="ev-card-id">EV-004</span><span class="ev-card-date" style="color:var(--p-urg)"><i class="ri-alarm-warning-line"></i> 27 Fev</span></div>
+                <div class="ev-card-title">Festa Rara</div>
+                <div class="ev-card-venue"><i class="ri-map-pin-line"></i> Casa França-Brasil · Centro</div>
+                <div class="ev-card-tags"><span class="etag">Deep House</span><span class="etag">Afrobeat</span></div>
+                <div class="ev-card-bottom">
+                    <div class="ev-card-team"><div class="tav"><img src="https://i.pravatar.cc/44?img=12"></div><div class="tav"><img src="https://i.pravatar.cc/44?img=5"></div><div class="tav"><img src="https://i.pravatar.cc/44?img=32"></div></div>
+                    <span class="ev-card-budget"><i class="ri-eye-line"></i> R$ 6.500</span>
+                </div>
+                <div class="ev-prog"><div class="ev-prog-track"><div class="ev-prog-fill" style="width:65%;background:var(--ink)"></div></div><div class="ev-prog-info"><span>13/20</span><span>65%</span></div></div>
+            </div>
+            <div class="ev-card" style="border-left:2px solid var(--s-prep)">
+                <div class="ev-card-top"><span class="ev-card-id">EV-005</span><span class="ev-card-date"><i class="ri-calendar-line"></i> 01 Mar</span></div>
+                <div class="ev-card-title">Dismantle · Mainstage</div>
+                <div class="ev-card-venue"><i class="ri-map-pin-line"></i> Armazém Utopia · Caju</div>
+                <div class="ev-card-tags"><span class="etag">Rave</span><span class="etag">Techno</span><span class="etag">Industrial</span></div>
+                <div class="ev-card-bottom">
+                    <div class="ev-card-team"><div class="tav"><img src="https://i.pravatar.cc/44?img=47"></div><div class="tav"><img src="https://i.pravatar.cc/44?img=59"></div></div>
+                    <span class="ev-card-budget"><i class="ri-eye-line"></i> R$ 12.000</span>
+                </div>
+                <div class="ev-prog"><div class="ev-prog-track"><div class="ev-prog-fill" style="width:40%;background:var(--ink)"></div></div><div class="ev-prog-info"><span>8/20</span><span>40%</span></div></div>
+            </div>
+        </div>
+    </div>
+    <!-- AO VIVO -->
+    <div class="ev-col">
+        <div class="ev-col-head"><span class="ev-col-dot" style="background:var(--s-live);animation:pulse 1.5s infinite"></span><span class="ev-col-name">Ao Vivo</span><span class="ev-col-count">0</span></div>
+        <div class="ev-list"><div class="empty"><i class="ri-live-line"></i><h3>Nenhum ao vivo</h3><p>Quando começar, aparece aqui</p></div></div>
+    </div>
+    <!-- CONCLUÍDO -->
+    <div class="ev-col">
+        <div class="ev-col-head"><span class="ev-col-dot" style="background:var(--s-done)"></span><span class="ev-col-name">Concluído</span><span class="ev-col-count">2</span></div>
+        <div class="ev-list">
+            <div class="ev-card" style="opacity:.45">
+                <div class="ev-card-top"><span class="ev-card-id">EV-002</span><span class="ev-card-date"><i class="ri-check-line" style="color:var(--s-live)"></i> 08 Fev</span></div>
+                <div class="ev-card-title">Miscelânea Festival</div>
+                <div class="ev-card-venue"><i class="ri-map-pin-line"></i> Lapa · Centro</div>
+                <div class="ev-prog"><div class="ev-prog-track"><div class="ev-prog-fill" style="width:100%;background:var(--s-done)"></div></div></div>
+            </div>
+            <div class="ev-card" style="opacity:.45">
+                <div class="ev-card-top"><span class="ev-card-id">EV-001</span><span class="ev-card-date"><i class="ri-check-line" style="color:var(--s-live)"></i> 01 Jan</span></div>
+                <div class="ev-card-title">AfterLove NYE</div>
+                <div class="ev-card-venue"><i class="ri-map-pin-line"></i> Copacabana Palace</div>
+                <div class="ev-prog"><div class="ev-prog-track"><div class="ev-prog-fill" style="width:100%;background:var(--s-done)"></div></div></div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ═══ TIME / STAFF (TODO 0.3: renamed from Staff do NCL → Time) ═══ -->
+<div class="panel" id="p-equipe">
+<div class="section">
+    <div class="vis-bar">
+        <i class="ri-eye-line"></i><span>Quem vê:</span>
+        <div class="vis-roles">
+            <span class="perm perm-adm" data-role="adm"><i class="ri-shield-star-line"></i> ADM</span>
+            <span class="perm perm-gestor" data-role="gestor"><i class="ri-user-star-line"></i> Gestor</span>
+            <span class="perm perm-tgestor" data-role="tgestor"><i class="ri-user-settings-line"></i> T.Gestor</span>
+        </div>
+    </div>
+    <div class="sec-head">
+        <div class="sec-title">
+            <i data-apollo-icon="team" style="--apollo-mask:url('https://assets.apollo.rio.br/i/team-s.svg')!important;width:18px;height:18px"></i>
+            Time
+        </div>
+        <div class="sec-sub">Festa Rara · 8 membros</div>
+        <button class="icon-btn" data-tooltip="Adicionar ao time" style="background:var(--ink);color:#fff;border-radius:8px;margin-left:auto"><i class="ri-user-add-line"></i></button>
+    </div>
+    <div class="staff-grid">
+        <div class="staff-card"><div class="staff-av"><img src="https://i.pravatar.cc/112?img=12"></div><div class="staff-name">Valle</div><div class="staff-func">Direção Geral · Sound</div><div class="staff-role-badge"><span class="perm perm-gestor" data-role="gestor"><i class="ri-user-star-line"></i> Gestor</span></div><div class="staff-stats"><div class="staff-stat"><div class="v">5</div><div class="l">Tarefas</div></div><div class="staff-stat"><div class="v">3</div><div class="l">Eventos</div></div></div><div class="staff-pix" data-pix="valle@email.com"><i class="ri-key-2-line"></i> va***@email.com</div></div>
+        <div class="staff-card"><div class="staff-av"><img src="https://i.pravatar.cc/112?img=5"></div><div class="staff-name">Marta</div><div class="staff-func">Direção Visual</div><div class="staff-role-badge"><span class="perm perm-tgestor" data-role="tgestor"><i class="ri-user-settings-line"></i> T.Gestor</span></div><div class="staff-stats"><div class="staff-stat"><div class="v">3</div><div class="l">Tarefas</div></div><div class="staff-stat"><div class="v">2</div><div class="l">Eventos</div></div></div><div class="staff-pix" data-pix="11999887766"><i class="ri-key-2-line"></i> (11) 9***-7766</div></div>
+        <div class="staff-card"><div class="staff-av"><img src="https://i.pravatar.cc/112?img=32"></div><div class="staff-name">Leo</div><div class="staff-func">Técnico de Som</div><div class="staff-role-badge"><span class="perm perm-team" data-role="team"><i class="ri-user-line"></i> Team</span></div><div class="staff-stats"><div class="staff-stat"><div class="v">4</div><div class="l">Tarefas</div></div><div class="staff-stat"><div class="v">1</div><div class="l">Eventos</div></div></div><div class="staff-pix" data-pix="12345678900"><i class="ri-key-2-line"></i> CPF ***456***</div></div>
+        <div class="staff-card"><div class="staff-av"><img src="https://i.pravatar.cc/112?img=25"></div><div class="staff-name">Ana</div><div class="staff-func">Produção · Logística</div><div class="staff-role-badge"><span class="perm perm-team" data-role="team"><i class="ri-user-line"></i> Team</span></div><div class="staff-stats"><div class="staff-stat"><div class="v">2</div><div class="l">Tarefas</div></div><div class="staff-stat"><div class="v">1</div><div class="l">Eventos</div></div></div><div class="staff-pix" data-pix="ana@pix.com"><i class="ri-key-2-line"></i> an***@pix.com</div></div>
+        <div class="staff-card"><div class="staff-av"><img src="https://i.pravatar.cc/112?img=47"></div><div class="staff-name">Pedro</div><div class="staff-func">Segurança</div><div class="staff-role-badge"><span class="perm perm-team" data-role="team"><i class="ri-user-line"></i> Team</span></div><div class="staff-stats"><div class="staff-stat"><div class="v">3</div><div class="l">Tarefas</div></div><div class="staff-stat"><div class="v">2</div><div class="l">Eventos</div></div></div><div class="staff-pix" data-pix="pedro.seg@pix"><i class="ri-key-2-line"></i> pe***@pix</div></div>
+        <div class="staff-card"><div class="staff-av"><img src="https://i.pravatar.cc/112?img=59"></div><div class="staff-name">Julia</div><div class="staff-func">Bar · Bebidas</div><div class="staff-role-badge"><span class="perm perm-team" data-role="team"><i class="ri-user-line"></i> Team</span></div><div class="staff-stats"><div class="staff-stat"><div class="v">2</div><div class="l">Tarefas</div></div><div class="staff-stat"><div class="v">1</div><div class="l">Eventos</div></div></div><div class="staff-pix" data-pix="julia.bar@pix"><i class="ri-key-2-line"></i> ju***@pix</div></div>
+        <div class="staff-card"><div class="staff-av"><img src="https://i.pravatar.cc/112?img=15"></div><div class="staff-name">Raí</div><div class="staff-func">DJ · Lineup</div><div class="staff-role-badge"><span class="perm perm-team" data-role="team"><i class="ri-user-line"></i> Team</span></div><div class="staff-stats"><div class="staff-stat"><div class="v">1</div><div class="l">Tarefas</div></div><div class="staff-stat"><div class="v">1</div><div class="l">Eventos</div></div></div><div class="staff-pix" data-pix="rai.dj@pix"><i class="ri-key-2-line"></i> ra***@pix</div></div>
+        <div class="staff-card"><div class="staff-av"><img src="https://i.pravatar.cc/112?img=22"></div><div class="staff-name">Dani</div><div class="staff-func">Iluminação</div><div class="staff-role-badge"><span class="perm perm-team" data-role="team"><i class="ri-user-line"></i> Team</span></div><div class="staff-stats"><div class="staff-stat"><div class="v">2</div><div class="l">Tarefas</div></div><div class="staff-stat"><div class="v">1</div><div class="l">Eventos</div></div></div><div class="staff-pix" data-pix="dani.luz@pix"><i class="ri-key-2-line"></i> da***@pix</div></div>
+    </div>
+</div>
+</div>
+
+<!-- ═══ FINANCEIRO — TODO 04: new vis-bar with team-access ═══ -->
+<div class="panel" id="p-financeiro">
+<div class="section">
+    <!-- TODO 04: Replaced restricted vis-bar with team-access version -->
+    <div class="vis-bar restricted">
+        <i class="ri-eye-line" style="color:var(--p-urg)"></i>
+        <span style="color:var(--p-urg);font-weight:600">&nbsp;Dados sensíveis.&nbsp; podem ver este conteúdo:</span>
+        <div class="vis-roles">
+            <span class="perm perm-gestor" data-role="team-access"><i class="ri-contacts-book-line"></i> Leo, Ana, Pedro, Dani</span>
+            <a href="#incluir_time" data-tooltip="Ajustar"><i class="ri-user-settings-line" style="background:rgba(0,0,0,0.03);margin:0 3px;width:46px;height:46px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--ghost)"></i></a>
+        </div>
+    </div>
+    <div class="sec-head">
+        <div class="sec-title"><i class="ri-money-dollar-circle-line" style="font-size:18px"></i> Financeiro</div>
+        <div class="sec-sub">Festa Rara · 27 Fev</div>
+    </div>
+    <div class="fin-grid">
+        <div style="overflow-x:auto">
+            <table class="fin-table">
+                <thead><tr><th>Staff</th><th>Função</th><th>Valor</th><th>PIX</th><th>Status</th></tr></thead>
+                <tbody>
+                    <tr><td><div class="flex aic gap4"><div class="user-av" style="width:22px;height:22px;border:none"><img src="https://i.pravatar.cc/44?img=32"></div> Leo</div></td><td class="mono" style="font-size:10px;color:var(--ghost)">Técnico Som</td><td class="bold">R$ 800</td><td><span class="fin-pix"><i class="ri-key-2-line"></i> CPF ***456***</span></td><td><span class="fin-st paid"><i class="ri-check-line"></i> Pago</span></td></tr>
+                    <tr><td><div class="flex aic gap4"><div class="user-av" style="width:22px;height:22px;border:none"><img src="https://i.pravatar.cc/44?img=25"></div> Ana</div></td><td class="mono" style="font-size:10px;color:var(--ghost)">Produção</td><td class="bold">R$ 600</td><td><span class="fin-pix"><i class="ri-key-2-line"></i> an***@pix</span></td><td><span class="fin-st paid"><i class="ri-check-line"></i> Pago</span></td></tr>
+                    <tr><td><div class="flex aic gap4"><div class="user-av" style="width:22px;height:22px;border:none"><img src="https://i.pravatar.cc/44?img=47"></div> Pedro</div></td><td class="mono" style="font-size:10px;color:var(--ghost)">Segurança</td><td class="bold">R$ 500</td><td><span class="fin-pix"><i class="ri-key-2-line"></i> pe***@pix</span></td><td><span class="fin-st pend"><i class="ri-time-line"></i> Pendente</span></td></tr>
+                    <tr><td><div class="flex aic gap4"><div class="user-av" style="width:22px;height:22px;border:none"><img src="https://i.pravatar.cc/44?img=59"></div> Julia</div></td><td class="mono" style="font-size:10px;color:var(--ghost)">Bar</td><td class="bold">R$ 450</td><td><span class="fin-pix"><i class="ri-key-2-line"></i> ju***@pix</span></td><td><span class="fin-st pend"><i class="ri-time-line"></i> Pendente</span></td></tr>
+                    <tr><td><div class="flex aic gap4"><div class="user-av" style="width:22px;height:22px;border:none"><img src="https://i.pravatar.cc/44?img=15"></div> Raí</div></td><td class="mono" style="font-size:10px;color:var(--ghost)">DJ</td><td class="bold">R$ 1.200</td><td><span class="fin-pix"><i class="ri-key-2-line"></i> ra***@pix</span></td><td><span class="fin-st late"><i class="ri-alarm-warning-line"></i> Atrasado</span></td></tr>
+                    <tr><td><div class="flex aic gap4"><div class="user-av" style="width:22px;height:22px;border:none"><img src="https://i.pravatar.cc/44?img=22"></div> Dani</div></td><td class="mono" style="font-size:10px;color:var(--ghost)">Iluminação</td><td class="bold">R$ 700</td><td><span class="fin-pix"><i class="ri-key-2-line"></i> da***@pix</span></td><td><span class="fin-st pend"><i class="ri-time-line"></i> Pendente</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <div class="fin-sum">
+                <div class="mono" style="font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--mist);margin-bottom:10px"><i class="ri-eye-line" style="font-size:10px;margin-right:2px"></i> Resumo · Festa Rara</div>
+                <div class="fin-sum-row"><span class="fin-sum-k">Budget total</span><span class="fin-sum-v">R$ 6.500</span></div>
+                <div class="fin-sum-row"><span class="fin-sum-k"><i class="ri-team-line" style="font-size:11px;margin-right:3px"></i> Staff</span><span class="fin-sum-v">R$ 4.250</span></div>
+                <div class="fin-sum-row"><span class="fin-sum-k"><i class="ri-store-2-line" style="font-size:11px;margin-right:3px"></i> Fornecedores</span><span class="fin-sum-v">R$ 1.800</span></div>
+                <div class="fin-sum-row"><span class="fin-sum-k"><i class="ri-tools-line" style="font-size:11px;margin-right:3px"></i> Produção</span><span class="fin-sum-v">R$ 450</span></div>
+                <div class="divider"></div>
+                <div class="fin-sum-row"><span class="fin-sum-k bold" style="color:var(--ink)">Já pago</span><span class="fin-sum-v" style="color:var(--s-live)">R$ 1.400</span></div>
+                <div class="fin-sum-row"><span class="fin-sum-k bold" style="color:var(--ink)">Pendente</span><span class="fin-sum-v" style="color:var(--s-prep)">R$ 2.850</span></div>
+                <div class="fin-sum-row"><span class="fin-sum-k bold" style="color:var(--ink)">Atrasado</span><span class="fin-sum-v" style="color:var(--p-urg)">R$ 1.200</span></div>
+                <div class="divider"></div>
+                <div class="fin-sum-row"><span class="fin-sum-k bold" style="font-size:13px;color:var(--ink)">Saldo</span><span class="fin-sum-v big" style="color:var(--primary)">R$ 1.050</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ═══ FORNECEDORES — TODO 05: Full replacement from #pasted01 ═══ -->
+<div class="panel" id="p-fornecedores">
+    <!-- Permission Modal (checkbox-driven) -->
+    <div class="modal-overlay">
+        <label class="modal-bg" for="modal-toggle" style="position:absolute;inset:0"></label>
+        <div class="modal-card">
+            <div class="modal-h">
+                <i class="ri-shield-keyhole-line" style="color:var(--primary)"></i>
+                Gerenciar Permissões
+                <label for="modal-toggle" class="icon-btn" style="margin-left:auto;cursor:pointer"><i class="ri-close-line"></i></label>
+            </div>
+            <div style="padding:12px;background:var(--sf2);border-radius:8px;font-size:11px;color:var(--smoke);line-height:1.4">
+                <span class="bold" style="color:var(--ink)">Festa Rara 2026:</span> Selecione membros da equipe para conceder acesso de visualização e edição aos orçamentos deste evento.
+            </div>
+            <div class="modal-select-wrap">
+                <select class="modal-select">
+                    <option value="" disabled selected>Selecionar usuário para incluir...</option>
+                    <option value="1">Amanda Torres (Produção)</option>
+                    <option value="2">Carlos Mendes (Financeiro)</option>
+                    <option value="3">Juliana Paes (Curadoria)</option>
+                </select>
+                <i class="ri-arrow-down-s-line modal-select-arrow"></i>
+            </div>
+            <div style="font-family:var(--mono);font-size:9px;color:var(--mist);text-transform:uppercase;margin-top:4px;letter-spacing:.05em">Usuários com acesso (4)</div>
+            <div class="usr-list">
+                <div class="usr-row">
+                    <div class="usr-info"><div class="usr-av">RM</div><div class="usr-det"><span class="usr-n">Rafael Mattos</span><span class="usr-d">Direção Geral</span></div></div>
+                    <div class="usr-acts"><span class="perm perm-adm">ADM</span></div>
+                </div>
+                <div class="usr-row">
+                    <div class="usr-info"><div class="usr-av">LP</div><div class="usr-det"><span class="usr-n">Luiza Pereira</span><span class="usr-d">Gestão Financeira</span></div></div>
+                    <div class="usr-acts">
+                        <button class="icon-btn" data-tooltip="Remover acesso" data-tooltip-pos="bottom"><i class="ri-user-minus-line" style="color:var(--p-med)"></i></button>
+                        <button class="icon-btn" data-tooltip="Excluir do evento" data-tooltip-pos="bottom"><i class="ri-user-unfollow-line" style="color:var(--p-urg)"></i></button>
+                    </div>
+                </div>
+                <div class="usr-row">
+                    <div class="usr-info"><div class="usr-av">BS</div><div class="usr-det"><span class="usr-n">Bruno Silva</span><span class="usr-d">Produção Técnica</span></div></div>
+                    <div class="usr-acts">
+                        <button class="icon-btn" data-tooltip="Remover acesso" data-tooltip-pos="bottom"><i class="ri-user-minus-line" style="color:var(--p-med)"></i></button>
+                        <button class="icon-btn" data-tooltip="Excluir do evento" data-tooltip-pos="bottom"><i class="ri-user-unfollow-line" style="color:var(--p-urg)"></i></button>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-perm-add" style="justify-content:center;margin-top:8px"><i class="ri-check-line"></i> Salvar Alterações</button>
+        </div>
+    </div>
+    <div class="section">
+        <div class="sec-head">
+            <div>
+                <div class="sec-title">
+                    <i data-apollo-icon="contacts-book-3" style="--apollo-mask:url('https://assets.apollo.rio.br/i/contacts-book-3-s.svg')!important;width:18px;height:18px"></i>
+                    Fornecedores
+                </div>
+                <div class="sec-sub">Gestão de contratos e pagamentos</div>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:8px">
+                <label for="modal-toggle" class="vis-bar" style="margin:0;cursor:pointer;transition:.2s">
+                    <i class="ri-lock-2-line"></i><span>Acesso:</span>
+                    <div class="vis-roles"><span class="perm perm-adm">ADM</span><span class="perm perm-gestor">Gestor</span><span class="perm perm-team">+2</span></div>
+                    <i class="ri-settings-4-line" style="margin-left:6px;color:var(--primary)"></i>
+                </label>
+                <button class="icon-btn" data-tooltip="Novo fornecedor" style="background:var(--ink);color:#fff;border-radius:8px"><i class="ri-add-line"></i></button>
+            </div>
+        </div>
+        <div class="sup-list">
+            <div class="sup-row">
+                <div class="sup-icon" style="color:var(--primary);background:var(--primary-l)"><i class="ri-speaker-3-line"></i></div>
+                <div class="sup-info"><div class="sup-name">SomPro Locações</div><div class="sup-type">Técnica · PA + Monitors + Booth</div></div>
+                <div class="sup-contact"><i class="ri-whatsapp-line" style="color:var(--s-live)"></i> (21) 99820-3456</div>
+                <div class="sup-val">R$ 800,00</div>
+                <div class="sup-status" style="color:var(--s-live)"><i class="ri-checkbox-circle-fill" style="margin-right:2px"></i> Confirmado</div>
+            </div>
+            <div class="sup-row">
+                <div class="sup-icon"><i class="ri-lightbulb-flash-line"></i></div>
+                <div class="sup-info"><div class="sup-name">LuzCarioca</div><div class="sup-type">Técnica · Moving heads + LEDs</div></div>
+                <div class="sup-contact"><i class="ri-mail-line"></i> contato@luzcarioca.com</div>
+                <div class="sup-val">R$ 500,00</div>
+                <div class="sup-status" style="color:var(--s-live)"><i class="ri-checkbox-circle-fill" style="margin-right:2px"></i> Confirmado</div>
+            </div>
+            <div class="sup-row" style="border-left:3px solid var(--p-med)">
+                <div class="sup-icon"><i class="ri-goblet-line"></i></div>
+                <div class="sup-info"><div class="sup-name">Bebidas Rio</div><div class="sup-type">Bar · Consignação + Gelo</div></div>
+                <div class="sup-contact"><i class="ri-phone-line"></i> (21) 97712-1234</div>
+                <div class="sup-val" style="color:var(--p-med)">R$ 350,00</div>
+                <div class="sup-status" style="color:var(--s-prep)"><i class="ri-time-line" style="margin-right:2px"></i> Pendente</div>
+            </div>
+            <div class="sup-row" style="opacity:.7">
+                <div class="sup-icon"><i class="ri-printer-line"></i></div>
+                <div class="sup-info"><div class="sup-name">GraficaExpress</div><div class="sup-type">Comunicação · Flyers + Pulseiras</div></div>
+                <div class="sup-contact"><i class="ri-chat-3-line"></i> Aguardando retorno</div>
+                <div class="sup-val">R$ 150,00</div>
+                <div class="sup-status" style="color:var(--ghost)"><i class="ri-file-list-2-line" style="margin-right:2px"></i> Orçamento</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ═══ CRONOGRAMA — TODO 06: MS Planner Gantt + TODO 07: Fixed Milestones ═══ -->
+<div class="panel" id="p-cronograma">
+<div class="crono">
+
+    <div class="sec-head">
+        <div class="sec-title"><i class="ri-timeline-view" style="font-size:18px"></i> Cronograma</div>
+        <div class="sec-sub">arraste fases · clique marcos</div>
+    </div>
+
+    <!-- TODO 06: MS Planner / Gantt View from #pasted02 -->
+    <div class="ms-container">
+        <div class="ms-toolbar">
+            <div style="display:flex;align-items:center;gap:8px">
+                <div class="icon-btn" style="background:var(--sf2);color:var(--ink)"><i class="ri-calendar-todo-line"></i></div>
+                <div>
+                    <div style="font-size:12px;font-weight:700">Planejamento Mestre</div>
+                    <div style="font-family:var(--mono);font-size:9px;color:var(--ghost)">Visualização Gantt · MS Project Mode</div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px">
+                <button class="vis-bar" style="margin:0;height:28px;padding:0 8px;cursor:pointer"><i class="ri-zoom-out-line"></i> <span>Zoom</span></button>
+                <button class="vis-bar" style="margin:0;height:28px;padding:0 8px;cursor:pointer"><i class="ri-filter-3-line"></i> <span>Filtro</span></button>
+                <div style="width:1px;height:20px;background:var(--brd);margin:0 4px"></div>
+                <button class="vis-bar" style="margin:0;height:28px;padding:0 8px;background:var(--ink);color:#fff;border-color:var(--ink);cursor:pointer"><i class="ri-save-3-line" style="color:#fff"></i> <span>Salvar</span></button>
+            </div>
+        </div>
+        <div class="ms-body">
+            <div class="ms-side">
+                <div class="ms-side-head"><span style="width:20px">#</span><span style="flex:1">Atividade</span><span>Resp.</span></div>
+                <div class="ms-task-row group"><span style="font-family:var(--mono);width:20px">01</span><span>1. Pré-Produção</span></div>
+                <div class="ms-task-row"><span style="font-family:var(--mono);width:20px;color:var(--mist)">1.1</span><span style="flex:1">Definição de Budget</span><div class="user-av" style="width:20px;height:20px"><img src="https://i.pravatar.cc/44?img=12" alt=""></div></div>
+                <div class="ms-task-row"><span style="font-family:var(--mono);width:20px;color:var(--mist)">1.2</span><span style="flex:1">Reserva Local</span><div class="user-av" style="width:20px;height:20px"><img src="https://i.pravatar.cc/44?img=5" alt=""></div></div>
+                <div class="ms-task-row"><span style="font-family:var(--mono);width:20px;color:var(--mist)">1.3</span><span style="flex:1">Contratação NCL</span><div class="user-av" style="width:20px;height:20px"><img src="https://i.pravatar.cc/44?img=32" alt=""></div></div>
+                <div class="ms-task-row group"><span style="font-family:var(--mono);width:20px">02</span><span>2. Técnica & Artístico</span></div>
+                <div class="ms-task-row"><span style="font-family:var(--mono);width:20px;color:var(--mist)">2.1</span><span style="flex:1">Booking Headliner</span><div class="user-av" style="width:20px;height:20px"><img src="https://i.pravatar.cc/44?img=15" alt=""></div></div>
+                <div class="ms-task-row"><span style="font-family:var(--mono);width:20px;color:var(--mist)">2.2</span><span style="flex:1">Fornecedor Som/Luz</span><div class="user-av" style="width:20px;height:20px"><img src="https://i.pravatar.cc/44?img=12" alt=""></div></div>
+                <div class="ms-task-row"><span style="font-family:var(--mono);width:20px;color:var(--mist)">2.3</span><span style="flex:1;color:var(--p-urg);font-weight:700">Alvarás e Licenças</span><div class="user-av" style="width:20px;height:20px;border-color:var(--p-urg)"><span style="font-size:9px;font-weight:700;color:var(--p-urg)">!</span></div></div>
+            </div>
+            <div class="ms-time-wrap">
+                <div class="ms-time-head" style="width:800px">
+                    <div class="ms-day"><div class="ms-day-n">01</div><div class="ms-day-l">Seg</div></div>
+                    <div class="ms-day"><div class="ms-day-n">02</div><div class="ms-day-l">Ter</div></div>
+                    <div class="ms-day"><div class="ms-day-n">03</div><div class="ms-day-l">Qua</div></div>
+                    <div class="ms-day"><div class="ms-day-n">04</div><div class="ms-day-l">Qui</div></div>
+                    <div class="ms-day"><div class="ms-day-n">05</div><div class="ms-day-l">Sex</div></div>
+                    <div class="ms-day wk"><div class="ms-day-n">06</div><div class="ms-day-l">Sab</div></div>
+                    <div class="ms-day wk"><div class="ms-day-n">07</div><div class="ms-day-l">Dom</div></div>
+                    <div class="ms-day"><div class="ms-day-n">08</div><div class="ms-day-l">Seg</div></div>
+                    <div class="ms-day"><div class="ms-day-n">09</div><div class="ms-day-l">Ter</div></div>
+                    <div class="ms-day"><div class="ms-day-n">10</div><div class="ms-day-l">Qua</div></div>
+                    <div class="ms-day"><div class="ms-day-n">11</div><div class="ms-day-l">Qui</div></div>
+                    <div class="ms-day"><div class="ms-day-n">12</div><div class="ms-day-l">Sex</div></div>
+                    <div class="ms-day wk"><div class="ms-day-n">13</div><div class="ms-day-l">Sab</div></div>
+                    <div class="ms-day wk"><div class="ms-day-n">14</div><div class="ms-day-l">Dom</div></div>
+                    <div class="ms-day"><div class="ms-day-n">15</div><div class="ms-day-l">Seg</div></div>
+                    <div class="ms-day"><div class="ms-day-n">16</div><div class="ms-day-l">Ter</div></div>
+                    <div class="ms-day"><div class="ms-day-n">17</div><div class="ms-day-l">Qua</div></div>
+                    <div class="ms-day"><div class="ms-day-n">18</div><div class="ms-day-l">Qui</div></div>
+                    <div class="ms-day"><div class="ms-day-n">19</div><div class="ms-day-l">Sex</div></div>
+                    <div class="ms-day wk"><div class="ms-day-n">20</div><div class="ms-day-l">Sab</div></div>
+                </div>
+                <div class="ms-today-line" style="left:580px"><div class="ms-today-label">HOJE</div></div>
+                <!-- Group header row -->
+                <div class="ms-chart-row" style="background:var(--sf2);border-bottom-color:var(--brd)"></div>
+                <!-- 1.1 Budget -->
+                <div class="ms-chart-row"><div class="g-bar plan" style="left:0;width:160px" data-tooltip="R$ 150k Aprovado"><div class="g-fill" style="width:100%"></div><span>Orçamento Inicial</span></div><div class="g-dep" style="left:160px;width:40px"></div></div>
+                <!-- 1.2 Reserva -->
+                <div class="ms-chart-row"><div class="g-bar proc" style="left:200px;width:200px"><div class="g-fill" style="width:80%"></div><span>Negociação MAM</span></div></div>
+                <!-- 1.3 NCL -->
+                <div class="ms-chart-row"><div class="g-bar proc" style="left:120px;width:480px;opacity:.8"><div class="g-fill" style="width:60%"></div><span>Staffing Crew</span></div></div>
+                <!-- Group header row -->
+                <div class="ms-chart-row" style="background:var(--sf2);border-bottom-color:var(--brd)"></div>
+                <!-- 2.1 Booking -->
+                <div class="ms-chart-row"><div class="g-bar plan" style="left:320px;width:400px"><div class="g-fill" style="width:40%"></div><span>International Acts</span></div></div>
+                <!-- 2.2 Som/Luz -->
+                <div class="ms-chart-row"><div class="g-bar wait" style="left:560px;width:200px"><span>Orçamentos Técnicos</span></div></div>
+                <!-- 2.3 Alvarás CRITICAL -->
+                <div class="ms-chart-row"><div class="g-bar crit" style="left:400px;width:120px"><div class="g-fill" style="width:20%"></div><i class="ri-alert-line" style="margin-right:4px"></i> Bombeiros</div></div>
+            </div>
+        </div>
+    </div>
+
+
+
+<!-- TODO 07 FIX: Milestones with forced display+visibility -->
+        <div class="ms-section" style="display:block!important;visibility:visible!important;opacity:1!important;margin-top:14px">
+            <div class="mono" style="font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--mist);margin-bottom:8px">Marcos</div>
+            <div class="ms" style="display:flex!important;visibility:visible!important;opacity:1!important"><div class="ms-icon"><i class="ri-checkbox-circle-line"></i></div><div class="ms-info"><div class="ms-name">NCL completo</div><div class="ms-date">05 Fev · Concluído</div></div><div class="ms-chk done"></div></div>
+            <div class="ms" style="display:flex!important;visibility:visible!important;opacity:1!important"><div class="ms-icon"><i class="ri-checkbox-circle-line"></i></div><div class="ms-info"><div class="ms-name">Lineup confirmado</div><div class="ms-date">10 Fev · Concluído</div></div><div class="ms-chk done"></div></div>
+            <div class="ms" style="display:flex!important;visibility:visible!important;opacity:1!important"><div class="ms-icon"><i class="ri-flag-2-line"></i></div><div class="ms-info"><div class="ms-name">Fornecedores 100%</div><div class="ms-date">18 Fev · Em andamento</div></div><div class="ms-chk"></div></div>
+            <div class="ms" style="display:flex!important;visibility:visible!important;opacity:1!important"><div class="ms-icon"><i class="ri-ticket-2-line"></i></div><div class="ms-info"><div class="ms-name">Início venda ingressos</div><div class="ms-date">20 Fev</div></div><div class="ms-chk"></div></div>
+            <div class="ms" style="display:flex!important;visibility:visible!important;opacity:1!important"><div class="ms-icon"><i class="ri-tools-line"></i></div><div class="ms-info"><div class="ms-name">Montagem espaço</div><div class="ms-date">26 Fev · Véspera</div></div><div class="ms-chk"></div></div>
+            <div class="ms" style="display:flex!important;visibility:visible!important;opacity:1!important;border-color:var(--primary-m);border-style:solid"><div class="ms-icon" style="background:var(--primary-l);color:var(--primary)"><i class="ri-live-fill"></i></div><div class="ms-info"><div class="ms-name" style="font-weight:800">DIA DO EVENTO</div><div class="ms-date">27 Fev · 22h</div></div><div class="ms-chk"></div></div>
+        </div>
+    </div>
+
+    <div class="divider" style=""></div>
+
+
+
+
+    <!-- Phase progress bars — Festa Rara -->
+    <div class="crono-ev">
+        <div class="crono-ev-head">
+            <span class="sdot" style="background:var(--s-prep)"></span>
+            <span class="crono-ev-title">Festa Rara</span>
+            <span class="crono-ev-date">01 Fev → 27 Fev 2026</span>
+        </div>
+        <div class="crono-phases">
+            <div class="crono-phase"><span class="crono-phase-handle" data-tooltip="Arrastar"><i class="ri-draggable"></i></span><span class="crono-phase-label"><i class="ri-draft-line"></i> Planejamento</span><div class="crono-track"><div class="crono-fill" style="width:100%;background:var(--ink)"></div></div><span class="crono-pct">100%</span></div>
+            <div class="crono-phase"><span class="crono-phase-handle"><i class="ri-draggable"></i></span><span class="crono-phase-label"><i class="ri-team-line"></i> Montar NCL</span><div class="crono-track"><div class="crono-fill" style="width:100%;background:var(--ink)"></div></div><span class="crono-pct">100%</span></div>
+            <div class="crono-phase"><span class="crono-phase-handle"><i class="ri-draggable"></i></span><span class="crono-phase-label"><i class="ri-store-2-line"></i> Fornecedores</span><div class="crono-track"><div class="crono-fill" style="width:80%;background:var(--smoke)"></div></div><span class="crono-pct">80%</span></div>
+            <div class="crono-phase"><span class="crono-phase-handle"><i class="ri-draggable"></i></span><span class="crono-phase-label"><i class="ri-music-2-line"></i> Lineup / DJs</span><div class="crono-track"><div class="crono-fill" style="width:90%;background:var(--ink)"></div></div><span class="crono-pct">90%</span></div>
+            <div class="crono-phase"><span class="crono-phase-handle"><i class="ri-draggable"></i></span><span class="crono-phase-label"><i class="ri-megaphone-line"></i> Divulgação</span><div class="crono-track"><div class="crono-fill" style="width:50%;background:var(--smoke)"></div></div><span class="crono-pct">50%</span></div>
+            <div class="crono-phase"><span class="crono-phase-handle"><i class="ri-draggable"></i></span><span class="crono-phase-label"><i class="ri-ticket-2-line"></i> Ingressos</span><div class="crono-track"><div class="crono-fill" style="width:35%;background:var(--mist)"></div></div><span class="crono-pct" style="color:var(--ghost)">35%</span></div>
+            <div class="crono-phase"><span class="crono-phase-handle"><i class="ri-draggable"></i></span><span class="crono-phase-label"><i class="ri-tools-line"></i> Montagem</span><div class="crono-track"><div class="crono-fill" style="width:0%;background:var(--mist)"></div></div><span class="crono-pct" style="color:var(--mist)">0%</span></div>
+            <div class="crono-phase"><span class="crono-phase-handle"><i class="ri-draggable"></i></span><span class="crono-phase-label"><i class="ri-live-line"></i> Dia Evento</span><div class="crono-track"><div class="crono-fill" style="width:0%;background:var(--mist)"></div></div><span class="crono-pct" style="color:var(--mist)">0%</span></div>
+        </div>
+
+        
+    <!-- Dismantle timeline -->
+    <div class="crono-ev">
+        <div class="crono-ev-head"><span class="sdot" style="background:var(--s-prep)"></span><span class="crono-ev-title">Dismantle · Mainstage</span><span class="crono-ev-date">10 Fev → 01 Mar 2026</span></div>
+        <div class="crono-phases">
+            <div class="crono-phase"><span class="crono-phase-handle"><i class="ri-draggable"></i></span><span class="crono-phase-label"><i class="ri-draft-line"></i> Planejamento</span><div class="crono-track"><div class="crono-fill" style="width:100%;background:var(--ink)"></div></div><span class="crono-pct">100%</span></div>
+            <div class="crono-phase"><span class="crono-phase-handle"><i class="ri-draggable"></i></span><span class="crono-phase-label"><i class="ri-team-line"></i> Montar NCL</span><div class="crono-track"><div class="crono-fill" style="width:60%;background:var(--smoke)"></div></div><span class="crono-pct">60%</span></div>
+            <div class="crono-phase"><span class="crono-phase-handle"><i class="ri-draggable"></i></span><span class="crono-phase-label"><i class="ri-music-2-line"></i> Lineup</span><div class="crono-track"><div class="crono-fill" style="width:45%;background:var(--smoke)"></div></div><span class="crono-pct">45%</span></div>
+            <div class="crono-phase"><span class="crono-phase-handle"><i class="ri-draggable"></i></span><span class="crono-phase-label"><i class="ri-store-2-line"></i> Fornecedores</span><div class="crono-track"><div class="crono-fill" style="width:20%;background:var(--mist)"></div></div><span class="crono-pct" style="color:var(--ghost)">20%</span></div>
+            <div class="crono-phase"><span class="crono-phase-handle"><i class="ri-draggable"></i></span><span class="crono-phase-label"><i class="ri-megaphone-line"></i> Divulgação</span><div class="crono-track"><div class="crono-fill" style="width:10%;background:var(--mist)"></div></div><span class="crono-pct" style="color:var(--ghost)">10%</span></div>
+        </div>
+    </div>
+</div>
+</div>
+
+</div><!-- end .main -->
+
+<!-- ═══ SLIDE-OVER ═══ -->
+<div class="so-bg" id="soBg"></div>
+<div class="so" id="so">
+    <div class="so-head">
+        <button class="so-close" data-tooltip="Fechar" onclick="closeSo()"><i class="ri-arrow-right-s-line"></i></button>
+        <span class="so-head-id" id="soId">EV-004</span>
+        <div class="so-head-acts">
+            <button class="icon-btn" data-tooltip="Compartilhar"><i class="ri-share-line"></i></button>
+            <button class="icon-btn" data-tooltip="Mais opções"><i class="ri-more-2-fill"></i></button>
+        </div>
+    </div>
+    <div class="so-body">
+        <div class="so-title" id="soTitle">Festa Rara</div>
+        <div class="so-venue"><i class="ri-map-pin-line"></i> Casa França-Brasil · Centro, RJ</div>
+        <div class="so-meta">
+            <div class="so-meta-k">Status</div><div class="so-meta-v"><span class="sdot" style="background:var(--s-prep)"></span> Preparando</div>
+            <div class="so-meta-k">Data</div><div class="so-meta-v mono" style="font-size:11px">27 Fev 2026 · 22h–06h</div>
+            <div class="so-meta-k">Gestor</div><div class="so-meta-v"><div class="user-av" style="width:18px;height:18px;border:none"><img src="https://i.pravatar.cc/36?img=12" style="border-radius:50%;width:100%;height:100%"></div> Valle</div>
+            <div class="so-meta-k">NCL</div><div class="so-meta-v mono" style="font-size:11px">8 membros</div>
+            <div class="so-meta-k">Gênero</div><div class="so-meta-v"><span class="etag">Deep House</span><span class="etag">Afrobeat</span></div>
+            <div class="so-meta-k"><i class="ri-eye-line" style="font-size:9px"></i> Budget</div><div class="so-meta-v bold">R$ 6.500</div>
+        </div>
+        <div class="so-desc">Festa mensal do Coletivo 44 na Casa França-Brasil. Deep house com influências afrobeat, lineup de 6 DJs, bar completo, iluminação cenográfica. Capacidade: 400 pessoas.</div>
+        <div class="so-sec">Checklist (5/8)</div>
+        <div>
+            <div class="so-task"><div class="so-task-chk done"></div><span class="so-task-text done">Reservar espaço</span></div>
+            <div class="so-task"><div class="so-task-chk done"></div><span class="so-task-text done">Confirmar lineup de DJs</span></div>
+            <div class="so-task"><div class="so-task-chk done"></div><span class="so-task-text done">Contratar som + iluminação</span></div>
+            <div class="so-task"><div class="so-task-chk done"></div><span class="so-task-text done">Equipe de segurança</span></div>
+            <div class="so-task"><div class="so-task-chk done"></div><span class="so-task-text done">Fornecedor de bebidas</span></div>
+            <div class="so-task"><div class="so-task-chk"></div><span class="so-task-text">Finalizar arte dos flyers</span></div>
+            <div class="so-task"><div class="so-task-chk"></div><span class="so-task-text">Abrir venda de ingressos</span></div>
+            <div class="so-task"><div class="so-task-chk"></div><span class="so-task-text">Passagem de som + montagem</span></div>
+        </div>
+    </div>
+    <div class="so-footer"><input type="text" placeholder="Adicionar tarefa…"><button class="send" data-tooltip="Enviar"><i class="ri-send-plane-fill"></i></button></div>
+</div>
+
+<script>/*
+ * GESTOR apollo v4 — JavaScript Controller
+ * 
+ * TODO 0: Tab icons swap between -s (selected) and -v (void) SVG masks
+ * TODO 01: Stats forced visible via CSS !important
+ * TODO 02: Header <select> switches between Overview + single events
+ * TODO 03: Single event pages simulated per selection
+ * TODO 07: Milestones forced visible via CSS !important + JS re-trigger
+ * 
+ * PLUGIN BASE:
+ * wp-project-manager-develop, employee-management-system-master,
+ * upstream gantt, upstream cmb2, upstream custom-reminders
+ * 
+ * TERMINOLOGY: PROJECT=EVENTO | TASK=TAREFA | STAFF/TEAM=TIME
+ * PERMISSION: ADM > Gestor > Team Gestor > Team
+ */
+
+// ═══ LOADER ═══
+window.addEventListener('load',()=>{
+    setTimeout(()=>{const l=document.getElementById('loader');if(l)l.classList.add('out')},450);
+});
+
+// ═══ TAB SYSTEM — Icon switching (TODO 0) ═══
+// Each tab has data-icon-active and data-icon-inactive for SVG mask URLs
+const tabs=document.querySelectorAll('.tab');
+const panels=document.querySelectorAll('.panel');
+
+function updateTabIcons(){
+    tabs.forEach(t=>{
+        const ico=t.querySelector('[data-apollo-icon]');
+        if(!ico)return;
+        const active=t.dataset.iconActive;
+        const inactive=t.dataset.iconInactive;
+        if(t.classList.contains('on')&&active){
+            ico.style.setProperty('--apollo-mask','url("'+active+'")', 'important');
+        }else if(inactive){
+            ico.style.setProperty('--apollo-mask','url("'+inactive+'")', 'important');
+        }
+    });
+}
+
+tabs.forEach(t=>{
+    t.addEventListener('click',()=>{
+        tabs.forEach(x=>x.classList.remove('on'));
+        panels.forEach(p=>p.classList.remove('on'));
+        t.classList.add('on');
+        updateTabIcons();
+        const target=document.getElementById('p-'+t.dataset.tab);
+        if(target){
+            target.classList.add('on');
+            const els=target.querySelectorAll('.ev-card,.staff-card,.sup-row,.crono-phase,.ms,.stat,.task-row,.ms-task-row');
+            if(els.length)gsap.from(els,{y:20,opacity:0,duration:.4,stagger:.04,ease:'power2.out'});
+        }
+    });
+});
+// Set initial icon states
+updateTabIcons();
+
+// ═══ EVENT SELECTOR (TODO 02 + 03) ═══
+// PHP: WP_Query on event_listing CPT where user is gestor
+// First option = "Overview Eventos" shows all; others show single event view
+const evSelect=document.getElementById('evSelect');
+const overviewPanel=document.getElementById('p-overview');
+const singlePanels=document.querySelectorAll('.ev-single-panel');
+
+// Event data for simulation (TODO 03)
+const eventData={
+    'ev-004':{name:'Festa Rara',date:'27 Fev 2026',venue:'Casa França-Brasil · Centro',status:'Preparando',tasks:13,total:20,budget:'R$ 6.500',team:8},
+    'ev-005':{name:'Dismantle · Mainstage',date:'01 Mar 2026',venue:'Armazém Utopia · Caju',status:'Preparando',tasks:8,total:20,budget:'R$ 12.000',team:5},
+    'ev-006':{name:'Industrial Complex',date:'12 Mar 2026',venue:'BCo. Makers · Santo Cristo',status:'Planejando',tasks:3,total:20,budget:'R$ 4.200',team:3},
+    'ev-007':{name:'Sunset Theory',date:'22 Mar 2026',venue:'Praia Vermelha · Urca',status:'Planejando',tasks:1,total:12,budget:'R$ 2.800',team:2},
+    'ev-002':{name:'Miscelânea Festival',date:'08 Fev 2026',venue:'Lapa · Centro',status:'Concluído',tasks:20,total:20,budget:'R$ 9.200',team:12},
+    'ev-001':{name:'AfterLove NYE',date:'01 Jan 2026',venue:'Copacabana Palace',status:'Concluído',tasks:15,total:15,budget:'R$ 22.000',team:18}
+};
+
+if(evSelect){
+    evSelect.addEventListener('change',function(){
+        const val=this.value;
+        // Hide all single panels
+        singlePanels.forEach(p=>p.style.display='none');
+        
+        if(val==='overview'){
+            // Show overview, hide single
+            document.getElementById('overviewContent').style.display='block';
+            document.getElementById('singleContent').style.display='none';
+        } else {
+            // Show single event view (TODO 03)
+            document.getElementById('overviewContent').style.display='none';
+            document.getElementById('singleContent').style.display='block';
+            const ev=eventData[val];
+            if(ev){
+                document.getElementById('singleName').textContent=ev.name;
+                document.getElementById('singleDate').textContent=ev.date+' · '+ev.venue;
+                document.getElementById('singleStatus').textContent=ev.status;
+                document.getElementById('singleTasks').textContent=ev.tasks+'/'+ev.total+' tarefas';
+                document.getElementById('singleBudget').textContent=ev.budget;
+                document.getElementById('singleTeam').textContent=ev.team+' membros';
+                // Update stat numbers
+                document.getElementById('sStat1').textContent=ev.total;
+                document.getElementById('sStat2').textContent=ev.tasks;
+                document.getElementById('sStat3').textContent=ev.total-ev.tasks;
+                document.getElementById('sStat4').textContent=ev.team;
+                // Animate
+                gsap.from('#singleContent .stat',{y:16,opacity:0,duration:.35,stagger:.05,ease:'power2.out'});
+                gsap.from('#singleContent .task-row',{y:10,opacity:0,duration:.3,stagger:.03,ease:'power2.out',delay:.2});
+            }
+        }
+    });
+}
+
+// ═══ KANBAN DRAG & DROP ═══
+let draggedCard=null;
+function initDrag(){
+    document.querySelectorAll('.ev-card').forEach(card=>{
+        card.setAttribute('draggable','true');
+        card.addEventListener('dragstart',e=>{
+            draggedCard=card;card.style.opacity='.35';e.dataTransfer.effectAllowed='move';
+        });
+        card.addEventListener('dragend',()=>{
+            card.style.opacity='1';draggedCard=null;
+            document.querySelectorAll('.ev-list').forEach(l=>l.classList.remove('drag-over'));
+        });
+    });
+    document.querySelectorAll('.ev-list').forEach(list=>{
+        list.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move';list.classList.add('drag-over')});
+        list.addEventListener('dragleave',()=>list.classList.remove('drag-over'));
+        list.addEventListener('drop',e=>{
+            e.preventDefault();list.classList.remove('drag-over');
+            if(draggedCard){
+                const empty=list.querySelector('.empty');if(empty)empty.remove();
+                list.appendChild(draggedCard);updateCounts();
+                gsap.fromTo(draggedCard,{scale:.96,opacity:.5},{scale:1,opacity:1,duration:.3,ease:'back.out(2)'});
+            }
+        });
+    });
+}
+function updateCounts(){
+    document.querySelectorAll('.ev-col').forEach(col=>{
+        const cnt=col.querySelector('.ev-col-count');
+        const n=col.querySelectorAll('.ev-card').length;
+        if(cnt)cnt.textContent=n;
+    });
+}
+initDrag();
+
+// ═══ SLIDE-OVER ═══
+const so=document.getElementById('so'),soBg=document.getElementById('soBg');
+function openEvent(el){
+    const t=el.querySelector('.ev-card-title'),i=el.querySelector('.ev-card-id');
+    if(t)document.getElementById('soTitle').textContent=t.textContent;
+    if(i)document.getElementById('soId').textContent=i.textContent;
+    so.classList.add('open');soBg.classList.add('open');
+}
+function closeSo(){so.classList.remove('open');soBg.classList.remove('open')}
+document.querySelectorAll('.ev-card').forEach(c=>{c.addEventListener('dblclick',()=>openEvent(c))});
+if(soBg)soBg.addEventListener('click',closeSo);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSo()});
+
+// ═══ CHECKBOXES (tasks + milestones) ═══
+document.addEventListener('click',e=>{
+    const chk=e.target.closest('.so-task-chk,.ms-chk,.task-chk');
+    if(chk){
+        chk.classList.toggle('done');
+        const txt=chk.nextElementSibling;
+        if(txt&&(txt.classList.contains('so-task-text')||txt.classList.contains('task-row-info'))){
+            const title=txt.classList.contains('task-row-info')?txt.querySelector('.task-row-title'):txt;
+            if(title)title.classList.toggle('done');
+        }
+    }
+});
+
+// ═══ PIX COPY ═══
+document.querySelectorAll('.staff-pix').forEach(pix=>{
+    pix.addEventListener('click',()=>{
+        const key=pix.getAttribute('data-pix');
+        if(key&&navigator.clipboard){
+            navigator.clipboard.writeText(key);
+            const orig=pix.innerHTML;
+            pix.innerHTML='<i class="ri-check-line"></i> Copiado!';
+            setTimeout(()=>{pix.innerHTML=orig},1200);
+        }
+    });
+});
+
+// ═══ PERMISSION BADGES ═══
+document.querySelectorAll('.perm').forEach(b=>{
+    b.addEventListener('click',()=>{
+        const role=b.getAttribute('data-role');
+        const msgs={'adm':'Apenas ADM do site','gestor':'Gestor + ADM','tgestor':'Gestor + Time Gestor','team':'Todos do time','team-access':'Membros selecionados com acesso'};
+        alert(msgs[role]||'');
+    });
+});
+
+// ═══ KEYBOARD ═══
+document.addEventListener('keydown',e=>{
+    if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();const inp=document.querySelector('.hd-search input');if(inp)inp.focus()}
+});
+
+// ═══ GSAP ═══
+gsap.registerPlugin(ScrollTrigger);
+// Stats — force visible then animate (TODO 01 fix)
+document.querySelectorAll('.stat').forEach(s=>{s.style.display='block';s.style.visibility='visible';s.style.opacity='1'});
+gsap.from('.stat',{y:20,opacity:0,duration:.45,stagger:.06,ease:'power2.out',delay:.5});
+// Bars
+document.querySelectorAll('.crono-fill,.ev-prog-fill').forEach(bar=>{
+    const w=bar.style.width;bar.style.width='0%';
+    setTimeout(()=>gsap.to(bar,{width:w,duration:1,ease:'power2.out'}),600);
+});
+// Cards
+gsap.from('.ev-card',{y:20,opacity:0,duration:.35,stagger:.04,ease:'power2.out',delay:.6});
+// Milestones — force visible (TODO 07 fix)
+document.querySelectorAll('.ms-section,.ms').forEach(el=>{el.style.display='flex';el.style.visibility='visible';el.style.opacity='1'});
+gsap.from('.ms',{y:12,opacity:0,duration:.3,stagger:.04,ease:'power2.out',delay:.8});
+</script>
+</body>
+</html>

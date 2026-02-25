@@ -1,0 +1,31 @@
+deptrac:
+  paths:
+    - ./src
+  layers:
+    - name: Presentation
+      collectors:
+        - type: classNameRegex
+          value: '#^SignerPHP\\\\Presentation\\\\#'
+    - name: Application
+      collectors:
+        - type: classNameRegex
+          value: '#^SignerPHP\\\\Application\\\\#'
+    - name: Domain
+      collectors:
+        - type: classNameRegex
+          value: '#^SignerPHP\\\\Domain\\\\#'
+    - name: Infrastructure
+      collectors:
+        - type: classNameRegex
+          value: '#^SignerPHP\\\\Infrastructure\\\\#'
+  ruleset:
+    Presentation:
+      - Application
+      - Domain
+      - Infrastructure
+    Application:
+      - Domain
+    Domain: []
+    Infrastructure:
+      - Application
+      - Domain

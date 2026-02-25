@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apollo | Radar de Usuários</title>
+
+    <!-- ============================================
+         APOLLO CDN CORE (Mandatory)
+         Loads: Base CSS + GSAP + RemixIcon + jQuery
+         ============================================ -->
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
+
+    <style>
+        /* ============================================
+           CUSTOM STYLES FOR APOLLO RADAR
+           ============================================ */
+
+        :root {
+            --radar-spacing: 40px;
+            --card-width: 240px;
+            --card-height: 350px;
+        }
+
+        body {
+            background: var(--bg) !important;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           HEADER SECTION
+           ============================================ */
+        .radar-header {
+            padding: var(--space-6) var(--space-4) var(--space-4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-4);
+            position: relative;
+        }
+
+        .radar-brand {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 0.875rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--txt-color-heading);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .live-indicator {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse-radar 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse-radar {
+            0%, 100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(244, 95, 0, 0.7);
+            }
+            50% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(244, 95, 0, 0);
+            }
+        }
+
+        /* ============================================
+           FILTER BAR
+           ============================================ */
+        .filter-bar {
+            display: flex;
+            gap: var(--space-2);
+            padding: var(--space-1);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: var(--space-2) var(--space-3);
+            border-radius: 100px;
+            border: none;
+            background: transparent;
+            font-family: var(--font-heading);
+            font-size: 0.6875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--txt-color);
+            cursor: pointer;
+            transition: all var(--transition-ui);
+        }
+
+        .filter-btn:hover {
+            color: var(--txt-color-hover);
+            background: var(--card);
+        }
+
+        .filter-btn.active {
+            background: var(--white-1);
+            color: var(--txt-color-heading);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Dark mode adjustments */
+        html.dark-mode .filter-btn.active {
+            background: var(--white-3);
+        }
+
+        /* ============================================
+           RADAR GRID
+           ============================================ */
+        .radar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(var(--card-width), 1fr));
+            gap: var(--radar-spacing);
+            padding: var(--radar-spacing) 5%;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            justify-items: center;
+        }
+
+        /* ============================================
+           USER CARD
+           WordPress Loop: Each .user-card should be
+           generated dynamically with user data
+           ============================================ */
+        .user-card {
+            width: var(--card-width);
+            height: var(--card-height);
+            border: 4px solid var(--white-1);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.12),
+                        0 0 0 1px var(--border);
+            position: relative;
+            background: var(--black-10);
+            transition: transform 0.4s var(--ease-default);
+            cursor: pointer;
+        }
+
+        .user-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+
+        .user-card::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 0) 0%,
+                rgba(0, 0, 0, 0.2) 50%,
+                rgba(0, 0, 0, 0.85) 100%
+            );
+        }
+
+        .user-card__media {
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        .user-card__avatar {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s var(--ease-default);
+        }
+
+        .user-card:hover .user-card__avatar {
+            transform: scale(1.08);
+        }
+
+        .user-card__body {
+            position: absolute;
+            bottom: 25px;
+            left: 20px;
+            right: 20px;
+            color: #fff;
+            z-index: 5;
+        }
+
+        .user-card__header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .user-card__name {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            line-height: 1.1;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            margin: 0;
+        }
+
+        .user-badges {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .user-badges i {
+            font-size: 1.1rem;
+            color: #fff;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        .user-card__bio {
+            font-family: var(--font-main);
+            font-size: 0.8rem;
+            font-weight: 400;
+            margin-bottom: var(--space-3);
+            opacity: 0.9;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-card__footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-card__stats {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .user-card__stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-family: var(--font-main);
+            font-size: 0.625rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 100px;
+            padding: 4px 10px;
+            color: #fff;
+            transition: all 0.2s var(--ease-default);
+            text-decoration: none;
+        }
+
+        .user-card__stat:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .user-card__stat i {
+            font-size: 0.875rem;
+        }
+
+        /* ============================================
+           FILTER STATE: Hidden cards
+           ============================================ */
+        .user-card.hidden {
+            display: none;
+        }
+
+        /* Dark mode card adjustments */
+        html.dark-mode .user-card {
+            border-color: var(--black-1);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4),
+                        0 0 0 1px var(--border);
+        }
+
+        html.dark-mode .user-card:hover {
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================
+         HEADER: Brand + Filters
+         ============================================ -->
+    <header class="radar-header">
+        <div class="radar-brand">
+            <div class="live-indicator"></div>
+            APOLLO RADAR
+        </div>
+
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="verified">Verificadxs</button>
+            <button class="filter-btn" data-filter="apollo-team">Apollo::team</button>
+            <button class="filter-btn" data-filter="cenario">Cena::rio</button>
+        </div>
+    </header>
+
+    <!-- ============================================
+         USER GRID
+         WordPress: Use WP_User_Query loop here
+         ============================================ -->
+    <div class="radar-grid">
+
+        <!--
+        =============================================
+        USER CARD TEMPLATE
+        WordPress developers: Replace with WP loop
+
+        Data attributes for filtering:
+        - data-verified="true" (if user is verified)
+        - data-apollo-team="true" (if Apollo team member)
+        - data-cenario="true" (if Cena::rio member)
+        =============================================
+        -->
+
+        <!-- USER 1: Rafael Valle (All badges) -->
+        <article class="user-card reveal-up"
+                 data-verified="true"
+                 data-apollo-team="true"
+                 data-cenario="false">
+            <figure class="user-card__media">
+                <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400&auto=format&fit=crop"
+                     alt="Rafael Valle"
+                     class="user-card__avatar" />
+            </figure>
+            <div class="user-card__body">
+                <div class="user-card__header">
+                    <h2 class="user-card__name">Rafael Valle</h2>
+                    <div class="user-badges">
+                        <i class="i-apollo-fill" title="Apollo team"></i>
+                        <i class="ri-shield-check-fill" title="Verificado"></i>
+                    </div>
+                </div>
+                <p class="user-card__bio">
+                    Sound architect bridging Rio &amp; Berlin. Vinyl collector &amp; event curator.
+                </p>
+                <div class="user-card__footer">
+                    <div class="user-card__stats">
+                        <div class="user-card__stat" title="Ranking Global">
+                            <i class="ri-team-fill"></i> #1
+                        </div>
+                        <a href="#" class="user-card__stat" title="Enviar mensagem">
+                            <i class="ri-message-3-line"></i> Mensagem
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- USER 2: Sophie Bennett (Verified only) -->
+        <article class="user-card reveal-up"
+                 data-verified="true"
+                 data-apollo-team="false"
+                 data-cenario="false">
+            <figure class="user-card__media">
+                <img src="https://images.pexels.com/photos/4850291/pexels-photo-4850291.jpeg?auto=compress&cs=tinysrgb&w=600"
+                     alt="Sophie Bennett"
+                     class="user-card__avatar" />
+            </figure>
+            <div class="user-card__body">
+                <div class="user-card__header">
+                    <h2 class="user-card__name">Sophie Bennett</h2>
+                    <div class="user-badges">
+                        <i class="ri-shield-check-fill" title="Verificado"></i>
+                    </div>
+                </div>
+                <p class="user-card__bio">
+                    Front-end Developer. Focus on amazing user experiences.
+                </p>
+                <div class="user-card__footer">
+                    <div class="user-card__stats">
+                        <div class="user-card__stat">
+                            <i class="ri-team-fill"></i> #2
+                        </div>
+                        <a href="#" class="user-card__stat">
+                            <i class="ri-message-3-line"></i> Mensagem
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- USER 3: Elena Fisher (Cena::rio) -->
+        <article class="user-card reveal-up"
+                 data-verified="false"
+                 data-apollo-team="false"
+                 data-cenario="true">
+            <figure class="user-card__media">
+                <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=600"
+                     alt="Elena Fisher"
+                     class="user-card__avatar" />
+            </figure>
+            <div class="user-card__body">
+                <div class="user-card__header">
+                    <h2 class="user-card__name">Elena Fisher</h2>
+                    <div class="user-badges">
+                        <i class="ri-disc-line" title="Cena::rio"></i>
+                    </div>
+                </div>
+                <p class="user-card__bio">
+                    Visual Artist &amp; Creative Director. Crafting digital dreams.
+                </p>
+                <div class="user-card__footer">
+                    <div class="user-card__stats">
+                        <div class="user-card__stat">
+                            <i class="ri-team-fill"></i> #3
+                        </div>
+                        <a href="#" class="user-card__stat">
+                            <i class="ri-message-3-line"></i> Mensagem
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- USER 4: Marcus Chen (Verified + Cena::rio) -->
+        <article class="user-card reveal-up"
+                 data-verified="true"
+                 data-apollo-team="false"
+                 data-cenario="true">
+            <figure class="user-card__media">
+                <img src="https://images.pexels.com/photos/1680172/pexels-photo-1680172.jpeg?auto=compress&cs=tinysrgb&w=600"
+                     alt="Marcus Chen"
+                     class="user-card__avatar" />
+            </figure>
+            <div class="user-card__body">
+                <div class="user-card__header">
+                    <h2 class="user-card__name">Marcus Chen</h2>
+                    <div class="user-badges">
+                        <i class="ri-shield-check-fill" title="Verificado"></i>
+                        <i class="ri-disc-line" title="Cena::rio"></i>
+                    </div>
+                </div>
+                <p class="user-card__bio">
+                    System Analyst. Obsessed with clean code and coffee.
+                </p>
+                <div class="user-card__footer">
+                    <div class="user-card__stats">
+                        <div class="user-card__stat">
+                            <i class="ri-team-fill"></i> #4
+                        </div>
+                        <a href="#" class="user-card__stat">
+                            <i class="ri-message-3-line"></i> Mensagem
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- USER 5: Sarah Connor (No badges) -->
+        <article class="user-card reveal-up"
+                 data-verified="false"
+                 data-apollo-team="false"
+                 data-cenario="false">
+            <figure class="user-card__media">
+                <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=600"
+                     alt="Sarah Connor"
+                     class="user-card__avatar" />
+            </figure>
+            <div class="user-card__body">
+                <div class="user-card__header">
+                    <h2 class="user-card__name">Sarah C.</h2>
+                </div>
+                <p class="user-card__bio">
+                    Cybersecurity Expert. Keeping the digital frontier safe.
+                </p>
+                <div class="user-card__footer">
+                    <div class="user-card__stats">
+                        <div class="user-card__stat">
+                            <i class="ri-team-fill"></i> #5
+                        </div>
+                        <a href="#" class="user-card__stat">
+                            <i class="ri-message-3-line"></i> Mensagem
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- USER 6: Apollo Team Member -->
+        <article class="user-card reveal-up"
+                 data-verified="false"
+                 data-apollo-team="true"
+                 data-cenario="false">
+            <figure class="user-card__media">
+                <img src="https://images.pexels.com/photos/1484794/pexels-photo-1484794.jpeg?auto=compress&cs=tinysrgb&w=600"
+                     alt="Alex Johnson"
+                     class="user-card__avatar" />
+            </figure>
+            <div class="user-card__body">
+                <div class="user-card__header">
+                    <h2 class="user-card__name">Alex Johnson</h2>
+                    <div class="user-badges">
+                        <i class="i-apollo-fill" title="Apollo team"></i>
+                    </div>
+                </div>
+                <p class="user-card__bio">
+                    Platform architect. Building the future of connection.
+                </p>
+                <div class="user-card__footer">
+                    <div class="user-card__stats">
+                        <div class="user-card__stat">
+                            <i class="ri-team-fill"></i> #6
+                        </div>
+                        <a href="#" class="user-card__stat">
+                            <i class="ri-message-3-line"></i> Mensagem
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+    </div>
+
+    <!-- ============================================
+         FILTER LOGIC + GSAP ANIMATIONS
+         ============================================ -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // ======================================
+            // GSAP ANIMATIONS (if available from CDN)
+            // ======================================
+            if (typeof gsap !== 'undefined') {
+                gsap.from(".reveal-up", {
+                    y: 50,
+                    opacity: 0,
+                    duration: 0.8,
+                    stagger: 0.1,
+                    ease: "power3.out"
+                });
+
+                gsap.from(".filter-btn", {
+                    y: -10,
+                    opacity: 0,
+                    duration: 0.5,
+                    stagger: 0.05,
+                    delay: 0.2
+                });
+            }
+
+            // ======================================
+            // FILTER FUNCTIONALITY
+            // ======================================
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const userCards = document.querySelectorAll('.user-card');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update active state
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Get filter type
+                    const filterType = this.dataset.filter;
+
+                    // Filter cards
+                    userCards.forEach(card => {
+                        if (filterType === 'all') {
+                            card.classList.remove('hidden');
+                        } else if (filterType === 'verified') {
+                            if (card.dataset.verified === 'true') {
+                                card.classList.remove('hidden');
+                            } else {
+                                card.classList.add('hidden');
+                            }
+                        } else if (filterType === 'apollo-team') {
+                            if (card.dataset.apolloTeam === 'true') {
+                                card.classList.remove('hidden');
+                            } else {
+                                card.classList.add('hidden');
+                            }
+                        } else if (filterType === 'cenario') {
+                            if (card.dataset.cenario === 'true') {
+                                card.classList.remove('hidden');
+                            } else {
+                                card.classList.add('hidden');
+                            }
+                        }
+                    });
+
+                    // Re-animate visible cards
+                    if (typeof gsap !== 'undefined') {
+                        const visibleCards = document.querySelectorAll('.user-card:not(.hidden)');
+                        gsap.from(visibleCards, {
+                            scale: 0.9,
+                            opacity: 0,
+                            duration: 0.4,
+                            stagger: 0.05,
+                            ease: "back.out(1.4)"
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

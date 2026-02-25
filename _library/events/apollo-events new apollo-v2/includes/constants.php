@@ -1,0 +1,60 @@
+<?php
+/**
+ * Constantes do plugin
+ *
+ * @package Apollo\Event
+ */
+
+declare(strict_types=1);
+
+namespace Apollo\Event;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+// REST API namespace (compartilhado com todo ecossistema Apollo)
+define( 'APOLLO_EVENT_REST_NAMESPACE', 'apollo/v1' );
+
+// CPT slug — conforme apollo-registry.json
+define( 'APOLLO_EVENT_CPT', 'event' );
+
+// Taxonomias — registradas pelo apollo-core como GLOBAL BRIDGE
+define( 'APOLLO_EVENT_TAX_CATEGORY', 'event_category' );
+define( 'APOLLO_EVENT_TAX_TYPE', 'event_type' );
+define( 'APOLLO_EVENT_TAX_TAG', 'event_tag' );
+define( 'APOLLO_EVENT_TAX_SOUND', 'sound' );
+define( 'APOLLO_EVENT_TAX_SEASON', 'season' );
+
+// Expiração — evento vira "gone" 30 minutos após end_date + end_time
+define( 'APOLLO_EVENT_GONE_OFFSET_MINUTES', 30 );
+
+// Templates — styles disponíveis
+define( 'APOLLO_EVENT_STYLES', [ 'base', 'apollo-v1', 'apollo-v2', 'ui-thim', 'ui-lis' ] );
+define( 'APOLLO_EVENT_DEFAULT_STYLE', 'base' );
+
+// Cache group
+define( 'APOLLO_EVENT_CACHE_GROUP', 'apollo_events' );
+define( 'APOLLO_EVENT_CACHE_TTL', 300 ); // 5 minutos
+
+// Meta keys — conforme apollo-registry.json → meta.event
+define( 'APOLLO_EVENT_META_KEYS', [
+	'_event_start_date',
+	'_event_end_date',
+	'_event_start_time',
+	'_event_end_time',
+	'_event_dj_ids',
+	'_event_dj_slots',
+	'_event_loc_id',
+	'_event_banner',
+	'_event_ticket_url',
+	'_event_ticket_price',
+	'_event_privacy',
+	'_event_status',
+	'_event_is_gone',
+	// Apollo V2 extensions
+	'_event_video_url',
+	'_event_gallery',
+	'_event_coupon_code',
+	'_event_list_url',
+] );

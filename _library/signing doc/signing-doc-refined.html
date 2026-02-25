@@ -1,0 +1,841 @@
+﻿<!--
+═══════════════════════════════════════════════════════════════════
+  APOLLO-SIGN — Signing Document Prototype · v1.2.0
+  File: _library/signing doc/signing-doc-refined.html
+  This file is the DEFINITIVE UI prototype + PHP plugin blueprint.
+  Adapt panels, JS state machine, and REST calls into the plugin.
+  Registry: _inventory/apollo-registry.json → plugins.apollo-sign
+
+  ── NAMESPACE & LAYER ────────────────────────────────────────────
+  Namespace : Apollo\Sign
+  Layer     : L5 — Documents (depends on L0 apollo-core, apollo-docs)
+  Status    : IMPLEMENTED v1.2.0
+  Composer  : jeidison/signer-php ^1.0
+
+  ── DB TABLES ─────────────────────────────────────────────────────
+  apollo_signatures:
+    sig_x            DECIMAL(5,4)       — fractional X position 0.0–1.0
+    sig_y            DECIMAL(5,4)       — fractional Y position 0.0–1.0
+    sig_w            DECIMAL(5,4)       — fractional width 0.0–1.0
+    sig_h            DECIMAL(5,4)       — fractional height 0.0–1.0
+    sig_page         SMALLINT UNSIGNED  — PDF page number (1-based)
+    placement_mode   VARCHAR(20)        — 'manual' | 'auto_footer'
+    signature_image_path VARCHAR(512)   — hand-drawn/uploaded PNG path
+    stamp_path       VARCHAR(512)       — generated visual stamp PNG
+
+  apollo_signature_audit:
+    Immutable event log: hash, timestamp, ip_hash, user_agent, action
+
+  ── REST ENDPOINTS ────────────────────────────────────────────────
+  POST   apollo/v1/signatures                    — create signature request
+  GET    apollo/v1/signatures/{id}               — get signature (public)
+  POST   apollo/v1/signatures/{id}/sign          — sign with PFX certificate
+  GET    apollo/v1/signatures/{id}/audit         — audit trail (auth required)
+  POST   apollo/v1/signatures/{id}/placement     — save placement coordinates
+  GET    apollo/v1/signatures/{id}/placement     — get saved placement
+  GET    apollo/v1/signatures/verify/{hash}      — public hash verification
+
+  ── COORDINATE SYSTEM ─────────────────────────────────────────────
+  Frontend : Canvas pixels, origin top-left.
+             JS  currentRect = { x, y, w, h }  (px)
+             JS  rectToFraction() → { sig_x, sig_y, sig_w, sig_h }  (0.0–1.0)
+  Storage  : DECIMAL(5,4) fractions in apollo_signatures table.
+  Backend  : PDF points (72 pt/inch), origin BOTTOM-LEFT, Y axis INVERTED.
+             PHP: $pdfY = (1 - $sig_y - $sig_h) * $pageHeightPt;
+             PHP: $pdfX = $sig_x * $pageWidthPt;
+
+  ── STATE MACHINE ─────────────────────────────────────────────────
+  IDLE ──(Posicionar tapped)──► PLACING
+  PLACING ──(tap×2 on doc)────► PLACED
+  PLACED ──(drag/resize)──────► DRAGGING | RESIZING ──► PLACED
+  PLACED ──(Assinar + agree)──► SIGNED ──(ApolloSlider)──► Panel done
+  JS STATE aliases (internal): 'IDLE' = IDLE | 'V1' = PLACING | 'DONE' = PLACED
+
+  ── PHP ADAPTER MAP ───────────────────────────────────────────────
+  Panel 1 [data-panel="preview"] → src/templates/sign/preview.php
+  Panel 2 [data-panel="sign"]    → src/templates/sign/sign.php
+  Panel 3 [data-panel="done"]    → src/templates/sign/done.php
+  ApolloSlider v2                → assets/js/apollo-slider.js
+  Sign placement JS              → assets/js/sign-placement.js
+  Signature pad / SVG generator  → assets/js/signature-pad.js
+  Pinch zoom (WeakMap)           → absorbed into sign-placement.js
+  Apollo CDN (GSAP 3.13)         → APOLLO_CDN_URL core.js (bundled)
+  interact.js                    → assets/js/vendor/interact.min.js
+
+  ── PHP CLASS SKELETON ────────────────────────────────────────────
+  namespace Apollo\Sign;
+  class SignController extends \Apollo\Core\API\RestBase {
+
+    public function register_routes(): void {
+      register_rest_route(APOLLO_REST_NAMESPACE, '/signatures', [
+        'methods' => 'POST', 'callback' => [$this, 'create'],
+        'permission_callback' => [$this, 'is_logged_in'],
+      ]);
+      register_rest_route(APOLLO_REST_NAMESPACE, '/signatures/(?P<id>[\d]+)/sign', [
+        'methods' => 'POST', 'callback' => [$this, 'sign_document'],
+        'permission_callback' => [$this, 'is_logged_in'],
+      ]);
+      // ... other routes
+    }
+
+    public function sign_document(\WP_REST_Request $req): \WP_REST_Response {
+      if (!wp_verify_nonce($req->get_header('X-WP-Nonce'), 'apollo_sign_' . $req['id']))
+        return new \WP_REST_Response(['error' => 'bad_nonce'], 403);
+
+      $frac = $this->pixels_to_fraction([
+        'x' => floatval($req['x']), 'y' => floatval($req['y']),
+        'w' => floatval($req['w']), 'h' => floatval($req['h']),
+      ], 794, 1123);
+      // validate: all values must be in [0.0, 1.0]
+      foreach ($frac as $k => $v) {
+        if ($v < 0.0 || $v > 1.0) return $this->prepare_response(['error'=>'invalid_coords'],400);
+      }
+      // TODO: invoke jeidison/signer-php with $frac + PFX cert
+      return $this->prepare_response(['signed' => true, 'hash' => bin2hex(random_bytes(32))]);
+    }
+
+    private function pixels_to_fraction(array $rect, int $cw, int $ch): array {
+      return [
+        'sig_x' => round(max(0, min(1, $rect['x'] / $cw)), 4),
+        'sig_y' => round(max(0, min(1, $rect['y'] / $ch)), 4),
+        'sig_w' => round(max(0, min(1, $rect['w'] / $cw)), 4),
+        'sig_h' => round(max(0, min(1, $rect['h'] / $ch)), 4),
+      ];
+    }
+
+    private function fraction_to_pdf_points(array $f, float $pH, float $pW): array {
+      // PDF origin is bottom-left — Y axis inverted
+      return [
+        'llx' => $f['sig_x'] * $pW,
+        'lly' => (1 - $f['sig_y'] - $f['sig_h']) * $pH,
+        'urx' => ($f['sig_x'] + $f['sig_w']) * $pW,
+        'ury' => (1 - $f['sig_y']) * $pH,
+      ];
+    }
+  }
+
+  ── PHP HOOKS ─────────────────────────────────────────────────────
+  add_action('apollo/core/initialized', [SignPlugin::class, 'boot']);
+  do_action('apollo/sign/created',      $doc_id, $user_id);
+  do_action('apollo/sign/signed',       $sig_id, $hash);
+  do_action('apollo/sign/verified',     $sig_id, $verified_by);
+  Hook naming: apollo/{plugin}/{action} — apollo-registry.json convention.
+
+  ── wp_localize_script DATA ───────────────────────────────────────
+  wp_localize_script('apollo-sign-placement', 'apolloSign', [
+    'docId'   => absint($doc->ID),
+    'docHash' => esc_js($doc->hash),
+    'docTitle'=> esc_js($doc->post_title),
+    'nonce'   => wp_create_nonce('apollo_sign_' . $doc->ID),
+    'restBase'=> esc_url_raw(rest_url('apollo/v1')),
+    'sigId'   => absint($sig->ID ?? 0),
+    'placement'=> $placement, // array from DB: sig_x, sig_y, sig_w, sig_h
+    'cdnUrl'  => esc_url(APOLLO_CDN_URL),
+  ]);
+
+  ── SECURITY CHECKLIST ────────────────────────────────────────────
+  ✓ wp_verify_nonce($n, 'apollo_sign_' . $doc_id)  on every mutation
+  ✓ current_user_can('upload_files')               PFX certificate upload
+  ✓ sanitize_text_field()                          text inputs
+  ✓ absint()                                       page numbers
+  ✓ floatval + clamp [0.0, 1.0]                   fractional coords
+  ✓ esc_html(), esc_attr(), wp_kses_post()         output escaping
+  ✓ if (!defined('ABSPATH')) { exit; }             top of every PHP file
+═══════════════════════════════════════════════════════════════════
+-->
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════
+     PHP PART: parts/head.php
+     Registry: apollo-sign → template_parts[0]
+     Render:   <?php require APOLLO_SIGN_PATH . 'templates/parts/head.php'; ?>
+     Contains: <!DOCTYPE>, <html>, <head>, meta tags, CDN scripts, CSS links
+     wp_head:  wp_enqueue_style('apollo-sign-placement')
+               wp_enqueue_script('interact', CDN)
+     ─────────────────────────────────────────────────────────────────
+     PHP vars available: $doc (WP_Post doc CPT), $sig (apollo_signatures row),
+                         $user (WP_User), $apolloSign (localized JS data)
+═══════════════════════════════════════════════════════════════════════╗ -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- PWA / mobile -->  
+<meta name="theme-color" content="#ececed">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<title>Apollo Docs — Assinatura Digital</title>
+
+<!-- fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<!-- icons -->
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.min.css" rel="stylesheet">
+<!-- Apollo CDN — mandatory for all Apollo frontend templates
+     Includes: Apollo CSS, GSAP 3.13, jQuery 3.7.1, RemixIcon, Translate i18n v2.2.4, ApolloTrack analytics
+     PHP constant: APOLLO_CDN_URL = 'https://cdn.apollo.rio.br/v1.0.0/'
+     Registry: apollo-registry.json → namingRules, constants -->
+<!-- Production: <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script> -->
+<!-- Local dev: GSAP 3.13 via jsDelivr (Apollo CDN = apollo.rio.br, offline locally) -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<!-- interact.js -->
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
+<link rel="stylesheet" href="signing-doc-refined.css">
+<!-- Production: wp_enqueue_style('apollo-sign-placement', APOLLO_SIGN_URL . 'assets/css/sign-placement.css', [], APOLLO_VERSION); -->
+</head>
+<!-- ╚═ END parts/head.php ═══════════════════════════════════════════════╝ -->
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════
+     PHP PART: (body open — inlined in sign.php main template)
+     Registry: apollo-sign → pages[0] → template: sign.php
+     Render:   Main template orchestrator — requires all parts/* below
+     Route:    /assinar/{hash} (virtual page)
+═══════════════════════════════════════════════════════════════════════╗ -->
+<body>
+
+<div id="min-warn">⚠ Área mínima de assinatura</div>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════
+     PHP PART: parts/doc-info.php
+     Registry: apollo-sign → template_parts[2]
+     Render:   <?php require APOLLO_SIGN_PATH . 'templates/parts/doc-info.php'; ?>
+     Panel:    1 — DOCUMENT PREVIEW (data-panel="preview")
+     Contains: Document header, full A4 paper preview, participants strip, CTA
+     PHP data: $doc->post_title, $doc->ID, $sig->status, $participants[]
+     CPT:      doc (from apollo-docs) | Tax: doc_folder, doc_type
+     Icon:     ri-file-text-line
+═══════════════════════════════════════════════════════════════════════╗ -->
+<section data-panel="preview">
+
+  <!-- parts/header.php — reusable header component
+       Registry: apollo-sign → template_parts[1]
+       Render: <?php require APOLLO_SIGN_PATH . 'templates/parts/header.php'; ?>
+       PHP: apollo_sign_render_header(['mode' => 'preview', 'doc' => $doc, 'sig' => $sig]) -->
+  <header class="doc-hd">
+    <div class="dh-brand">
+      <span class="gl">Apollo</span>
+      <span class="ga">docs</span>
+    </div>
+    <div class="dh-sep"></div>
+    <div class="dh-doc">
+      <span class="dh-title">Termo de Responsabilidade</span>
+      <span class="dh-id">Nº APOLLO-2025-X992</span>
+    </div>
+    <div class="dh-right">
+      <span class="pill pending" id="pill-p1"><span class="sdot"></span> Pendente</span>
+      <button class="icon-btn" title="Baixar"><i class="ri-download-line"></i></button>
+    </div>
+  </header>
+
+  <!-- gray tray + A4 paper -->
+  <div class="doc-tray">
+    <div class="paper-sheet" id="pdf-p1">
+      <div class="paper">
+
+        <div class="paper-hd">
+          <div class="paper-wordmark">
+            <span class="wm-label">Apollo</span>
+            <span class="wm-dot"></span>
+            <span class="wm-sub">Plataforma Digital</span>
+          </div>
+          <span class="paper-rule"></span>
+          <div class="paper-inst">Apollo Plataforma Digital Ltda. — CNPJ 00.000.000/0001-00</div>
+          <div class="paper-title">Termo de<br>Responsabilidade</div>
+          <div class="paper-docid">Nº APOLLO-2025-X992 &nbsp;·&nbsp; v1.0 &nbsp;·&nbsp; 19.02.2026</div>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">1. Do Objeto</div>
+          <p class="paper-txt">O presente instrumento formaliza as responsabilidades operacionais, de segurança e de convivência aplicáveis ao evento cadastrado na plataforma Apollo::rio, conforme dados inseridos pelo GESTOR responsável, doravante denominado simplesmente RESPONSÁVEL.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">2. Das Obrigações do Responsável</div>
+          <p class="paper-txt">O RESPONSÁVEL declara ciência e plena concordância com as normas vigentes, comprometendo-se irrevogavelmente a:</p>
+          <ul class="paper-list">
+            <li>Garantir a integridade física e o bem-estar de todos os participantes do evento;</li>
+            <li>Respeitar os limites de pressão sonora estabelecidos pela legislação municipal e estadual vigente;</li>
+            <li>Assegurar a limpeza, organização e devolução do local ao estado original pós-evento;</li>
+            <li>Responsabilizar-se civilmente perante terceiros por quaisquer danos materiais ou imateriais decorrentes do evento;</li>
+            <li>Cumprir integralmente as exigências do Corpo de Bombeiros, Vigilância Sanitária e demais órgãos competentes.</li>
+          </ul>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">3. Da Validade Jurídica Digital</div>
+          <p class="paper-txt">A assinatura eletrônica aposta neste instrumento gera hash criptográfico único registrado na infraestrutura blockchain Apollo, conferindo plena validade jurídica nos termos da Medida Provisória nº 2.200-2/2001 e da Lei nº 14.063/2020, sendo equivalente à assinatura manuscrita para todos os efeitos legais previstos no ordenamento jurídico brasileiro.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">4. Das Penalidades e Sanções</div>
+          <p class="paper-txt">O descumprimento de qualquer cláusula do presente instrumento sujeitará o RESPONSÁVEL às penalidades previstas nos Termos de Uso Apollo, bem como à responsabilidade civil e, conforme o caso, penal perante a legislação vigente, incluindo suspensão imediata de conta e registro nos órgãos competentes.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">5. Da Aceitação e Manifestação de Vontade</div>
+          <p class="paper-txt">Ao assinar eletronicamente o presente instrumento, o RESPONSÁVEL declara expressamente que leu, compreendeu e aceita integralmente todos os termos e condições aqui estipulados, dispensando quaisquer formalidades adicionais para sua plena eficácia.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">6. Do Foro</div>
+          <p class="paper-txt">Fica eleito o foro da Comarca do Rio de Janeiro, Estado do Rio de Janeiro, para dirimir quaisquer questões oriundas do presente instrumento, com renúncia expressa a qualquer outro, por mais privilegiado que seja.</p>
+        </div>
+
+        <div class="paper-sig-row">
+          <div class="paper-sig-col">
+            <div class="paper-sig-line ink">
+              <div class="sig-name">Apollo Plataforma Digital Ltda.</div>
+              <div class="sig-role">CNPJ 00.000.000/0001-00 — Emissor</div>
+            </div>
+          </div>
+          <div class="paper-sig-col">
+            <div class="paper-sig-line waiting">
+              <div class="sig-name" style="color:var(--faint);">Responsável / Gestor</div>
+              <div class="sig-role">Aguardando assinatura eletrônica</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="paper-foot">
+          <div class="pf-left">
+            <span>APOLLO-2025-X992 · v1.0</span>
+            <span>Emitido em: 19.02.2026</span>
+          </div>
+          <div class="pf-right">
+            <span>HASH SHA-256: <span style="color:var(--faint);">PENDENTE</span></span>
+            <span>Verificar em: apollo.rio.br/docs/verify</span>
+          </div>
+        </div>
+
+      </div><!-- /paper -->
+
+      <!-- ICP seal -->
+      <div class="paper-seal">
+        <span class="seal-star">✦</span>
+        <span class="seal-txt">ICP-Brasil<br>A3</span>
+      </div>
+
+      <!-- QR placeholder -->
+      <div class="paper-qr"><div class="paper-qr-inner"></div></div>
+
+    </div><!-- /paper-sheet -->
+  </div><!-- /doc-tray -->
+
+  <!-- participants strip -->
+  <div class="part-strip">
+    <div class="part-chip ok"><i class="ri-checkbox-circle-fill"></i> Apollo Admin</div>
+    <div class="part-rule"></div>
+    <div class="part-chip"><i class="ri-time-line"></i> Você — pendente</div>
+  </div>
+
+  <!-- CTA -->
+  <div class="pg-footer">
+    <button class="btn-proceed" data-to="sign" data-dir="right">
+      <i class="ri-quill-pen-line"></i> Prosseguir para Assinar
+    </button>
+  </div>
+
+</section>
+<!-- ╚═ END parts/doc-info.php ═══════════════════════════════════════╝ -->
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════
+     PHP PART: parts/pdf-viewer.php
+     Registry: apollo-sign → template_parts[3]
+     Render:   <?php require APOLLO_SIGN_PATH . 'templates/parts/pdf-viewer.php'; ?>
+     Panel:    2 — SIGN (data-panel="sign")
+     Contains: Toolbar, A4 paper (pdf-p2), touch overlay, ghost SVG, sign-rect
+     JS file:  assets/js/sign-placement.js (state machine IDLE→PLACING→PLACED)
+     CDN deps: interact.min.js (drag/resize)
+     Coords:   Canvas px → fractions 0.0–1.0 via rectToFraction()
+     DB cols:  apollo_signatures.sig_x, sig_y, sig_w, sig_h DECIMAL(5,4)
+═══════════════════════════════════════════════════════════════════════╗ -->
+<section data-panel="sign">
+
+  <!-- parts/header.php — reusable header component
+       Render: <?php apollo_sign_render_header(['mode' => 'sign', 'doc' => $doc]) ?> -->
+  <header class="doc-hd">
+    <button data-back="1" data-dir="left" class="icon-btn" style="color:var(--ghost);">
+      <i class="ri-arrow-left-line"></i>
+    </button>
+    <div class="dh-sep"></div>
+    <div class="breadcrumb">
+      <i class="ri-quill-pen-line"></i>
+      <span>Assinar Documento</span>
+    </div>
+    <div class="dh-right">
+      <span class="pill pending" id="pill-p2"><span class="sdot"></span> Pendente</span>
+    </div>
+  </header>
+
+  <!-- toolbar -->
+  <div class="doc-tb">
+    <div class="doc-tb-meta">
+      <i class="ri-file-pdf-line"></i>
+      <span>Termo de Responsabilidade · APOLLO-2025-X992</span>
+    </div>
+    <div class="doc-tb-right">
+      <button class="tb-btn" id="btn-minus" title="Reduzir (−)" style="font-size:18px;font-weight:700;color:var(--smoke);">&#x2212;</button>
+      <button class="tb-btn" id="btn-plus"  title="Ampliar (+)" style="font-size:18px;font-weight:700;color:var(--smoke);">+</button>
+      <div class="tb-sep"></div>
+      <button class="tb-btn" id="btn-restart-pos" title="Reiniciar posicionamento" style="color:var(--primary);"><i class="ri-restart-line"></i></button>
+      <div class="tb-sep"></div>
+      <button class="tb-btn" title="Baixar"><i class="ri-download-line"></i></button>
+    </div>
+  </div>
+
+  <!-- tray (scrollable) -->
+  <div class="doc-tray" style="flex:1;">
+    <div class="paper-sheet" id="pdf-p2" style="position:relative;overflow:hidden;">
+      <div class="paper">
+
+        <div class="paper-hd">
+          <div class="paper-wordmark">
+            <span class="wm-label">Apollo</span>
+            <span class="wm-dot"></span>
+            <span class="wm-sub">Plataforma Digital</span>
+          </div>
+          <span class="paper-rule"></span>
+          <div class="paper-title">Termo de Responsabilidade</div>
+          <div class="paper-docid">Nº APOLLO-2025-X992</div>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">1. Do Objeto</div>
+          <p class="paper-txt">O presente instrumento formaliza as responsabilidades operacionais, de segurança e de convivência aplicáveis ao evento cadastrado na plataforma Apollo::rio, conforme dados inseridos pelo GESTOR responsável.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">2. Das Obrigações</div>
+          <p class="paper-txt">O RESPONSÁVEL declara ciência e concordância, comprometendo-se a garantir integridade, respeitar limites legais, assegurar organização pós-evento e responder civilmente por danos.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">3. Da Validade Digital</div>
+          <p class="paper-txt">Assinatura ICP-Brasil A3 — validade jurídica plena nos termos da Lei 14.063/2020 e MP 2.200-2/2001.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">4 &amp; 5. Penalidades · Aceitação</div>
+          <p class="paper-txt">O descumprimento sujeita o RESPONSÁVEL às penalidades previstas. Ao assinar, declara leitura e aceite integral.</p>
+        </div>
+
+        <div class="paper-sig-row">
+          <div class="paper-sig-col">
+            <div class="paper-sig-line ink">
+              <div class="sig-name">Apollo Plataforma Digital</div>
+              <div class="sig-role">CNPJ 00.000.000/0001-00</div>
+            </div>
+          </div>
+          <div class="paper-sig-col">
+            <div class="sig-stamp" id="sig-stamp">✦ ASSINADO</div>
+            <!-- SVG signature injected here SAFELY (separate from sig-line children) -->
+            <div id="user-sig-svg" style="margin-bottom:4px;min-height:0;line-height:0;"></div>
+            <div class="paper-sig-line waiting" id="user-sig-line">
+              <div class="sig-name" id="user-sig-name" style="color:var(--faint);">Responsável</div>
+              <div class="sig-role" id="user-sig-cpf" style="color:var(--mist);font-size:8px;"></div>
+              <div class="sig-role" id="user-sig-date">Aguardando...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="paper-foot">
+          <div class="pf-left"><span>APOLLO-2025-X992</span></div>
+          <div class="pf-right"><span>HASH: <span id="doc-hash-prev" style="color:var(--faint);">PENDING</span></span></div>
+        </div>
+
+      </div><!-- /paper -->
+
+      <!-- ICP seal -->
+      <div class="paper-seal">
+        <span class="seal-star">✦</span>
+        <span class="seal-txt">ICP-Brasil<br>A3</span>
+      </div>
+      <div class="paper-qr"><div class="paper-qr-inner"></div></div>
+
+      <!-- touch & ghost layer -->
+      <div id="touch-ov">
+        <!-- viewBox matches natural A4 at 96dpi so coordinates always align -->
+        <svg id="ghost-svg" xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 794 1123"
+             preserveAspectRatio="none"></svg>
+        <!-- placement hint overlay -->
+        <div id="place-hint" style="
+          position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+          background:rgba(18,18,20,.78); color:#fff;
+          font-family:'Space Mono',monospace; font-size:11px; font-weight:700;
+          text-transform:uppercase; letter-spacing:.08em; text-align:center;
+          padding:10px 18px; border-radius:8px; pointer-events:none;
+          line-height:1.6; white-space:nowrap;
+          display:none;
+        ">Toque no 1º ponto<br/><span style='font-size:9px;opacity:.6;'>depois no 2º para definir a área</span></div>
+      </div>
+
+      <!-- sign rect -->
+      <div id="sign-rect">
+        <div class="rect-inner">
+          <span class="rect-lbl" id="rect-lbl">Assinatura</span>
+          <span class="rect-dim" id="rect-dim">posicione</span>
+        </div>
+        <div class="rh rh-tl"></div><div class="rh rh-tr"></div>
+        <div class="rh rh-bl"></div><div class="rh rh-br"></div>
+      </div>
+
+      <!-- ╔═══════════════════════════════════════════════════════════
+           PHP PART: parts/placement-modal.php
+           Registry: apollo-sign → template_parts[4]
+           Render:   <?php require APOLLO_SIGN_PATH . 'templates/parts/placement-modal.php'; ?>
+           Contains: #sign-overlay → #ov-card (compact 230px)
+                     sim-* CSS keyframe animations (ported from sign-doc v2)
+                     Buttons: btn-iniciar (manual), btn-auto (footer)
+           JS:       dismissOverlay() / openOverlay() — GSAP timeline
+           State:    Shown on IDLE, dismissed on placement start
+      ═══════════════════════════════════════════════════════════╗ -->
+            <div id="sign-overlay">
+        <div id="ov-bg"></div>
+        <div id="ov-card">
+          <div class="ov-icon"><i class="ri-fingerprint-line"></i></div>
+          <div class="ov-title">Posicionar Assinatura</div>
+          <div class="ov-sub">Toque dois pontos opostos no documento para definir a área.</div>
+          <div class="sim-wrap">
+            <div class="sim-lines">
+              <div class="sim-line"></div>
+              <div class="sim-line"></div>
+              <div class="sim-line"></div>
+            </div>
+            <div class="sim-rect"></div>
+            <div class="sim-dot"></div>
+            <div class="sim-dot2"></div>
+            <span class="sim-hand">👆</span>
+            <span class="sim-label">Assinatura</span>
+          </div>
+          <button id="btn-iniciar"><i class="ri-cursor-line"></i> Iniciar</button>
+          <button id="btn-auto"><i class="ri-layout-bottom-line"></i> Inserir no rodapé</button>
+        </div>
+      </div>
+
+    </div><!-- /pdf-p2 -->
+  </div><!-- /doc-tray -->
+  <!-- ╚═ END parts/pdf-viewer.php + parts/placement-modal.php ═══════╝ -->
+
+  <!-- ╔═══════════════════════════════════════════════════════════
+       PHP PART: parts/signing-form.php
+       Registry: apollo-sign → template_parts[6]
+       Render:   <?php require APOLLO_SIGN_PATH . 'templates/parts/signing-form.php'; ?>
+       Contains: sign-bottom action bar (toggle, checkbox, btn-pos, btn-assinar)
+       JS:       checkState() — enables btn-assinar when chk-agree + rectPlaced
+       REST:     POST apollo/v1/signatures/{id}/sign (on btn-assinar click)
+       Nonce:    wp_nonce_field('apollo_sign_' . $doc->ID)
+       Hook:     do_action('apollo/sign/signed', $sig_id, $hash)
+  ═══════════════════════════════════════════════════════════╗ -->
+
+  <!-- ── parts/signature-pad-canvas.php (PLACEHOLDER) ──
+       Registry: apollo-sign → template_parts[5]
+       Render:   <?php require APOLLO_SIGN_PATH . 'templates/parts/signature-pad-canvas.php'; ?>
+       Status:   Future — hand-drawn signature pad (canvas draw/upload/undo/color/PNG)
+       JS file:  assets/js/signature-pad.js
+       CSS file: assets/css/signature-pad.css
+       Adapted:  _library/signing doc/advanced-pdf-esignature-main/.../signaturePad.js
+       DB col:   apollo_signatures.signature_image_path VARCHAR(512)
+  ── -->
+
+  <div class="sign-bottom" id="sign-bottom">
+    <!-- toggle: OUTSIDE inner so it is never clipped -->
+    <button class="sbottom-toggle" id="sbottom-toggle" title="Minimizar / Expandir">
+      <i class="ri-arrow-down-s-line"></i>
+    </button>
+
+    <!-- collapsible content -->
+    <div class="sign-bottom-inner">
+      <p class="sign-pg-title">Validar &amp; Assinar</p>
+      <p class="sign-pg-sub">Documento Nº APOLLO-2025-X992</p>
+
+      <label class="chk-wrap">
+        <input type="checkbox" id="chk-agree">
+        <div class="chk-box"></div>
+        <span class="chk-text">Reconheço a autenticidade, integridade e plena validade deste documento assinado.</span>
+      </label>
+
+      <div class="action-row">
+        <button class="btn-pos" id="btn-pos">
+          <i class="ri-drag-move-2-line"></i>
+          <span id="btn-pos-lbl">Posicionar</span>
+        </button>
+        <button class="btn-assinar" id="btn-assinar" disabled>
+          <i class="ri-quill-pen-line"></i> Assinar
+        </button>
+      </div>
+
+      <div class="lock-note"><i class="ri-lock-2-line"></i> Criptografado ponta-a-ponta &nbsp;·&nbsp; ICP-Brasil A3 &nbsp;·&nbsp; Lei 14.063/2020</div>
+    </div><!-- /sign-bottom-inner -->
+  </div><!-- /sign-bottom -->
+  <!-- ╚═ END parts/signing-form.php ═════════════════════════════════╝ -->
+
+</section>
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════
+     PHP PART: parts/signed-info.php
+     Registry: apollo-sign → template_parts[7]
+     Render:   <?php require APOLLO_SIGN_PATH . 'templates/parts/signed-info.php'; ?>
+     Panel:    3 — DONE (data-panel="done")
+     Contains: Badge, participants, share (email/request), download,
+               blockchain hash, done-doc paper preview (mobile sub-view)
+     Mobile:   done-info shown first → btn-preview-doc slides to done-doc
+               CSS: .done-info.out / .done-doc.in (sub-view toggle)
+               btn-dl-preview visible only ≤860px (desktop: paper alongside)
+               done-doc-back: returns to done-info
+     REST:     POST /signatures/request (multi-signer from btn-send-sign)
+               GET  /signatures/users (user search for signer dropdown)
+               GET  /signatures/verify/{hash} (public hash verification)
+     Tables:   apollo_signatures, apollo_signature_audit
+     Hooks:    do_action('apollo/sign/verified', $sig_id, $verified_by)
+     CPT:      doc | Tax: doc_folder, doc_type
+     Icon:     ri-shield-keyhole-fill (registry: apollo-sign icon)
+═══════════════════════════════════════════════════════════════════════╗ -->
+<section data-panel="done">
+
+  <!-- parts/header.php — reusable header component
+       Render: <?php apollo_sign_render_header(['mode' => 'done', 'doc' => $doc, 'sig' => $sig]) ?> -->
+  <header class="doc-hd">
+    <div class="dh-brand">
+      <span class="gl">Apollo</span>
+      <span class="ga">docs</span>
+    </div>
+    <div class="dh-sep"></div>
+    <div class="breadcrumb">
+      <i class="ri-shield-check-fill" style="color:var(--live);"></i>
+      <span style="color:var(--live);font-weight:800;">Assinatura Confirmada</span>
+    </div>
+    <div class="dh-right">
+      <span class="pill signed" id="pill-p3"><i class="ri-check-line"></i> Assinado</span>
+    </div>
+  </header>
+
+  <!-- scrollable done layout -->
+  <div class="done-scroll">
+
+    <!-- ╔══════════════════════════════════════════════════════╗
+         ║ MOBILE SUB-VIEW A — DONE-INFO (primary landing)    ║
+         ║ Shows: badge, participants, preview btn, download,  ║
+         ║ hash. Desktop: renders via display:contents.        ║
+         ║ Mobile: full-screen slide-in view.                  ║
+         ║                                                     ║
+         ║ Registry ref:                                       ║
+         ║   L5_documents > apollo-sign > done flow            ║
+         ║   CPT: doc | tax: doc_folder, doc_type              ║
+         ║   Icon: ri-shield-keyhole-fill                      ║
+         ╚══════════════════════════════════════════════════════╝ -->
+    <div class="done-info" id="done-info">
+      <div class="done-aside">
+
+        <!-- ── doc ID + status badge ── -->
+        <div class="aside-card">
+          <p class="done-badge"><i class="ri-shield-check-fill"></i> Assinatura Confirmada</p>
+          <p class="done-id" id="done-id-line">APOLLO-2025-X992</p>
+        </div>
+
+        <!-- ── participants list ── -->
+        <div class="aside-card">
+          <div class="aside-label">Participantes</div>
+          <div class="part-list">
+            <div class="part-row">
+              <div class="part-av"><i class="ri-shield-check-line"></i></div>
+              <div class="part-meta">
+                <div class="part-name">Apollo Admin</div>
+                <div class="part-role">Plataforma · Emissor</div>
+              </div>
+              <i class="ri-checkbox-circle-fill part-ic"></i>
+            </div>
+            <div class="part-row">
+              <div class="part-av"><i class="ri-check-line"></i></div>
+              <div class="part-meta">
+                <div class="part-name" id="done-part-name">Você</div>
+                <div class="part-role">Gestor do Evento</div>
+              </div>
+              <i class="ri-checkbox-circle-fill part-ic"></i>
+            </div>
+          </div>
+        </div>
+        <!-- ── post-signature actions: send / email ── -->
+        <div class="aside-card">
+          <div class="aside-label">Compartilhar</div>
+          <button class="btn-send-email" id="btn-send-email">
+            <i class="ri-mail-send-line"></i>
+            <span>Enviar por E-mail</span>
+          </button>
+          <button class="btn-send-sign" id="btn-send-sign">
+            <i class="ri-user-add-line"></i>
+            <span>Solicitar Assinatura</span>
+          </button>
+          <p class="send-note">Encaminhe o documento ou solicite a assinatura de outra parte.</p>
+        </div>
+
+        <!-- ── document actions: preview + download ── -->
+        <div class="aside-card">
+          <div class="aside-label">Documento Assinado</div>
+
+          <!-- MOBILE: "Visualizar" button slides to done-doc sub-view -->
+          <button class="btn-dl-preview" id="btn-preview-doc">
+            <i class="ri-file-shield-2-line"></i>
+            <span>Ver Arquivo Assinado</span>
+          </button>
+
+          <!-- Download PDF -->
+          <button class="btn-dl" id="btn-download">
+            <i class="ri-download-2-line"></i>
+            <span id="btn-dl-lbl">Baixar PDF Assinado</span>
+          </button>
+          <p class="dl-note">Administradores podem baixar em qualquer fase do fluxo.</p>
+        </div>
+
+        <!-- ── blockchain verify hash ── -->
+        <div class="aside-card">
+          <div class="aside-label">Verificação Blockchain</div>
+          <div class="hash-strip">
+            <span class="hash-k"><i class="ri-links-line"></i> SHA-256</span>
+            <span class="hash-v" id="done-hash-full">—</span>
+          </div>
+        </div>
+
+      </div><!-- /done-aside -->
+    </div><!-- /done-info -->
+
+    <!-- ╔══════════════════════════════════════════════════════╗
+         ║ MOBILE SUB-VIEW B — DONE-DOC (paper preview)       ║
+         ║ Shows: scaled A4 paper with signature applied.      ║
+         ║ Desktop: renders via display:contents alongside     ║
+         ║ the aside cards in .done-layout flex row.           ║
+         ║ Mobile: slides in from right when user taps         ║
+         ║ "Visualizar documento assinado".                    ║
+         ╚══════════════════════════════════════════════════════╝ -->
+    <div class="done-doc" id="done-doc">
+
+      <!-- back button (mobile only) -->
+      <div class="done-doc-back" id="done-doc-back">
+        <i class="ri-arrow-left-s-line"></i> Voltar
+      </div>
+
+      <!-- scaled A4 paper -->
+      <div class="done-paper">
+        <div class="paper-sheet" id="pdf-p3" style="position:relative;overflow:hidden;">
+          <div class="paper">
+
+            <div class="paper-hd">
+              <div class="paper-wordmark">
+                <span class="wm-label">Apollo</span>
+                <span class="wm-dot"></span>
+                <span class="wm-sub">Plataforma Digital</span>
+              </div>
+              <span class="paper-rule"></span>
+              <div class="paper-title">Termo de Responsabilidade</div>
+              <div class="paper-docid">Nº APOLLO-2025-X992</div>
+            </div>
+
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">1. Do Objeto</div>
+              <p class="paper-txt">O presente instrumento formaliza as responsabilidades operacionais, de segurança e de convivência aplicáveis ao evento cadastrado na plataforma Apollo::rio.</p>
+            </div>
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">2. Das Obrigações</div>
+              <p class="paper-txt">O RESPONSÁVEL declara ciência e concordância, comprometendo-se a garantir integridade, respeitar limites legais e responder civilmente por danos.</p>
+            </div>
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">3. Da Validade Digital</div>
+              <p class="paper-txt">Assinatura ICP-Brasil A3 — validade jurídica plena nos termos da Lei 14.063/2020.</p>
+            </div>
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">4 &amp; 5. Penalidades · Aceitação</div>
+              <p class="paper-txt">O descumprimento sujeita às penalidades previstas. Ao assinar, declara leitura e aceite integral.</p>
+            </div>
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">6. Do Foro</div>
+              <p class="paper-txt">Comarca do Rio de Janeiro, Estado do Rio de Janeiro.</p>
+            </div>
+
+            <div class="paper-sig-row">
+              <div class="paper-sig-col">
+                <div class="paper-sig-line ink">
+                  <div class="sig-name">Apollo Plataforma Digital</div>
+                  <div class="sig-role">CNPJ 00.000.000/0001-00</div>
+                </div>
+              </div>
+              <div class="paper-sig-col" style="position:relative;">
+                <div class="sig-stamp" id="sig-stamp-p3">✦ ASSINADO</div>
+                <div class="paper-sig-line ink">
+                  <div class="sig-name" id="done-sig-name" style="color:var(--live);">—</div>
+                  <div class="sig-role" id="done-sig-cpf" style="color:var(--live);font-size:8px;">—</div>
+                  <div class="sig-role" id="done-sig-date">—</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="paper-foot">
+              <div class="pf-left">
+                <span>APOLLO-2025-X992</span>
+              </div>
+              <div class="pf-right">
+                <span style="color:var(--live);">HASH: <span id="done-hash-short">—</span></span>
+              </div>
+            </div>
+
+          </div><!-- /paper -->
+          <div class="paper-seal"><span class="seal-star">✦</span><span class="seal-txt">ICP-Brasil<br>A3</span></div>
+          <div class="paper-qr"><div class="paper-qr-inner"></div></div>
+          <div id="done-sig-rect"></div>
+        </div>
+      </div><!-- /done-paper -->
+
+    </div><!-- /done-doc -->
+
+  </div><!-- /done-scroll -->
+
+</section>
+<!-- ╚═ END parts/signed-info.php ════════════════════════════════════╝ -->
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════
+     PHP PART: parts/scripts.php
+     Registry: apollo-sign → template_parts[9]
+     Render:   <?php require APOLLO_SIGN_PATH . 'templates/parts/scripts.php'; ?>
+     Contains: page-layout.js (ApolloSlider v2 CDN), sign-placement.js
+     PHP:      wp_enqueue_script('apollo-slider',     APOLLO_CDN_URL . 'js/page-layout.js')
+               wp_enqueue_script('apollo-sign-placement', APOLLO_SIGN_URL . 'assets/js/sign-placement.js')
+               wp_localize_script('apollo-sign-placement', 'apolloSign', [
+                 'docId' => absint($doc->ID), 'docHash' => esc_js($hash),
+                 'nonce' => wp_create_nonce('apollo_sign_' . $doc->ID),
+                 'restBase' => esc_url_raw(rest_url('apollo/v1')),
+                 'sigId' => absint($sig->ID ?? 0),
+                 'placement' => $placement, 'cdnUrl' => esc_url(APOLLO_CDN_URL)
+               ]);
+═══════════════════════════════════════════════════════════════════════╗ -->
+<!-- ApolloSlider v2 — panel engine
+     Provides: window.ApolloSlider.navigate(panelId, dir)
+     HTML API: <section data-panel>, <button data-to data-dir>, <button data-back>
+     Mandatory: all pages using data-panel must load page-layout.js
+     Production: src="https://cdn.apollo.rio.br/v1.0.0/js/page-layout.js"
+     Local dev:  relative path to _library/layout-page.js -->
+<script src="../layout-page.js"></script>
+<!-- Sign placement + interaction logic -->
+<script src="signing-doc-refined.js"></script>
+<!-- ╚═ END parts/scripts.php ════════════════════════════════════════╝ -->
+
+
+<!-- ╔═══════════════════════════════════════════════════════════════════
+     PHP PART: parts/footer.php
+     Registry: apollo-sign → template_parts[8]
+     Render:   <?php require APOLLO_SIGN_PATH . 'templates/parts/footer.php'; ?>
+     Contains: wp_footer(), closing </body></html>
+     Hooks:    do_action('apollo/sign/page_footer')
+═══════════════════════════════════════════════════════════════════════╗ -->
+<!-- Production: <?php wp_footer(); ?> -->
+</body>
+</html>
+<!-- ╚═ END parts/footer.php ═════════════════════════════════════════╝ -->

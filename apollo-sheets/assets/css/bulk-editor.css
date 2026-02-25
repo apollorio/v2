@@ -1,0 +1,534 @@
+/**
+ * Apollo Bulk Editor — Luxury Grade Styles
+ * Ultra Clean Minimalist Design System
+ *
+ * @package Apollo\Sheets
+ */
+
+/* ========================================= */
+/* 1. APOLLO CORE VARIABLES                  */
+/* ========================================= */
+:root {
+  --ff-main: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --ff-mono: "Space Mono", monospace;
+
+  /* --- PALETTE --- */
+  --white-1:  rgba(255, 255, 255, 1);
+  --white-2:  rgba(0, 0, 0, 0.02);
+  --white-3:  rgba(0, 0, 0, 0.04);
+  --white-4:  rgba(0, 0, 0, 0.06);
+  --white-8:  rgba(0, 0, 0, 0.14);
+  --white-12: rgba(0, 0, 0, 0.22);
+  --white-overlay: rgba(255, 255, 255, 0.85);
+
+  --gray-1: rgba(0, 0, 0, 0.40);
+  --gray-4: rgba(0, 0, 0, 0.46);
+  --gray-5: rgba(0, 0, 0, 0.48);
+  --gray-8: rgba(0, 0, 0, 0.54);
+  --gray-10: rgba(0, 0, 0, 0.65);
+  
+  --ink-solid: #121214; 
+  --ink-accent: #000000;
+
+  /* --- UI MAP --- */
+  --bg-body: var(--white-1);
+  --head:    var(--white-1); 
+  --border:  var(--white-8);
+  --selected: var(--white-1);
+  --hover-background: var(--white-2);
+  
+  --radius-pill: 999px;
+  --radius-card: 18px;
+  /**
+   * Apollo Bulk Editor — Mobile-first Light Design
+   * Mirrors approved mobile sheet layout and focus effects.
+   *
+   * @package Apollo\Sheets
+   */
+
+  /* ========================================= */
+  /* 1. VARIABLES                             */
+  /* ========================================= */
+  :root {
+    --bg-body: #ffffff;
+    --bg-sheet: #ffffff;
+    --ink-solid: #121214;
+    --ink-smoke: #666666;
+    --ink-ghost: #999999;
+    --ink-mist: #bbbbbb;
+    --primary: #f45f00;
+    --border: rgba(0, 0, 0, 0.08);
+    --border-h: rgba(0, 0, 0, 0.16);
+    --hover-bg: #fafafa;
+    --focus-bg: #ffffff;
+    --radius-pill: 100px;
+    --radius-card: 12px;
+    --radius-squircle: 8px;
+    --ff-main: "Space Grotesk", system-ui, sans-serif;
+    --ff-mono: "Space Mono", monospace;
+  }
+
+  /* ========================================= */
+  /* 2. BASE                                  */
+  /* ========================================= */
+  * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+  #wpwrap { background: var(--bg-body) !important; }
+
+  .apollo-bulk-editor-wrap {
+    font-family: var(--ff-main) !important;
+    color: var(--ink-solid) !important;
+    padding: 0 0 12px 0 !important;
+    margin: 0 !important;
+    background: var(--bg-body);
+    overflow: hidden;
+  }
+
+  button { transition: 0.2s ease; }
+  button:hover { transform: translateY(-1px); }
+  button:active { transform: scale(0.98); }
+
+  /* ========================================= */
+  /* 3. HEADER & SEARCH                       */
+  /* ========================================= */
+  .apollo-bulk-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    z-index: 50;
+  }
+
+  .apollo-bulk-header-left { display: flex; align-items: center; gap: 10px; flex: 1 1 auto; }
+  .apollo-bulk-header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  .apollo-bulk-back {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border);
+    color: var(--ink-smoke);
+    text-decoration: none;
+    background: #fff;
+  }
+  .apollo-bulk-back:hover { border-color: var(--ink-solid); color: var(--ink-solid); }
+
+  .wp-heading-inline {
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    letter-spacing: -0.01em !important;
+    color: var(--ink-solid) !important;
+  }
+
+  .apollo-bulk-badge {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    background: var(--hover-bg);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: var(--radius-pill);
+    color: var(--ink-smoke);
+  }
+
+  .apollo-bulk-search-wrap,
+  .apollo-search-composite {
+    display: flex;
+    align-items: center;
+    background: var(--hover-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 2px;
+    flex: 1 1 300px;
+    max-width: 420px;
+    min-width: 240px;
+  }
+
+  .apollo-composite-select-wrap { position: relative; border-right: 1px solid var(--border); }
+  .apollo-composite-select,
+  .apollo-bulk-select {
+    appearance: none; border: none; background: transparent;
+    font-family: var(--ff-mono); font-size: 11px;
+    padding: 6px 20px 6px 12px;
+    color: var(--ink-solid); cursor: pointer;
+  }
+  .apollo-composite-select-wrap::after {
+    content: '';
+    position: absolute;
+    right: 6px; top: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--ink-mist);
+    transform: translateY(-20%);
+    pointer-events: none;
+  }
+
+  .apollo-composite-input,
+  .apollo-bulk-search {
+    flex: 1;
+    border: none !important;
+    background: transparent !important;
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+    font-family: var(--ff-main) !important;
+    color: var(--ink-solid) !important;
+    min-width: 0;
+    box-shadow: none !important;
+  }
+
+  .apollo-composite-btn {
+    width: 28px; height: 28px;
+    background: var(--ink-solid);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+
+  .apollo-bulk-search-wrap .dashicons { display: none; }
+
+  /* ========================================= */
+  /* 4. TOOLBAR                               */
+  /* ========================================= */
+  .apollo-bulk-toolbar {
+    padding: 8px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-body);
+  }
+
+  .apollo-bulk-toolbar-left,
+  .apollo-bulk-toolbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .button {
+    height: 32px;
+    padding: 0 14px !important;
+    border-radius: var(--radius-pill) !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    font-family: var(--ff-main) !important;
+    border: 1px solid var(--border) !important;
+    background: #fff !important;
+    color: var(--ink-solid) !important;
+  }
+
+  .button-primary { background: var(--ink-solid) !important; color: #fff !important; border-color: var(--ink-solid) !important; }
+  .button-primary:hover { background: var(--primary) !important; border-color: var(--primary) !important; }
+  .button-primary:disabled { opacity: 0.5 !important; cursor: not-allowed !important; }
+
+  .apollo-icon-btn { width: 32px !important; height: 32px !important; padding: 0 !important; border-radius: 50% !important; justify-content: center !important; }
+  .button i, .button .dashicons { font-size: 14px !important; width: 14px !important; height: 14px !important; }
+
+  .apollo-bulk-per-page-select {
+    height: 30px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 0 10px;
+    font-family: var(--ff-mono);
+    font-size: 11px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .apollo-bulk-pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--hover-bg);
+    padding: 2px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+  }
+  .apollo-bulk-pagination button,
+  .apollo-bulk-pagination .button {
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 50% !important;
+    border: 1px solid var(--border) !important;
+    background: #fff !important;
+    color: var(--ink-smoke) !important;
+    padding: 0 !important;
+  }
+  .apollo-bulk-page-input {
+    width: 30px !important;
+    height: 20px !important;
+    border: none !important;
+    background: transparent !important;
+    text-align: center !important;
+    font-family: var(--ff-mono) !important;
+    font-size: 11px !important;
+    padding: 0 !important;
+  }
+
+  /* ========================================= */
+  /* 5. SPREADSHEET                           */
+  /* ========================================= */
+  .apollo-bulk-spreadsheet,
+  .apollo-sheets {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--bg-sheet);
+    overflow: auto;
+    max-height: 70dvh;
+    position: relative;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .apollo-bulk-spreadsheet table,
+  .apollo-sheets table,
+  table.handsontable {
+    width: auto !important;
+    min-width: fit-content !important;
+    border-spacing: 0 !important;
+    border-collapse: separate !important;
+    font-family: var(--ff-main) !important;
+    font-size: 0.9rem !important;
+  }
+
+  .apollo-bulk-spreadsheet thead,
+  .apollo-sheets thead,
+  table.handsontable thead {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--bg-sheet) !important;
+  }
+  .apollo-bulk-spreadsheet thead::after,
+  .apollo-sheets thead::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--border); }
+
+  .apollo-bulk-spreadsheet th,
+  .apollo-sheets th,
+  table.handsontable th {
+    text-align: left !important;
+    font-family: var(--ff-mono) !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    color: var(--ink-mist) !important;
+    padding: 12px 16px !important;
+    white-space: nowrap !important;
+    background: var(--bg-sheet) !important;
+    user-select: none !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+
+  .apollo-bulk-spreadsheet th:first-child,
+  .apollo-sheets th:first-child,
+  table.handsontable th:first-child,
+  .apollo-bulk-spreadsheet td:first-child,
+  .apollo-sheets td:first-child,
+  table.handsontable td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 25;
+    background: var(--bg-sheet) !important;
+    border-right: 1px solid var(--border) !important;
+    width: 56px !important;
+    min-width: 56px !important;
+    text-align: center !important;
+    padding: 0 10px !important;
+  }
+  .apollo-bulk-spreadsheet th:first-child,
+  .apollo-sheets th:first-child,
+  table.handsontable th:first-child { z-index: 30 !important; }
+
+  .apollo-bulk-spreadsheet td,
+  .apollo-sheets td,
+  table.handsontable td {
+    border-bottom: 1px solid var(--border) !important;
+    padding: 0 12px !important;
+    height: 28px !important;
+    vertical-align: middle !important;
+    background: var(--bg-sheet) !important;
+    color: var(--ink-solid) !important;
+  }
+
+  .apollo-bulk-spreadsheet tr,
+  .apollo-sheets tr,
+  table.handsontable tr { transition: 0.2s ease; }
+
+  .apollo-bulk-spreadsheet input,
+  .apollo-sheets input,
+  table.handsontable input,
+  .handsontableInput {
+    width: 100% !important;
+    min-width: 120px !important;
+    border: none !important;
+    background: transparent !important;
+    font-family: var(--ff-main) !important;
+    font-size: 13px !important;
+    color: var(--ink-solid) !important;
+    padding: 4px 0 !important;
+  }
+
+  /* Ghost/focus mode */
+  .apollo-bulk-spreadsheet:hover tbody tr,
+  .apollo-bulk-spreadsheet:focus-within tbody tr,
+  .apollo-sheets:hover tbody tr,
+  .apollo-sheets:focus-within tbody tr {
+    filter: blur(2px);
+    opacity: 0.5;
+    transition: 0.3s ease;
+  }
+
+  .apollo-bulk-spreadsheet tbody tr:hover,
+  .apollo-bulk-spreadsheet tbody tr:focus-within,
+  .apollo-sheets tbody tr:hover,
+  .apollo-sheets tbody tr:focus-within,
+  table.handsontable tbody tr:hover,
+  table.handsontable tbody tr:focus-within {
+    filter: none !important;
+    opacity: 1 !important;
+    background: #fff !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    position: relative;
+    z-index: 10;
+  }
+
+  .apollo-bulk-spreadsheet tbody tr:hover td:first-child,
+  .apollo-bulk-spreadsheet tbody tr:focus-within td:first-child,
+  .apollo-sheets tbody tr:hover td:first-child,
+  .apollo-sheets tbody tr:focus-within td:first-child,
+  table.handsontable tbody tr:hover td:first-child,
+  table.handsontable tbody tr:focus-within td:first-child {
+    background: #fff !important;
+    color: var(--ink-solid) !important;
+    font-weight: 700 !important;
+  }
+
+  table input:focus,
+  .handsontableInput:focus {
+    color: var(--primary) !important;
+  }
+
+  .apollo-bulk-cell-readonly,
+  table.handsontable td.htDimmed {
+    background: #f4f4f4 !important;
+    color: var(--ink-smoke) !important;
+    font-style: italic !important;
+  }
+
+  .apollo-bulk-cell-changed { background: rgba(0, 163, 42, 0.06) !important; border-left: 2px solid #00a32a !important; }
+
+  .apollo-bulk-spreadsheet::-webkit-scrollbar,
+  .apollo-sheets::-webkit-scrollbar,
+  table.handsontable .wtHolder::-webkit-scrollbar { width: 8px; height: 8px; }
+  .apollo-bulk-spreadsheet::-webkit-scrollbar-thumb,
+  .apollo-sheets::-webkit-scrollbar-thumb,
+  table.handsontable .wtHolder::-webkit-scrollbar-thumb { background: var(--ink-mist); border-radius: 4px; }
+  .apollo-bulk-spreadsheet::-webkit-scrollbar-track,
+  .apollo-sheets::-webkit-scrollbar-track,
+  table.handsontable .wtHolder::-webkit-scrollbar-track { background: var(--hover-bg); }
+
+  /* ========================================= */
+  /* 6. CONSOLE                               */
+  /* ========================================= */
+  .apollo-bulk-console {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--ink-solid);
+    padding: 10px 14px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    font-size: 12px;
+    gap: 12px;
+    min-width: 240px;
+    margin: 12px 16px;
+  }
+  .apollo-bulk-console .msg-type { font-weight: 700; text-transform: uppercase; font-size: 10px; margin-right: 6px; }
+  .apollo-bulk-console.error { border-left-color: #dc2626; }
+  .apollo-bulk-console.warn { border-left-color: #dba617; }
+  .apollo-bulk-console.success { border-left-color: #00a32a; }
+
+  .console-close {
+    background: transparent;
+    border: none;
+    color: var(--ink-ghost);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+  .console-close:hover { background: var(--hover-bg); color: var(--ink-solid); }
+
+  /* ========================================= */
+  /* 7. MODALS & PROGRESS                     */
+  /* ========================================= */
+  .apollo-bulk-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .apollo-bulk-modal-content {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 24px;
+    min-width: 320px;
+    max-width: 480px;
+    color: var(--ink-solid);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  }
+
+  .apollo-bulk-modal-content h3 { margin: 0 0 12px !important; color: var(--ink-solid) !important; font-size: 1.2rem !important; font-weight: 700 !important; }
+  .apollo-bulk-modal-content p { margin: 0 0 14px !important; font-size: 0.95rem !important; color: var(--ink-smoke) !important; }
+
+  .apollo-bulk-modal-content input[type="number"],
+  .apollo-bulk-modal-content input[type="text"] {
+    width: 100% !important;
+    padding: 10px 12px !important;
+    background: #fff !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-squircle) !important;
+    color: var(--ink-solid) !important;
+    font-size: 0.95rem !important;
+    margin-bottom: 14px !important;
+    font-family: var(--ff-main) !important;
+  }
+  .apollo-bulk-modal-content input:focus { border-color: var(--ink-solid) !important; box-shadow: 0 0 0 3px rgba(18, 18, 20, 0.08) !important; outline: none !important; }
+
+  .apollo-bulk-modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+  .apollo-bulk-progress { height: 8px; background: var(--hover-bg); border-radius: var(--radius-squircle); overflow: hidden; margin: 14px 0; }
+  .apollo-bulk-progress-bar { height: 100%; background: linear-gradient(90deg, var(--ink-solid), var(--primary)); border-radius: var(--radius-squircle); width: 0; transition: width 0.3s ease; }
+
+  .apollo-bulk-save-response { margin-top: 12px; }
+  .apollo-bulk-save-response .notice { margin: 0 !important; padding: 10px 14px !important; border-radius: var(--radius-squircle) !important; border-left: 4px solid var(--ink-solid) !important; }
+
+  /* ========================================= */
+  /* 8. RESPONSIVE                           */
+  /* ========================================= */
+  @media (max-width: 960px) {
+    .apollo-bulk-header { flex-direction: column; align-items: flex-start; }
+    .apollo-bulk-toolbar { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .apollo-search-composite, .apollo-bulk-search-wrap { width: 100%; max-width: 100%; }
+    .apollo-bulk-editor-wrap { padding: 0 8px !important; }
+  }
+    min-width: 360px;

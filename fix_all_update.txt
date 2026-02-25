@@ -1,0 +1,24 @@
+
+FILE: ...tent\plugins\apollo-shortcodes\includes\class-user-dashboard-interesse.php
+--------------------------------------------------------------------------------
+FOUND 12 ERRORS AND 2 WARNINGS AFFECTING 14 LINES
+--------------------------------------------------------------------------------
+   1 | ERROR   | Missing file doc comment
+   9 | ERROR   | Missing doc comment for class User_Dashboard_Interesse
+  10 | ERROR   | Missing doc comment for function init()
+  16 | ERROR   | Missing doc comment for function render()
+  18 | ERROR   | Using short ternaries is not allowed as they are rarely used
+     |         | correctly
+  29 | ERROR   | Missing doc comment for function profile_widget()
+  37 | ERROR   | Missing doc comment for function build_dashboard()
+ 149 | ERROR   | Missing doc comment for function
+     |         | get_upcoming_interested_events()
+ 158 | WARNING | Detected usage of meta_key, possible slow query.
+ 161 | WARNING | Detected usage of meta_query, possible slow query.
+ 173 | ERROR   | Missing doc comment for function get_user_bubbles()
+ 178 | ERROR   | Missing doc comment for function get_user_communities()
+ 183 | ERROR   | Missing doc comment for function get_user_nucleos()
+ 188 | ERROR   | Missing doc comment for function render_sounds_section()
+--------------------------------------------------------------------------------
+
+

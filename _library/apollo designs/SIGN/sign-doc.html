@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- PWA / mobile -->  
+<meta name="theme-color" content="#ececed">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<title>Apollo Docs — Assinatura Digital</title>
+
+<!-- fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<!-- gsap + icons via cdn apollo script -->
+<!-- CDN Script of Apollo loads: injected inline Base Stylesheet.css (style /style before</head>) + GSAP Animate v3.13.0 + RemixIcon + jQuery v4.0.0 + Tracking script + //   + Popper Positioning + Dark Theme + Reveal-Up + Translate -->
+ <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
+<!-- interact -->
+<link href="sign-doc.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+
+<body>
+
+<div id="min-warn">⚠ Área mínima de assinatura</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PANEL 1 — DOCUMENT PREVIEW
+══════════════════════════════════════════════════════════════ -->
+<section data-panel="preview">
+
+  <!-- header -->
+  <header class="doc-hd">
+    <div class="dh-brand">
+      <span class="gl">Apollo</span>
+      <span class="ga">docs</span>
+    </div>
+    <div class="dh-sep"></div>
+    <div class="dh-doc">
+      <span class="dh-title">Termo de Responsabilidade</span>
+      <span class="dh-id">Nº APOLLO-2025-X992</span>
+    </div>
+    <div class="dh-right">
+      <span class="pill pending" id="pill-p1"><span class="sdot"></span> Pendente</span>
+      <button class="icon-btn" title="Baixar"><i class="ri-download-line"></i></button>
+    </div>
+  </header>
+
+  <!-- gray tray + A4 paper -->
+  <div class="doc-tray">
+    <div class="paper-sheet" id="pdf-p1">
+      <div class="paper">
+
+        <div class="paper-hd">
+          <div class="paper-wordmark">
+            <span class="wm-label">Apollo</span>
+            <span class="wm-dot"></span>
+            <span class="wm-sub">Plataforma Digital</span>
+          </div>
+          <span class="paper-rule"></span>
+          <div class="paper-inst">Apollo Plataforma Digital Ltda. — CNPJ 00.000.000/0001-00</div>
+          <div class="paper-title">Termo de<br>Responsabilidade</div>
+          <div class="paper-docid">Nº APOLLO-2025-X992 &nbsp;·&nbsp; v1.0 &nbsp;·&nbsp; 19.02.2026</div>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">1. Do Objeto</div>
+          <p class="paper-txt">O presente instrumento formaliza as responsabilidades operacionais, de segurança e de convivência aplicáveis ao evento cadastrado na plataforma Apollo::rio, conforme dados inseridos pelo GESTOR responsável, doravante denominado simplesmente RESPONSÁVEL.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">2. Das Obrigações do Responsável</div>
+          <p class="paper-txt">O RESPONSÁVEL declara ciência e plena concordância com as normas vigentes, comprometendo-se irrevogavelmente a:</p>
+          <ul class="paper-list">
+            <li>Garantir a integridade física e o bem-estar de todos os participantes do evento;</li>
+            <li>Respeitar os limites de pressão sonora estabelecidos pela legislação municipal e estadual vigente;</li>
+            <li>Assegurar a limpeza, organização e devolução do local ao estado original pós-evento;</li>
+            <li>Responsabilizar-se civilmente perante terceiros por quaisquer danos materiais ou imateriais decorrentes do evento;</li>
+            <li>Cumprir integralmente as exigências do Corpo de Bombeiros, Vigilância Sanitária e demais órgãos competentes.</li>
+          </ul>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">3. Da Validade Jurídica Digital</div>
+          <p class="paper-txt">A assinatura eletrônica aposta neste instrumento gera hash criptográfico único registrado na infraestrutura blockchain Apollo, conferindo plena validade jurídica nos termos da Medida Provisória nº 2.200-2/2001 e da Lei nº 14.063/2020, sendo equivalente à assinatura manuscrita para todos os efeitos legais previstos no ordenamento jurídico brasileiro.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">4. Das Penalidades e Sanções</div>
+          <p class="paper-txt">O descumprimento de qualquer cláusula do presente instrumento sujeitará o RESPONSÁVEL às penalidades previstas nos Termos de Uso Apollo, bem como à responsabilidade civil e, conforme o caso, penal perante a legislação vigente, incluindo suspensão imediata de conta e registro nos órgãos competentes.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">5. Da Aceitação e Manifestação de Vontade</div>
+          <p class="paper-txt">Ao assinar eletronicamente o presente instrumento, o RESPONSÁVEL declara expressamente que leu, compreendeu e aceita integralmente todos os termos e condições aqui estipulados, dispensando quaisquer formalidades adicionais para sua plena eficácia.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">6. Do Foro</div>
+          <p class="paper-txt">Fica eleito o foro da Comarca do Rio de Janeiro, Estado do Rio de Janeiro, para dirimir quaisquer questões oriundas do presente instrumento, com renúncia expressa a qualquer outro, por mais privilegiado que seja.</p>
+        </div>
+
+        <div class="paper-sig-row">
+          <div class="paper-sig-col">
+            <div class="paper-sig-line ink">
+              <div class="sig-name">Apollo Plataforma Digital Ltda.</div>
+              <div class="sig-role">CNPJ 00.000.000/0001-00 — Emissor</div>
+            </div>
+          </div>
+          <div class="paper-sig-col">
+            <div class="paper-sig-line waiting">
+              <div class="sig-name" style="color:var(--faint);">Responsável / Gestor</div>
+              <div class="sig-role">Aguardando assinatura eletrônica</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="paper-foot">
+          <div class="pf-left">
+            <span>APOLLO-2025-X992 · v1.0</span>
+            <span>Emitido em: 19.02.2026</span>
+          </div>
+          <div class="pf-right">
+            <span>HASH SHA-256: <span style="color:var(--faint);">PENDENTE</span></span>
+            <span>Verificar em: apollo.rio.br/docs/verify</span>
+          </div>
+        </div>
+
+      </div><!-- /paper -->
+
+      <div class="paper-seal">
+        <span class="seal-star">✦</span>
+        <span class="seal-txt">ICP-Brasil<br>A3</span>
+      </div>
+      <div class="paper-qr"><div class="paper-qr-inner"></div></div>
+
+    </div><!-- /paper-sheet -->
+  </div><!-- /doc-tray -->
+
+  <!-- participants strip -->
+  <div class="part-strip">
+    <div class="part-chip ok"><i class="ri-checkbox-circle-fill"></i> Apollo Admin</div>
+    <div class="part-rule"></div>
+    <div class="part-chip"><i class="ri-time-line"></i> Você — pendente</div>
+  </div>
+
+  <!-- CTA -->
+  <div class="pg-footer">
+    <button class="btn-proceed" data-to="sign" data-dir="right">
+      <i class="ri-quill-pen-line"></i> Prosseguir para Assinar
+    </button>
+  </div>
+
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PANEL 2 — SIGN
+══════════════════════════════════════════════════════════════ -->
+<section data-panel="sign">
+
+  <!-- header -->
+  <header class="doc-hd">
+    <button data-back="1" data-dir="left" class="icon-btn" style="color:var(--ghost);">
+      <i class="ri-arrow-left-line"></i>
+    </button>
+    <div class="dh-sep"></div>
+    <div class="breadcrumb">
+      <i class="ri-quill-pen-line"></i>
+      <span>Assinar Documento</span>
+    </div>
+    <div class="dh-right">
+      <span class="pill pending" id="pill-p2"><span class="sdot"></span> Pendente</span>
+    </div>
+  </header>
+
+  <!-- toolbar -->
+  <div class="doc-tb">
+    <div class="doc-tb-meta">
+      <i class="ri-file-pdf-line"></i>
+      <span>Termo de Responsabilidade · APOLLO-2025-X992</span>
+    </div>
+    <div class="doc-tb-right">
+      <button class="tb-btn" id="btn-minus" title="Reduzir (−)" style="font-size:18px;font-weight:700;color:var(--smoke);">&#x2212;</button>
+      <button class="tb-btn" id="btn-plus"  title="Ampliar (+)" style="font-size:18px;font-weight:700;color:var(--smoke);">+</button>
+      <div class="tb-sep"></div>
+      <button class="tb-btn" id="btn-restart-pos" title="Reiniciar posicionamento" style="color:var(--primary);"><i class="ri-restart-line"></i></button>
+      <div class="tb-sep"></div>
+      <button class="tb-btn" title="Baixar"><i class="ri-download-line"></i></button>
+    </div>
+  </div>
+
+  <!-- tray -->
+  <div class="doc-tray" style="flex:1;">
+    <div class="paper-sheet" id="pdf-p2" style="position:relative;overflow:hidden;">
+      <div class="paper">
+
+        <div class="paper-hd">
+          <div class="paper-wordmark">
+            <span class="wm-label">Apollo</span>
+            <span class="wm-dot"></span>
+            <span class="wm-sub">Plataforma Digital</span>
+          </div>
+          <span class="paper-rule"></span>
+          <div class="paper-title">Termo de Responsabilidade</div>
+          <div class="paper-docid">Nº APOLLO-2025-X992</div>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">1. Do Objeto</div>
+          <p class="paper-txt">O presente instrumento formaliza as responsabilidades operacionais, de segurança e de convivência aplicáveis ao evento cadastrado na plataforma Apollo::rio, conforme dados inseridos pelo GESTOR responsável.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">2. Das Obrigações</div>
+          <p class="paper-txt">O RESPONSÁVEL declara ciência e concordância, comprometendo-se a garantir integridade, respeitar limites legais, assegurar organização pós-evento e responder civilmente por danos.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">3. Da Validade Digital</div>
+          <p class="paper-txt">Assinatura ICP-Brasil A3 — validade jurídica plena nos termos da Lei 14.063/2020 e MP 2.200-2/2001.</p>
+        </div>
+
+        <div class="paper-sec">
+          <div class="paper-sec-lbl">4 &amp; 5. Penalidades · Aceitação</div>
+          <p class="paper-txt">O descumprimento sujeita o RESPONSÁVEL às penalidades previstas. Ao assinar, declara leitura e aceite integral.</p>
+        </div>
+
+        <div class="paper-sig-row">
+          <div class="paper-sig-col">
+            <div class="paper-sig-line ink">
+              <div class="sig-name">Apollo Plataforma Digital</div>
+              <div class="sig-role">CNPJ 00.000.000/0001-00</div>
+            </div>
+          </div>
+          <div class="paper-sig-col">
+            <div class="sig-stamp" id="sig-stamp">✦ ASSINADO</div>
+            <div class="paper-sig-line waiting" id="user-sig-line">
+              <div class="sig-name" id="user-sig-name" style="color:var(--faint);">Responsável</div>
+              <div class="sig-role" id="user-sig-date">Aguardando...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="paper-foot">
+          <div class="pf-left"><span>APOLLO-2025-X992</span></div>
+          <div class="pf-right"><span>HASH: <span id="doc-hash-prev" style="color:var(--faint);">PENDING</span></span></div>
+        </div>
+
+      </div><!-- /paper -->
+
+      <div class="paper-seal">
+        <span class="seal-star">✦</span>
+        <span class="seal-txt">ICP-Brasil<br>A3</span>
+      </div>
+      <div class="paper-qr"><div class="paper-qr-inner"></div></div>
+
+      <!-- touch & ghost layer -->
+      <div id="touch-ov">
+        <svg id="ghost-svg" xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 794 1123"
+             preserveAspectRatio="none"></svg>
+        <div id="place-hint" style="
+          position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+          background:rgba(18,18,20,.78); color:#fff;
+          font-family:'Space Mono',monospace; font-size:11px; font-weight:700;
+          text-transform:uppercase; letter-spacing:.08em; text-align:center;
+          padding:10px 18px; border-radius:8px; pointer-events:none;
+          line-height:1.6; white-space:nowrap;
+          display:none;
+        ">Toque no 1º ponto<br/><span style='font-size:9px;opacity:.6;'>depois no 2º para definir a área</span></div>
+      </div>
+
+      <!-- sign rect -->
+      <div id="sign-rect">
+        <div class="rect-inner">
+          <span class="rect-lbl" id="rect-lbl">Assinatura</span>
+          <span class="rect-dim" id="rect-dim">posicione</span>
+        </div>
+        <div class="rh rh-tl"></div><div class="rh rh-tr"></div>
+        <div class="rh rh-bl"></div><div class="rh rh-br"></div>
+      </div>
+
+      <!-- ── UPDATED OV-CARD (doc 2 design) ── -->
+      <div id="sign-overlay">
+        <div id="ov-bg"></div>
+        <div id="ov-card">
+          <div class="ov-icon"><i class="ri-fingerprint-line"></i></div>
+          <div class="ov-title">Posicionar Assinatura</div>
+          <div class="ov-sub">Toque dois pontos opostos no documento para definir a área.</div>
+          <div class="sim-wrap">
+            <div class="sim-lines">
+              <div class="sim-line"></div>
+              <div class="sim-line"></div>
+              <div class="sim-line"></div>
+            </div>
+            <div class="sim-rect"></div>
+            <div class="sim-dot"></div>
+            <div class="sim-dot2"></div>
+            <span class="sim-hand">👆</span>
+            <span class="sim-label">Assinatura</span>
+          </div>
+          <button id="btn-iniciar"><i class="ri-cursor-line"></i> Iniciar</button>
+          <button id="btn-auto"><i class="ri-layout-bottom-line"></i> Inserir no rodapé</button>
+        </div>
+      </div>
+
+    </div><!-- /pdf-p2 -->
+  </div><!-- /doc-tray -->
+
+  <!-- action bar -->
+  <div class="sign-bottom" id="sign-bottom">
+    <button class="sbottom-toggle" id="sbottom-toggle" title="Minimizar / Expandir">
+      <i class="ri-arrow-down-s-line"></i>
+    </button>
+
+    <div class="sign-bottom-inner">
+      <p class="sign-pg-title">Validar &amp; Assinar</p>
+      <p class="sign-pg-sub">Documento Nº APOLLO-2025-X992</p>
+
+      <label class="chk-wrap">
+        <input type="checkbox" id="chk-agree">
+        <div class="chk-box"></div>
+        <span class="chk-text">De acordo com os termos e ciente da responsabilidade pelo cumprimento integral das cláusulas deste instrumento.</span>
+      </label>
+
+      <div class="action-row">
+        <button class="btn-reset-sig" id="btn-reset-sig" title="Resetar área">
+          <i class="ri-refresh-line"></i>
+        </button>
+        <button class="btn-pos" id="btn-pos">
+          <i class="ri-drag-move-2-line"></i>
+          <span id="btn-pos-lbl">Posicionar</span>
+        </button>
+        <button class="btn-assinar" id="btn-assinar" disabled>
+          <i class="ri-quill-pen-line"></i> Assinar
+        </button>
+      </div>
+
+      <div class="lock-note"><i class="ri-lock-2-line"></i> Criptografado ponta-a-ponta &nbsp;·&nbsp; ICP-Brasil A3 &nbsp;·&nbsp; Lei 14.063/2020</div>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PANEL 3 — DONE
+══════════════════════════════════════════════════════════════ -->
+<section data-panel="done">
+
+  <header class="doc-hd">
+    <div class="dh-brand">
+      <span class="gl">Apollo</span>
+      <span class="ga">docs</span>
+    </div>
+    <div class="dh-sep"></div>
+    <div class="breadcrumb">
+      <i class="ri-shield-check-fill" style="color:var(--live);"></i>
+      <span style="color:var(--live);font-weight:800;">Assinatura Confirmada</span>
+    </div>
+    <div class="dh-right">
+      <span class="pill signed" id="pill-p3"><i class="ri-check-line"></i> Assinado</span>
+    </div>
+  </header>
+
+  <div class="done-scroll">
+
+    <div class="done-info" id="done-info">
+      <div class="done-aside">
+
+        <div class="aside-card">
+          <p class="done-badge"><i class="ri-shield-check-fill"></i> Assinatura Confirmada</p>
+          <p class="done-id" id="done-id-line">APOLLO-2025-X992</p>
+        </div>
+
+        <div class="aside-card">
+          <div class="aside-label">Participantes</div>
+          <div class="part-list">
+            <div class="part-row">
+              <div class="part-av"><i class="ri-shield-check-line"></i></div>
+              <div class="part-meta">
+                <div class="part-name">Apollo Admin</div>
+                <div class="part-role">Plataforma · Emissor</div>
+              </div>
+              <i class="ri-checkbox-circle-fill part-ic"></i>
+            </div>
+            <div class="part-row">
+              <div class="part-av"><i class="ri-check-line"></i></div>
+              <div class="part-meta">
+                <div class="part-name" id="done-part-name">Você</div>
+                <div class="part-role">Gestor do Evento</div>
+              </div>
+              <i class="ri-checkbox-circle-fill part-ic"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="aside-card">
+          <div class="aside-label">Documento Assinado</div>
+          <button class="btn-dl" id="btn-download">
+            <i class="ri-download-2-line"></i>
+            <span id="btn-dl-lbl">Baixar PDF Assinado</span>
+          </button>
+          <button class="btn-dl-preview" id="btn-preview-doc"
+            data-to="signed-file" data-dir="right">
+            <i class="ri-computer-line"></i>
+            <span>Visualizar documento assinado</span>
+          </button>
+          <p class="dl-note">Administradores podem baixar em qualquer fase do fluxo.</p>
+        </div>
+
+        <div class="aside-card">
+          <div class="aside-label">Verificação Blockchain</div>
+          <div class="hash-strip">
+            <span class="hash-k"><i class="ri-links-line"></i> SHA-256</span>
+            <span class="hash-v" id="done-hash-full">—</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="done-doc" id="done-doc">
+
+      <div class="done-doc-back" id="done-doc-back">
+        <i class="ri-arrow-left-s-line"></i> Voltar
+      </div>
+
+      <div class="done-paper">
+        <div class="paper-sheet" id="pdf-p3" style="position:relative;overflow:hidden;">
+          <div class="paper">
+
+            <div class="paper-hd">
+              <div class="paper-wordmark">
+                <span class="wm-label">Apollo</span>
+                <span class="wm-dot"></span>
+                <span class="wm-sub">Plataforma Digital</span>
+              </div>
+              <span class="paper-rule"></span>
+              <div class="paper-title">Termo de Responsabilidade</div>
+              <div class="paper-docid">Nº APOLLO-2025-X992</div>
+            </div>
+
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">1. Do Objeto</div>
+              <p class="paper-txt">O presente instrumento formaliza as responsabilidades operacionais, de segurança e de convivência aplicáveis ao evento cadastrado na plataforma Apollo::rio.</p>
+            </div>
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">2. Das Obrigações</div>
+              <p class="paper-txt">O RESPONSÁVEL declara ciência e concordância, comprometendo-se a garantir integridade, respeitar limites legais e responder civilmente por danos.</p>
+            </div>
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">3. Da Validade Digital</div>
+              <p class="paper-txt">Assinatura ICP-Brasil A3 — validade jurídica plena nos termos da Lei 14.063/2020.</p>
+            </div>
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">4 &amp; 5. Penalidades · Aceitação</div>
+              <p class="paper-txt">O descumprimento sujeita às penalidades previstas. Ao assinar, declara leitura e aceite integral.</p>
+            </div>
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">6. Do Foro</div>
+              <p class="paper-txt">Comarca do Rio de Janeiro, Estado do Rio de Janeiro.</p>
+            </div>
+
+            <div class="paper-sig-row">
+              <div class="paper-sig-col">
+                <div class="paper-sig-line ink">
+                  <div class="sig-name">Apollo Plataforma Digital</div>
+                  <div class="sig-role">CNPJ 00.000.000/0001-00</div>
+                </div>
+              </div>
+              <div class="paper-sig-col" style="position:relative;">
+                <div class="sig-stamp" id="sig-stamp-p3">✦ ASSINADO</div>
+                <div class="paper-sig-line ink">
+                  <div class="sig-name" id="done-sig-name" style="color:var(--live);">—</div>
+                  <div class="sig-role" id="done-sig-date">—</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="paper-foot">
+              <div class="pf-left"><span>APOLLO-2025-X992</span></div>
+              <div class="pf-right">
+                <span style="color:var(--live);">HASH: <span id="done-hash-short">—</span></span>
+              </div>
+            </div>
+
+          </div>
+          <div class="paper-seal"><span class="seal-star">✦</span><span class="seal-txt">ICP-Brasil<br>A3</span></div>
+          <div class="paper-qr"><div class="paper-qr-inner"></div></div>
+          <div id="done-sig-rect"></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PANEL 4 — SIGNED-FILE  (computer screen / browser view)
+══════════════════════════════════════════════════════════════ -->
+<section data-panel="signed-file">
+
+  <!-- OS top-bar -->
+  <div class="sf-os-bar" style="position:relative;">
+    <div class="sf-os-dots">
+      <div class="sf-os-dot"></div>
+      <div class="sf-os-dot"></div>
+      <div class="sf-os-dot"></div>
+    </div>
+    <span class="sf-os-title">Apollo Docs · Documento Assinado</span>
+    <button class="sf-os-back" data-back="1">
+      <i class="ri-arrow-left-s-line"></i> Voltar
+    </button>
+  </div>
+
+  <!-- verified banner -->
+  <div class="sf-verified-banner ai">
+    <i class="ri-shield-check-fill"></i>
+    Documento assinado digitalmente · ICP-Brasil A3 · Lei 14.063/2020 ·
+    Hash SHA-256: <strong id="sf-hash-inline" style="margin-left:4px;opacity:.7;">—</strong>
+  </div>
+
+  <!-- browser window -->
+  <div class="sf-browser ai">
+
+    <div class="sf-chrome">
+      <div class="sf-chrome-dots">
+        <div class="sf-chrome-dot"></div>
+        <div class="sf-chrome-dot"></div>
+        <div class="sf-chrome-dot"></div>
+      </div>
+      <div class="sf-url-bar">
+        <i class="ri-lock-fill"></i>
+        <span><b>apollo.rio.br</b>/docs/assinatura/APOLLO-2025-X992</span>
+      </div>
+      <div class="sf-chrome-badge"><i class="ri-check-line"></i> Assinado</div>
+    </div>
+
+    <div class="sf-body">
+      <div class="sf-paper-wrap">
+        <div class="paper-sheet" id="pdf-p4">
+          <div class="paper">
+
+            <div class="paper-hd">
+              <div class="paper-wordmark">
+                <span class="wm-label">Apollo</span>
+                <span class="wm-dot"></span>
+                <span class="wm-sub">Plataforma Digital</span>
+              </div>
+              <span class="paper-rule"></span>
+              <div class="paper-title">Termo de Responsabilidade</div>
+              <div class="paper-docid">Nº APOLLO-2025-X992</div>
+            </div>
+
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">1. Do Objeto</div>
+              <p class="paper-txt">O presente instrumento formaliza as responsabilidades operacionais, de segurança e de convivência aplicáveis ao evento cadastrado na plataforma Apollo::rio.</p>
+            </div>
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">2. Das Obrigações</div>
+              <p class="paper-txt">O RESPONSÁVEL declara ciência e concordância, comprometendo-se a garantir integridade, respeitar limites legais e responder civilmente por danos.</p>
+            </div>
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">3. Da Validade Digital</div>
+              <p class="paper-txt">Assinatura ICP-Brasil A3 — validade jurídica plena nos termos da Lei 14.063/2020.</p>
+            </div>
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">4 &amp; 5. Penalidades · Aceitação</div>
+              <p class="paper-txt">O descumprimento sujeita às penalidades previstas. Ao assinar, declara leitura e aceite integral.</p>
+            </div>
+            <div class="paper-sec">
+              <div class="paper-sec-lbl">6. Do Foro</div>
+              <p class="paper-txt">Comarca do Rio de Janeiro, Estado do Rio de Janeiro.</p>
+            </div>
+
+            <div class="paper-sig-row">
+              <div class="paper-sig-col">
+                <div class="paper-sig-line ink">
+                  <div class="sig-name">Apollo Plataforma Digital</div>
+                  <div class="sig-role">CNPJ 00.000.000/0001-00</div>
+                </div>
+              </div>
+              <div class="paper-sig-col" style="position:relative;">
+                <div class="sig-stamp" id="sig-stamp-p4">✦ ASSINADO</div>
+                <div class="paper-sig-line ink">
+                  <div class="sig-name" id="sf-sig-name" style="color:var(--live);">—</div>
+                  <div class="sig-role" id="sf-sig-date">—</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="paper-foot">
+              <div class="pf-left"><span>APOLLO-2025-X992</span></div>
+              <div class="pf-right">
+                <span style="color:var(--live);">HASH: <span id="sf-hash-short">—</span></span>
+              </div>
+            </div>
+
+          </div><!-- /paper -->
+          <div class="paper-seal"><span class="seal-star">✦</span><span class="seal-txt">ICP-Brasil<br>A3</span></div>
+          <div class="paper-qr"><div class="paper-qr-inner"></div></div>
+          <!-- titan stamp injected here -->
+          <div id="sf-sig-rect"></div>
+        </div>
+      </div>
+    </div><!-- /sf-body -->
+
+  </div><!-- /sf-browser -->
+
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     APOLLO PAGE-LAYOUT ENGINE v2 (CDN)
+══════════════════════════════════════════════════════════════ -->
+<script src="https://cdn.apollo.rio.br/v1.0.0/js/page-layout.js"></script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SIGN INTERACTION LOGIC
+══════════════════════════════════════════════════════════════ -->
+<script src="/sign-doc.js"></script>

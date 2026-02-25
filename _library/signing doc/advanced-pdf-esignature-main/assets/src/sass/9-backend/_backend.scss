@@ -1,0 +1,512 @@
+$primaryColor: #ff3d6c;
+$secondaryColor: #034faa;
+
+// .wp-admin
+body {
+  .fwp__esign {
+    &__header {
+      display: block;
+    }
+  }
+
+  .swal2-container.swal2-center.swal2-backdrop-show {
+    z-index: 999999;
+  }
+  .swal2-container.swal2-center {
+    > .fwp-swal2-popup {
+      height: 90vh;
+      margin: auto;
+      max-height: 100vh;
+      width: 95vw !important;
+      max-width: 100vw !important;
+      @include mq($until: 250px) {
+        grid-row: 1;
+        grid-column: 1;
+      }
+      .swal2-html-container {
+        margin: 0;
+        text-align: unset;
+      }
+      .dynamic_popup {
+        .spinner-material {
+          width: 56px;
+          height: 56px;
+          margin: auto;
+          margin-top: 50px;
+          border-radius: 50%;
+          margin-bottom: 50px;
+          border: 9px solid #474bff;
+          border-bottom-color: #ddd;
+          animation: spinner-aib1d7 0.8s infinite linear;
+          & + h3 {
+            text-align: center;
+            margin-bottom: 2rem;
+          }
+        }
+        .popup_close{
+          top: 1rem;
+          left: unset;
+          right: 1rem;
+          height: 30px;
+          width: 30px;
+          display: flex;
+          padding: unset;
+          cursor: pointer;
+          position: absolute;
+          border-radius: 50%;
+          text-align: center;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid #d3d3d3;
+        }
+        .popup_body {
+          margin: auto;
+          display: block;
+          max-width: 500px;
+          text-align: unset;
+          padding: 2rem 1rem;
+        }
+        .popup_foot {
+          gap: 20px;
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          padding-left: 20px;
+          padding-right: 20px;
+          justify-content: end;
+          .button {
+            gap: 10px;
+            display: flex;
+            align-items: center;
+            .invisible {
+              visibility: hidden;
+            }
+            &.btn-default {
+              background: #333;
+              margin-right: auto;
+            }
+          }
+          .calculated-prices {
+            font-weight: 700;
+            .price_amount {
+              color: #fb18a9;
+            }
+          }
+        }
+    
+      }
+      .swal2-progress-steps {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        align-content: center;
+        justify-content: center;
+        .swal2-progress-step {
+          padding: 3px 10px;
+          height: unset;
+          width: unset;
+          border-radius: 15px;
+        }
+      }
+    }
+  }
+}
+@keyframes spinner-aib1d7 {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pdf_builder__container {
+  .upload-pdf {
+    border: 1px solid #ddd;
+    padding: 10px 20px;
+    box-shadow: 0 0 5rem #c1c1c185 inset, 0 0 5rem #c1c1c1;
+    border-radius: 5px;
+    &:not([style^="display: none;"]) + .pdf_builder__row {
+      display: none;
+    }
+  }
+  #signature-builder {
+    margin: 0;
+    padding: 0;
+    z-index: 0;
+    overflow: auto;
+    background: none;
+    min-height: 100px;
+    position: relative;
+    // border-radius: 10px;
+    canvas {
+      margin: 0;
+      padding: 0;
+      display: block;
+      border: 1px solid #ddd;
+      &.canvas {
+        &__frontend {
+          max-width: 100%;
+          min-width: 100%;
+        }
+      }
+    }
+  }
+  .active {
+    outline: 1px solid red;
+  }
+  .hover {
+    outline: 1px solid blue;
+  }
+  .drop-item {
+    cursor: pointer;
+    margin-bottom: 10px;
+    background-color: rgb(255, 255, 255);
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: 1px solid rgb(204, 204, 204);
+    position: relative;
+  }
+  .drop-item .remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+  }
+}
+
+.pdf-dropzone {
+  height: 400px;
+  display: flex;
+  padding: 10px;
+  flex-wrap: wrap;
+  cursor: pointer;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #8b8b8b;
+  box-shadow: 0px 0px 14px #a3a3a3 inset;
+  @include mq($until: 500px) {
+    min-height: 300px;
+  }
+}
+.pdf_builder {
+  &__container {
+    width: 100%;
+    margin: 5rem auto;
+  }
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    .update_esign_template {
+      gap: 5px;
+      display: flex;
+      transition: all .7s ease;
+      .spinner-circular-tube {
+        width: 20px;
+        height: 20px;
+        display: none;
+        border-radius: 50%;
+        border: 11.2px #fdfdfd double;
+        border-left-style: solid;
+        animation: spinner-aib1d7 0.75s infinite linear;
+      }
+      &:disabled .spinner-circular-tube {
+        display: block;
+      }
+    }
+  }
+  &__builder {
+    width: 75%;
+    padding: 20px;
+    &.w-full {
+      width: 100%;
+      #signature-builder {
+        width: 100%;
+        canvas {
+          width: 100% !important;
+          height: auto !important;
+        }
+      }
+    }
+    .esign-body {
+      z-index: 0;
+      padding: 20px;
+      min-height: 100px;
+      background: #eee;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      &__single {
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 40px;
+        display: flex;
+        overflow: hidden;
+        padding: 3px 10px;
+        position: absolute;
+        line-height: unset;
+        align-items: center;
+        background: #ebebeb;
+        justify-content: space-between;
+        border: 0.5px dashed #a5a5a5;
+        
+        // &__front {
+        //   display: none;
+        // }
+        
+        @include mq($until: 550px) {
+          padding: 3px 5px;
+        }
+        &__title {
+          padding: 10px 5px;
+          text-transform: capitalize;
+        }
+        &__signpreview {
+          display: block;
+          padding: unset;
+          border-width: 1px;
+          transition: all 2s ease;
+          .esign-body__single__title {
+            top: 0;
+            left: 5px;
+            padding: 0;
+            z-index: 1;
+            margin: unset;
+            padding: 0 5px;
+            font-size: 10px;
+            color: #ffffff;
+            position: absolute;
+            background: #333;
+            border-radius: 3px;
+            box-shadow: 1px 1px 5px #fff;
+            + img {
+              height: 100%;
+              width: 100%;
+            }
+            @include mq($until: mobile) {
+              padding: 0 3px;
+              font-size: 6px;
+              line-height: 8px;
+            }
+          }
+        }
+        .dashicons-trash {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-wrap: nowrap;
+          line-height: unset;
+          margin: auto;
+        }
+        canvas {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+  &__frontend {
+    .pdf_builder {
+      &__builder {
+        width: 100%;
+      }
+      &__fields {
+        // @include mq($until: medium) {
+          display: none;
+        // }
+      }
+    }
+    .esign-body {
+      &__single {
+        &__enabled {
+          border-width: 1px;
+          border-color: $primaryColor;
+          &[data-type="sign"] {
+            border-width: 2px;
+          }
+        }
+      }
+      &__pattern {
+        // https://www.magicpattern.design/tools/css-backgrounds
+        background-color: #e5e5f7;
+        opacity: 0.8;
+        background-size: 10px 10px;
+        background-image: repeating-linear-gradient(45deg, $primaryColor 0, $primaryColor 1px, #e5e5f7 0, #e5e5f7 50%);
+      }
+    }
+    .update_esign_signature {
+      color: #fff;
+      margin-top: 20px;
+      background: $secondaryColor;
+    }
+  }
+  &__fields {
+    width: 25%;
+    display: block;
+    overflow: hidden;
+    position: relative;
+    transition: all .7s ease;
+    &__grid {
+      display: block;
+      position: relative;
+      padding: 20px 10px;
+      h3 {
+        font-size: 20px;
+        text-transform: uppercase;
+      }
+      .modal {
+        &__collapse {
+          top: 50%;
+          left: -5px;
+          display: none;
+          position: absolute;
+          transform: translateX(-15px);
+        }
+      }
+    }
+    .esign-fields {
+      gap: 10px;
+      z-index: 1;
+      padding: 20px;
+      display: grid;
+      background: #eee;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      &__single {
+        width: 100%;
+        border-radius: 5px;
+        background: #fff;
+        border: 1px solid #ccc;
+        display: inline-block;
+        margin-bottom: 0;
+        font-weight: 400;
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+        background-image: none;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        border-radius: 4px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        color: #333;
+        border-color: #ccc;
+      }
+      &__image {
+        height: 50px;
+      }
+    }
+    &__settings {
+      display: none;
+      padding: 20px 10px;
+      &__header {
+        border: none;
+        display: flex;
+        flex-wrap: wrap;
+        padding-bottom: 10px;
+        justify-content: space-between;
+        border-bottom: 1px solid #ddd;
+        button {
+          border: none;
+          background: #ddd;
+          border-radius: 3px;
+        }
+        &__title {
+          color: #333;
+          font-size: 15px;
+        }
+      }
+      &__body {
+        .pdf_fields {
+          padding: 5px;
+          padding-top: 20px;
+          &__group {
+            display: block;
+            position: relative;
+            &__fieldset {
+              margin-bottom: 10px;
+              .form-wrap {
+                &__radio, &__checkbox {
+                  gap: 10px;
+                  width: 100%;
+                  display: flex;
+                  flex-wrap: wrap;
+                  align-items: center;
+                  align-content: center;
+                  justify-content: space-between;
+                  & > label {
+                    gap: 5px;
+                    margin-bottom: 0;
+                    line-height: 20px;
+                    align-items: center;
+                  }
+                }
+              }
+              label {
+                display: flex;
+                align-items: center;
+                margin-bottom: 10px;
+                justify-content: space-between;
+                span[tooltip] {
+                  display: flex;
+                  padding: 2px 6px;
+                  line-height: 17px;
+                  border-radius: 100%;
+                  align-items: center;
+                  justify-content: center;
+                  border: 1px solid #ddd;
+                }
+              }
+            }
+          }
+          &__label {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: space-between;
+          }
+          &__tooltip {
+            margin-left: 5px;
+            padding: 2px 5px;
+            background: #eee;
+            border-radius: 14px;
+          }
+        }
+      }
+    }
+    &.settings_enabled {
+      .pdf_builder__fields__grid {display: none;}
+      .pdf_builder__fields__settings {display: block;}
+    }
+  }
+  &__collapse {
+    .pdf_builder {
+      &__builder {
+        width: 100%;
+      }
+      &__fields {
+        width: 0;
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+  }
+}
+
+.fwp__esign {
+  &__body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: auto;
+  }
+  #preview_contract {
+    min-width: 100%;
+    max-width: 100%;
+  }
+}
+button.launch-esignature {
+  display: none;
+}

@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "@babel/preset-env": "^7.28.5",
+    "browserify": "^17.0.1",
+    "gulp": "^5.0.1",
+    "gulp-babel": "^8.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-eslint-new": "^2.0.0",
+    "gulp-newer": "^1.4.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-terser": "^2.1.0",
+    "plugin-error": "^2.0.1",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0",
+    "vmsg": "^0.4.0",
+    "webpack": "^5.103.0",
+    "tmp": ">=0.2.4"
+  },
+  "overrides": {
+    "postcss": "^8.4.38"
+  },
+  "scripts": {
+    "build": "gulp",
+    "build:static": "gulp js-static",
+    "webpack": "webpack"
+  }
+}

@@ -1,0 +1,21 @@
+{
+    "name": "apollo/classifieds",
+    "description": "Apollo Classifieds — Marketplace system with mandatory disclaimer modal",
+    "type": "wordpress-plugin",
+    "license": "proprietary",
+    "version": "1.0.0",
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Apollo\\Classifieds\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Apollo Team",
+            "homepage": "https://apollo.rio.br"
+        }
+    ]
+}

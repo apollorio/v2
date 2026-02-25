@@ -1,0 +1,664 @@
+/**
+ * Apollo Mural — Logged-in Dashboard
+ *
+ * Layout: Weather Hero (full-width) → Greeting → Ticker → Sections
+ * Design System: Apollo DS tokens
+ *
+ * @package Apollo\Templates
+ * @since   1.1.0
+ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   0. DESIGN TOKENS
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+    --ff-fun: "Shrikhand", cursive;
+    --ff-mono: "Space Mono", monospace;
+    --ff-main: "Space Grotesk", system-ui, -apple-system, sans-serif;
+    --font: 400 14px/1.5 var(--ff-main);
+    --primary: #f45f00;
+    --accent-violet: #651FFF;
+    --txt-rgb: 19, 21, 23;
+    --txt-color: rgba(var(--txt-rgb), 0.77);
+    --txt-color-hover: rgba(var(--txt-rgb), 0.9);
+    --txt-muted: rgba(var(--txt-rgb), 0.31);
+    --white-1: #fff;
+    --white-2: #fcfbf7;
+    --white-3: #f9f7ef;
+    --white-4: #f6f3e7;
+    --gray-1: #f8f8f9;
+    --gray-2: #f2f2f4;
+    --gray-7: #cfcfd1;
+    --gray-10: #6e6e73;
+    --black-1: #121214;
+    --black-2: #0f0f11;
+    --border: #00000027;
+    --border-hover: #00000037;
+    --radius-xs: 6px;
+    --radius-sm: 10px;
+    --radius: 18px;
+    --radius-lg: 28px;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 32px;
+    --space-6: 48px;
+    --ease-default: cubic-bezier(.16, 1, .3, 1);
+    --ease-smooth: cubic-bezier(.25, 1, .5, 1);
+    --transition-ui: .25s var(--ease-default);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   1. GLOBAL RESETS
+   ═══════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body.apollo-mural {
+    background-color: var(--white-1);
+    color: var(--txt-color);
+    font: var(--font);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    line-height: 1.6;
+    padding-bottom: 80px;
+}
+
+a { color: inherit; text-decoration: none; transition: var(--transition-ui); }
+img { display: block; max-width: 100%; border-radius: var(--radius-sm); }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   2. LAYOUT
+   ═══════════════════════════════════════════════════════════════════ */
+
+.app-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   3. WEATHER HERO — Full-width cinematic bar at top
+   ═══════════════════════════════════════════════════════════════════ */
+
+.weather-hero {
+    width: 100%;
+    padding: 24px 24px 0;
+}
+
+.weather-hero .a-fore-card {
+    width: 100%;
+    height: clamp(200px, 28vw, 360px);
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--black-2);
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    isolation: isolate;
+}
+
+.a-fore-video-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.a-fore-video-layer iframe {
+    position: absolute;
+    width: 120%;
+    height: 120%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 0;
+    opacity: 0.9;
+    filter: saturate(1.1);
+}
+
+.a-fore-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.15) 0%,
+        rgba(0, 0, 0, 0) 40%,
+        rgba(0, 0, 0, 0.7) 100%
+    );
+}
+
+.a-fore-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    padding: clamp(16px, 3vw, 32px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.a-fore-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.a-fore-icon-box {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #FFD700;
+    font-size: 18px;
+}
+
+.a-fore-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.a-fore-label {
+    font-family: var(--ff-mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    opacity: 0.8;
+    margin-bottom: 2px;
+}
+
+.a-fore-location {
+    font-family: var(--ff-main);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.a-fore-footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.a-fore-temp {
+    font-family: var(--ff-main);
+    font-size: clamp(36px, 5vw, 56px);
+    line-height: 0.9;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+}
+
+.a-fore-condition {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 5px 10px;
+    border-radius: 100px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   4. GREETING
+   ═══════════════════════════════════════════════════════════════════ */
+
+.mural-greeting {
+    padding: var(--space-6) 0 var(--space-4);
+}
+
+.greet-title {
+    font-family: var(--ff-main);
+    font-weight: 700;
+    font-size: clamp(32px, 4vw, 56px);
+    color: var(--black-1);
+    line-height: 1;
+    margin-bottom: 12px;
+    letter-spacing: -0.04em;
+}
+
+.greet-temp {
+    font-family: var(--ff-mono);
+    font-size: 13px;
+    color: var(--gray-10);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.greet-temp i {
+    color: var(--primary);
+}
+
+.greet-alert {
+    display: inline-block;
+    background: var(--white-2);
+    border: 1px solid var(--border);
+    color: var(--black-1);
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 480px;
+    position: relative;
+}
+
+.greet-alert::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    background: var(--primary);
+    border-radius: 0 4px 4px 0;
+}
+
+.greet-alert strong {
+    font-weight: 700;
+    color: var(--black-1);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   5. NEWS TICKER
+   ═══════════════════════════════════════════════════════════════════ */
+
+.news-ticker-bar {
+    background: var(--black-1);
+    color: var(--primary);
+    font-family: var(--ff-mono);
+    padding: 14px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-6);
+    position: relative;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.news-track {
+    display: inline-block;
+    animation: ticker-scroll 60s linear infinite;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.news-item {
+    margin-right: 80px;
+    position: relative;
+}
+
+.news-item::after {
+    content: "///";
+    color: var(--gray-7);
+    margin-left: 80px;
+    opacity: 0.3;
+    font-weight: 400;
+}
+
+@keyframes ticker-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   6. SECTION COMMON
+   ═══════════════════════════════════════════════════════════════════ */
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+}
+
+.section-title {
+    font-family: var(--ff-mono);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--txt-muted);
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title i {
+    font-size: 14px;
+    color: var(--black-1);
+}
+
+.section-link {
+    font-family: var(--ff-mono);
+    font-size: 11px;
+    text-decoration: none;
+    color: var(--black-1);
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+    transition: 0.2s;
+}
+
+.section-link:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   7. MY SOUNDS
+   ═══════════════════════════════════════════════════════════════════ */
+
+.section-my-sounds {
+    margin-bottom: var(--space-6);
+}
+
+.sound-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.sound-pill {
+    padding: 10px 20px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    font-family: var(--ff-main);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--black-1);
+    background: var(--white-1);
+    transition: 0.2s;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.sound-pill:hover {
+    background: var(--black-1);
+    color: var(--white-1);
+    border-color: var(--black-1);
+    transform: translateY(-2px);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   8. CARDS GRID (Events)
+   ═══════════════════════════════════════════════════════════════════ */
+
+.section-favorites { margin-bottom: var(--space-6); }
+.section-upcoming  { margin-top: 40px; margin-bottom: var(--space-6); }
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.event-card {
+    background: var(--white-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.event-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.08);
+    border-color: var(--black-1);
+}
+
+.ec-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border);
+    filter: grayscale(100%);
+    transition: filter 0.3s;
+    border-radius: 0;
+}
+
+.ec-img--placeholder {
+    display: grid;
+    place-items: center;
+    background: var(--gray-1);
+    font-size: 32px;
+    color: var(--gray-7);
+}
+
+.event-card:hover .ec-img {
+    filter: grayscale(0%);
+}
+
+.ec-body {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.ec-date {
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.ec-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--black-1);
+    margin-bottom: 8px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+}
+
+.ec-loc {
+    font-size: 13px;
+    color: var(--txt-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--ff-main);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   9. CLASSIFIEDS
+   ═══════════════════════════════════════════════════════════════════ */
+
+.section-classifieds {
+    margin-top: 60px;
+    padding-bottom: var(--space-6);
+}
+
+.classified-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.class-col-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    font-family: var(--ff-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--gray-10);
+    font-weight: 700;
+}
+
+.class-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--white-1);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.class-item:hover {
+    border-color: var(--primary);
+    background: var(--white-2);
+    transform: translateX(4px);
+}
+
+.class-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--gray-1);
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    color: var(--black-1);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.class-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.class-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--black-1);
+    line-height: 1.3;
+}
+
+.class-meta {
+    font-size: 12px;
+    color: var(--txt-muted);
+    margin-top: 2px;
+}
+
+.class-price {
+    font-family: var(--ff-mono);
+    font-weight: 700;
+    color: var(--black-1);
+    font-size: 13px;
+    background: var(--gray-2);
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   10. SCROLL REVEAL
+   ═══════════════════════════════════════════════════════════════════ */
+
+.reveal-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s var(--ease-smooth), transform 0.6s var(--ease-smooth);
+}
+
+.reveal-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   11. RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+    .weather-hero {
+        padding: 16px 16px 0;
+    }
+
+    .weather-hero .a-fore-card {
+        height: clamp(160px, 40vw, 240px);
+    }
+
+    .mural-greeting {
+        padding: var(--space-4) 0 var(--space-3);
+    }
+
+    .greet-title {
+        font-size: clamp(28px, 6vw, 40px);
+    }
+
+    .classified-row {
+        grid-template-columns: 1fr;
+    }
+
+    .cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .weather-hero {
+        padding: 12px 12px 0;
+    }
+
+    .weather-hero .a-fore-card {
+        height: 180px;
+        border-radius: var(--radius);
+    }
+
+    .app-container {
+        padding: 0 16px;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ec-img {
+        height: 150px;
+    }
+
+    .sound-pill {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+}

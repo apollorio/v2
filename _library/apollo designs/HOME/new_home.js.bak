@@ -1,0 +1,578 @@
+﻿/* ═══════════════════════════════════════════════════════════════════
+   APOLLO::RIO — new_home.js  v3.1.0
+   Page-level interactions for /home panel layout.
+   Depends on: Apollo CDN (GSAP 3.13, RemixIcon), page-layout.js
+   ═══════════════════════════════════════════════════════════════════
+   PART MAPPING (PHP modular reference):
+     Radio engine      → apollo-home/templates/partials/radio-widget.php
+     Navbar scroll     → nh-navbar (persistent-ui.php)
+     Menu FAB + sheet  → nh-menu-fab + nh-menu-sheet (persistent-ui.php)
+     Profile dropdown  → nhProfileSheet (persistent-ui.php)
+     GSAP hero         → panel-home.php hero section
+   ═══════════════════════════════════════════════════════════════════ */
+
+;(function () {
+  'use strict';
+
+  /* ─── CACHE DOM ─────────────────────────────────────────────────── */
+  var navbar       = document.getElementById('nhNav');
+  var homePanel    = document.querySelector('[data-panel="home"]');
+
+  // Radio
+  var radioWidget  = document.getElementById('nhRadio');
+  var radioBtn     = document.getElementById('nhRadioBtn');
+  var radioIcon    = document.getElementById('nhRadioIcon');
+
+  // Menu FAB + upward sheet
+  var menuFab      = document.getElementById('nhMenuFab');
+  var menuSheet    = document.getElementById('nhMenuSheet');
+
+  // Profile dropdown
+  var profileBtn   = document.getElementById('nhProfileBtn');
+  var profileSheet = document.getElementById('nhProfileSheet');
+
+
+  /* ─── APOLLO RADIO — Synchronized Playback Engine v2 ─────────────
+     JSON block format: [{ title, url, time, dj }, ...]
+       title  → display name of the track
+       url    → SoundCloud track URL  (https://soundcloud.com/...)
+       time   → duration in seconds
+       dj     → DJ / artist name
+     All users hear the same track at the same offset (time-sync).
+     ─────────────────────────────────────────────────────────────────── */
+  var SVG_PAUSE = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+  var SVG_PLAY  = '<polygon points="5 3 19 12 5 21 5 3"></polygon>';
+  var radioPlaying   = false;
+  var radioPlaylist  = [];
+  var radioBlockHour = -1;
+  var radioAdvanceTimer = null;
+  /* PROTOTYPE: local radio/ folder. Production: 'https://assets.apollo.rio.br/radio/' */
+  var RADIO_BASE = 'radio/';
+
+  /* ─── Live time counter ─── */
+  var radioTickTimer  = null;   // setInterval id
+  var radioElapsedSec = 0;      // seconds elapsed on current track
+
+  /** Format seconds → M:SS and write to #nhRadioTime */
+  function updateRadioTime(secs) {
+    radioElapsedSec = secs;
+    var el = document.getElementById('nhRadioTime');
+    if (!el) return;
+    var m = Math.floor(secs / 60);
+    var s = secs % 60;
+    el.textContent = m + ':' + (s < 10 ? '0' + s : s);
+  }
+
+  /** Start a 1-second local tick from startOffset (seconds) */
+  function startRadioTick(startOffset) {
+    clearRadioTick();
+    updateRadioTime(startOffset);
+    radioTickTimer = setInterval(function () {
+      if (!radioPlaying) return;
+      updateRadioTime(radioElapsedSec + 1);
+    }, 1000);
+  }
+
+  /** Stop the local tick */
+  function clearRadioTick() {
+    if (radioTickTimer) { clearInterval(radioTickTimer); radioTickTimer = null; }
+  }
+
+  /* ─── SoundCloud Widget ─── */
+  var scIframe = null;
+  var scWidget = null;
+
+  function isSoundCloud(url) { return url && url.indexOf('soundcloud.com') !== -1; }
+
+  function getSCEmbedUrl(trackUrl) {
+    return 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(trackUrl) +
+      '&auto_play=true&hide_related=true&show_comments=false&show_user=false&show_reposts=false&visual=false&color=%23FF6B35';
+  }
+
+  function loadSCApi(cb) {
+    if (window.SC && window.SC.Widget) return cb();
+    var s = document.createElement('script');
+    s.src = 'https://w.soundcloud.com/player/api.js';
+    s.onload = cb;
+    document.head.appendChild(s);
+  }
+
+  /**
+   * SC Widget correct sequence:
+   *   READY       → play()
+   *   PLAY        → seekTo(ms) once (must be playing before seeking)
+   *   PLAY_PROGRESS → update time display + sync local tick
+   *   FINISH      → advance to next
+   */
+  function setupSCPlayer(trackUrl, offsetSeconds, onFinish) {
+    loadSCApi(function () {
+      if (!scIframe) {
+        scIframe = document.createElement('iframe');
+        scIframe.id = 'nhScPlayer';
+        scIframe.setAttribute('allow', 'autoplay');
+        scIframe.style.cssText = 'position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1;';
+        document.body.appendChild(scIframe);
+      }
+      scWidget = null;
+      scIframe.src = getSCEmbedUrl(trackUrl);
+      scIframe.onload = function () {
+        try {
+          scWidget = SC.Widget(scIframe);
+          var seekDone = false;
+
+          /* 1. READY → start playback */
+          scWidget.bind(SC.Widget.Events.READY, function () {
+            scWidget.play();
+          });
+
+          /* 2. PLAY → seek to correct position once play has begun */
+          scWidget.bind(SC.Widget.Events.PLAY, function () {
+            if (!seekDone) {
+              seekDone = true;
+              if (offsetSeconds > 0) {
+                /* Small delay ensures widget is in a buffered/playing state */
+                setTimeout(function () {
+                  try { scWidget.seekTo(offsetSeconds * 1000); } catch (e) {}
+                }, 350);
+              }
+              startRadioTick(offsetSeconds);
+            }
+          });
+
+          /* 3. PLAY_PROGRESS → SC provides currentPosition in ms → sync display */
+          scWidget.bind(SC.Widget.Events.PLAY_PROGRESS, function (prog) {
+            if (prog && typeof prog.currentPosition === 'number') {
+              /* Keep local tick in sync with SC position (overrides tick drift) */
+              radioElapsedSec = Math.floor(prog.currentPosition / 1000);
+              var el = document.getElementById('nhRadioTime');
+              if (el) {
+                var m = Math.floor(radioElapsedSec / 60);
+                var s = radioElapsedSec % 60;
+                el.textContent = m + ':' + (s < 10 ? '0' + s : s);
+              }
+            }
+          });
+
+          /* 4. FINISH → advance to next track */
+          scWidget.bind(SC.Widget.Events.FINISH, function () {
+            clearRadioTick();
+            if (onFinish) onFinish();
+          });
+
+        } catch (e) {
+          console.warn('[Apollo Radio] SC Widget error:', e);
+        }
+      };
+    });
+  }
+
+  function pauseSCPlayer() {
+    if (scWidget) { try { scWidget.pause(); } catch(e) {} }
+  }
+
+  /* ─── Fallback Audio (for direct audio file URLs) ─── */
+  var radioAudio = null;
+
+  function ensureAudio(onEnded) {
+    if (!radioAudio) {
+      radioAudio = new Audio();
+      radioAudio.crossOrigin = 'anonymous';
+      radioAudio.preload = 'auto';
+      radioAudio.volume = 0.85;
+      /* Live time display via timeupdate */
+      radioAudio.addEventListener('timeupdate', function () {
+        updateRadioTime(Math.floor(radioAudio.currentTime));
+      });
+    }
+    radioAudio.onended = onEnded;
+    radioAudio.onerror = function () {
+      console.warn('[Apollo Radio] Audio error, skipping...');
+      setTimeout(advanceToNext, 1500);
+    };
+    return radioAudio;
+  }
+
+  /* ─── Time-block helpers ─── */
+  function getBlockHour() { return Math.floor(new Date().getHours() / 3) * 3; }
+
+  function getBlockStart(blockHour) {
+    var d = new Date(); d.setHours(blockHour, 0, 0, 0); return d;
+  }
+
+  /** Get sync state: current track + seek offset */
+  function getSyncPlayback(playlist) {
+    var blockHour  = getBlockHour();
+    var blockStart = getBlockStart(blockHour);
+    var elapsed    = Math.floor((Date.now() - blockStart.getTime()) / 1000);
+
+    var total = 0;
+    for (var t = 0; t < playlist.length; t++) total += playlist[t].time;
+    if (total > 0) elapsed = elapsed % total;
+
+    for (var i = 0; i < playlist.length; i++) {
+      if (elapsed < playlist[i].time) {
+        return {
+          index:     i,
+          title:     playlist[i].title,
+          url:       playlist[i].url,
+          dj:        playlist[i].dj,
+          offset:    elapsed,
+          remaining: playlist[i].time - elapsed
+        };
+      }
+      elapsed -= playlist[i].time;
+    }
+    return null;
+  }
+
+  /** Fetch 3-hour block JSON */
+  function fetchRadioBlock(blockHour, cb) {
+    var padded = blockHour < 10 ? '0' + blockHour : '' + blockHour;
+    fetch(RADIO_BASE + 'radio.' + padded + '.json')
+      .then(function (r) { return r.json(); })
+      .then(function (d) { cb(null, d); })
+      .catch(function (e) { cb(e, null); });
+  }
+
+  /** Update track/artist display */
+  function updateRadioUI(title, dj) {
+    var t = document.querySelector('.nh-radio-track');
+    var a = document.querySelector('.nh-radio-artist');
+    if (t) t.textContent = title || '—';
+    if (a) a.textContent = dj    || '';
+  }
+
+  /** Start synced playback */
+  function startSyncedPlayback() {
+    var sync = getSyncPlayback(radioPlaylist);
+    if (!sync) return;
+
+    updateRadioUI(sync.title, sync.dj);
+
+    if (isSoundCloud(sync.url)) {
+      /* SC Widget handles seek + tickTimer internally after play fires */
+      setupSCPlayer(sync.url, sync.offset, advanceToNext);
+    } else {
+      var audio = ensureAudio(advanceToNext);
+      audio.src = sync.url;
+      audio.currentTime = 0;
+      var p = audio.play();
+      if (p && p.then) {
+        p.then(function () {
+          if (sync.offset > 0) audio.currentTime = sync.offset;
+          startRadioTick(sync.offset); // local fallback tick (timeupdate also fires)
+        }).catch(function (e) { console.warn('[Apollo Radio] Autoplay blocked:', e.message); });
+      }
+    }
+
+    clearTimeout(radioAdvanceTimer);
+    radioAdvanceTimer = setTimeout(advanceToNext, sync.remaining * 1000 + 400);
+  }
+
+  /** Advance to next track */
+  function advanceToNext() {
+    clearTimeout(radioAdvanceTimer);
+    clearRadioTick();
+    var bh = getBlockHour();
+    if (bh !== radioBlockHour) {
+      radioBlockHour = bh;
+      fetchRadioBlock(bh, function (err, data) {
+        if (err || !data || !data.length) return;
+        radioPlaylist = data;
+        startSyncedPlayback();
+      });
+    } else {
+      startSyncedPlayback(); // re-sync on same block (handles drift)
+    }
+  }
+
+  /** Toggle play / pause */
+  function toggleRadio() {
+    radioPlaying = !radioPlaying;
+
+    if (radioPlaying) {
+      radioWidget && radioWidget.classList.remove('is-paused');
+      radioIcon.innerHTML = SVG_PAUSE;
+      radioBtn.setAttribute('aria-label', 'Pausar rádio');
+
+      var bh = getBlockHour();
+      if (bh !== radioBlockHour || !radioPlaylist.length) {
+        radioBlockHour = bh;
+        fetchRadioBlock(bh, function (err, data) {
+          if (err || !data || !data.length) { updateRadioUI('Offline', '—'); return; }
+          radioPlaylist = data;
+          startSyncedPlayback();
+        });
+      } else {
+        startSyncedPlayback();
+      }
+    } else {
+      radioWidget && radioWidget.classList.add('is-paused');
+      radioIcon.innerHTML = SVG_PLAY;
+      radioBtn.setAttribute('aria-label', 'Tocar rádio');
+      clearTimeout(radioAdvanceTimer);
+      clearRadioTick();
+      pauseSCPlayer();
+      if (radioAudio) radioAudio.pause();
+    }
+  }
+
+  if (radioBtn && radioWidget) { radioBtn.addEventListener('click', toggleRadio); }
+
+  /* Pre-fetch block to show current track info without autoplay */
+  (function preloadRadioInfo() {
+    var bh = getBlockHour();
+    fetchRadioBlock(bh, function (err, data) {
+      if (err || !data || !data.length) return;
+      radioPlaylist = data;
+      radioBlockHour = bh;
+      var sync = getSyncPlayback(data);
+      if (sync) updateRadioUI(sync.title, sync.dj);
+    });
+  })();
+
+
+  /* ─── NAVBAR SCROLL (panel-aware) ──────────────────────────────────
+     body is locked by page-layout.js — listen on [data-panel="home"]
+     which is the actual scrolling surface.                            */
+  if (navbar && homePanel) {
+    var ticking = false;
+    homePanel.addEventListener('scroll', function () {
+      if (!ticking) {
+        window.requestAnimationFrame(function () {
+          navbar.classList.toggle('scrolled', homePanel.scrollTop > 72);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  }
+
+
+  /* ─── MENU FAB — open/close upward sheet ───────────────────────────
+     Single circle button bottom-right.
+     Click → toggles .is-open on both FAB and sheet.
+     Sheet slides from bottom to top via CSS transform.
+     Clicking outside closes both.                                      */
+  function openMenuSheet() {
+    menuFab.classList.add('is-open');
+    menuSheet.classList.add('is-open');
+    menuFab.setAttribute('aria-expanded', 'true');
+    // Close profile if open
+    closeProfileSheet();
+  }
+  function closeMenuSheet() {
+    menuFab.classList.remove('is-open');
+    menuSheet.classList.remove('is-open');
+    menuFab.setAttribute('aria-expanded', 'false');
+  }
+  function isMenuOpen() {
+    return menuSheet.classList.contains('is-open');
+  }
+
+  if (menuFab && menuSheet) {
+    menuFab.addEventListener('click', function (e) {
+      e.stopPropagation();
+      isMenuOpen() ? closeMenuSheet() : openMenuSheet();
+    });
+  }
+
+
+  /* ─── PROFILE DROPDOWN (navbar top-right) ───────────────────────── */
+  function openProfileSheet() {
+    if (!profileSheet) return;
+    profileSheet.classList.add('is-open');
+    profileBtn.setAttribute('aria-expanded', 'true');
+    // Close menu fab if open
+    closeMenuSheet();
+  }
+  function closeProfileSheet() {
+    if (!profileSheet) return;
+    profileSheet.classList.remove('is-open');
+    if (profileBtn) profileBtn.setAttribute('aria-expanded', 'false');
+  }
+  function isProfileOpen() {
+    return profileSheet && profileSheet.classList.contains('is-open');
+  }
+
+  if (profileBtn && profileSheet) {
+    profileBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      isProfileOpen() ? closeProfileSheet() : openProfileSheet();
+    });
+  }
+
+
+  /* ─── CLICK OUTSIDE — close all sheets ─────────────────────────── */
+  document.addEventListener('click', function (e) {
+    if (menuFab && menuSheet && !menuFab.contains(e.target) && !menuSheet.contains(e.target)) {
+      closeMenuSheet();
+    }
+    if (profileBtn && profileSheet && !profileBtn.contains(e.target) && !profileSheet.contains(e.target)) {
+      closeProfileSheet();
+    }
+  });
+
+  /* ESC key closes any open sheet */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeMenuSheet();
+      closeProfileSheet();
+    }
+  });
+
+
+  /* ─── GSAP HERO EFFECTS ─────────────────────────────────────────── */
+  function waitForGsap(cb, n) {
+    n = n || 0;
+    if (typeof gsap !== 'undefined') return cb();
+    if (n < 100) return setTimeout(function () { waitForGsap(cb, n + 1); }, 50);
+  }
+
+  waitForGsap(function () {
+
+    /* Cancel CSS fallback animation — GSAP takes over from here */
+    if (homePanel) {
+      homePanel.querySelectorAll('.ai').forEach(function (el) {
+        el.style.animation = 'none';
+      });
+    }
+
+    /* Hero video parallax — scroller is the panel, not window */
+    var heroVid = document.querySelector('.nh-hero-vid');
+    if (heroVid && homePanel && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+
+      gsap.to(heroVid, {
+        scale: 1.12,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.nh-hero',
+          scroller: homePanel,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.5,
+        }
+      });
+    }
+
+    /* Menu FAB entrance — springy pop from bottom */
+    if (menuFab) {
+      gsap.fromTo(menuFab,
+        { y: 30, scale: 0.5, opacity: 0 },
+        { y: 0, scale: 1, opacity: 1, duration: 0.7, delay: 1.6, ease: 'back.out(2.2)' }
+      );
+    }
+
+    /* Radio entrance — slide from left */
+    if (radioWidget) {
+      gsap.from(radioWidget, {
+        x: -40,
+        opacity: 0,
+        duration: 0.9,
+        delay: 2.0,
+        ease: 'power3.out',
+      });
+    }
+
+    /* Scroll-triggered reveal for all .ai elements in each section */
+    if (typeof ScrollTrigger !== 'undefined' && homePanel) {
+      var sections = homePanel.querySelectorAll('.section');
+      sections.forEach(function (sec) {
+        var items = sec.querySelectorAll('.ai');
+        if (!items.length) return;
+        ScrollTrigger.create({
+          trigger: sec,
+          scroller: homePanel,
+          start: 'top 86%',
+          once: true,
+          onEnter: function () {
+            gsap.to(items, {
+              y: 0,
+              opacity: 1,
+              duration: 0.52,
+              ease: 'power3.out',
+              stagger: 0.055,
+              overwrite: 'auto',
+            });
+          }
+        });
+      });
+    }
+
+  });
+
+
+  /* ─── MONTH DROPDOWN (September start, +2 months, Portal) ────────
+     Trigger → click → reveals row of month options + portal link.
+     Current = September, then +1 (October), +2 (November), + Portal.  */
+  var monthTrigger = document.getElementById('nhMonthTrigger');
+  var monthMenu    = document.getElementById('nhMonthMenu');
+  var monthText    = monthTrigger ? monthTrigger.querySelector('.nh-month-text') : null;
+
+  if (monthTrigger && monthMenu && monthText) {
+    var allMonths = ['January','February','March','April','May','June',
+                     'July','August','September','October','November','December'];
+    var startIdx = 8; // September = 0-indexed 8
+
+    var curMonth  = allMonths[startIdx];
+    var nextMonth = allMonths[(startIdx + 1) % 12];
+    var plusTwo   = allMonths[(startIdx + 2) % 12];
+
+    var monthOptions = [
+      { text: curMonth,  type: 'month' },
+      { text: nextMonth, type: 'month' },
+      { text: plusTwo,   type: 'month' },
+      { text: '<i class="ri-calendar-2-line"></i> TODOS', type: 'link', url: '/portal' },
+      { text: '<i class="ri-calendar-schedule-line"></i> NOVO', type: 'link', url: '/add-evento' }
+    ];
+
+    // Set trigger text
+    monthText.textContent = curMonth;
+
+    // Populate row
+    monthMenu.innerHTML = monthOptions.map(function (opt) {
+      var isActive = (opt.text === curMonth) ? ' active' : '';
+      var isPortal = (opt.type === 'link') ? ' nh-portal-link' : '';
+      var href = opt.url || '#';
+      return '<li><a href="' + href + '" class="' + isActive + isPortal + '" data-type="' + opt.type + '">' + opt.text + '</a></li>';
+    }).join('');
+
+    // Toggle visibility
+    monthTrigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      monthMenu.classList.toggle('is-visible');
+
+      // GSAP stagger if available
+      if (typeof gsap !== 'undefined' && monthMenu.classList.contains('is-visible')) {
+        gsap.from('#nhMonthMenu li', {
+          x: 10,
+          opacity: 0,
+          stagger: 0.05,
+          ease: 'power2.out'
+        });
+      }
+    });
+
+    // Option click
+    monthMenu.addEventListener('click', function (e) {
+      var target = e.target.closest('a');
+      if (!target) return;
+
+      if (target.dataset.type === 'month') {
+        e.preventDefault();
+        monthText.textContent = target.textContent.trim();
+        monthMenu.querySelectorAll('a').forEach(function (a) { a.classList.remove('active'); });
+        target.classList.add('active');
+        monthMenu.classList.remove('is-visible');
+      }
+      // Portal link follows href naturally
+    });
+
+    // Close on outside click
+    document.addEventListener('click', function () {
+      monthMenu.classList.remove('is-visible');
+    });
+  }
+
+})();

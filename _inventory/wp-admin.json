@@ -1,0 +1,1165 @@
+{
+  "_meta": {
+    "generated": "2026-02-18",
+    "registry_version": "6.3.0",
+    "option_key": "apollo_admin_settings",
+    "option_source": "apollo-admin/src/Settings.php",
+    "schema_method": "Apollo\\Admin\\Settings::get_schema()",
+    "admin_panel_url": "/wp-admin/admin.php?page=apollo",
+    "constant": "APOLLO_ADMIN_OPTION_KEY",
+    "constant_source": "apollo-admin/includes/constants.php",
+    "constant_line": 21,
+    "save_method": "Settings::save()",
+    "save_source": "apollo-admin/src/Settings.php",
+    "save_line": 660,
+    "load_method": "Settings::load()",
+    "load_line": 670,
+    "field_types": ["text","email","number","color","toggle","select","textarea"],
+    "note": "ALL settings shown here are controllable via wp-admin/admin.php?page=apollo-settings. Stored as a single serialized array in wp_option apollo_admin_settings. Each section key is the plugin slug (or '_global' for brand settings)."
+  },
+
+  "settings": {
+
+    "_global": {
+      "label": "Global / Marca",
+      "description": "Brand configuration applied across all Apollo templates",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 160,
+      "fields": [
+        {
+          "id":      "brand_name",
+          "label":   "Nome da Marca",
+          "type":    "text",
+          "default": "Apollo",
+          "description": "Displayed in headers, emails, and UI chrome throughout Apollo templates"
+        },
+        {
+          "id":      "brand_color",
+          "label":   "Cor Principal",
+          "type":    "color",
+          "default": "#6366f1",
+          "description": "Primary accent color applied as CSS variable --apollo-color"
+        },
+        {
+          "id":      "dark_mode",
+          "label":   "Modo Escuro Padrão",
+          "type":    "toggle",
+          "default": false,
+          "description": "Activates dark theme by default; users can override via preference"
+        },
+        {
+          "id":      "compact_ui",
+          "label":   "Interface Compacta",
+          "type":    "toggle",
+          "default": false,
+          "description": "Reduces spacing and padding for information-dense layouts"
+        }
+      ]
+    },
+
+    "apollo-core": {
+      "label": "Core",
+      "description": "Core platform settings — CPT registries, debug tools, cleanup behavior",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 175,
+      "fields": [
+        {
+          "id":      "debug_mode",
+          "label":   "Modo Debug",
+          "type":    "toggle",
+          "default": false,
+          "description": "Outputs registry diagnostics to Apollo REST /health endpoint and error_log"
+        },
+        {
+          "id":      "cleanup_on_uninstall",
+          "label":   "Limpar dados ao desinstalar",
+          "type":    "toggle",
+          "default": false,
+          "description": "When true, uninstall.php drops ALL Apollo custom tables and transients. Irreversible."
+        }
+      ]
+    },
+
+    "apollo-login": {
+      "label": "Login & Registro",
+      "description": "Authentication flow, registration options, URL masking, wp-login hardening",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 185,
+      "fields": [
+        {
+          "id":      "enable_registration",
+          "label":   "Habilitar Registro",
+          "type":    "toggle",
+          "default": true,
+          "description": "If false, /registre redirects to /acesso and registration REST returns 403"
+        },
+        {
+          "id":      "registration_quiz",
+          "label":   "Quiz de Registro",
+          "type":    "toggle",
+          "default": true,
+          "description": "Shows the gamified interest quiz on step 7 of the multi-step registration form"
+        },
+        {
+          "id":      "login_redirect",
+          "label":   "Redirecionar após login",
+          "type":    "text",
+          "default": "/",
+          "description": "URL path where users are sent after successfully logging in. Use /explore for social feed, /painel for dashboard."
+        },
+        {
+          "id":      "disable_wp_login",
+          "label":   "Desabilitar /wp-login.php",
+          "type":    "toggle",
+          "default": true,
+          "description": "URLRewriter maps wp-login.php → /acesso (custom login) and returns 404 for direct access. 7G Firewall blocks brute-force."
+        }
+      ]
+    },
+
+    "apollo-users": {
+      "label": "Usuários & Perfil",
+      "description": "User profiles, discovery features, matchmaking, default role assignment",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 205,
+      "fields": [
+        {
+          "id":      "enable_radar",
+          "label":   "Radar de Usuários",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables /radar page and GET /apollo/v1/users/radar endpoint — new user discovery system"
+        },
+        {
+          "id":      "enable_matchmaking",
+          "label":   "Matchmaking por sons",
+          "type":    "toggle",
+          "default": false,
+          "description": "Enables GET /apollo/v1/users/{id}/matchmaking — finds users with overlapping sound taxonomy interests"
+        },
+        {
+          "id":      "default_role",
+          "label":   "Papel padrão de novos usuários",
+          "type":    "text",
+          "default": "subscriber",
+          "description": "WordPress role slug assigned on registration: 'subscriber', 'contributor', or a custom Apollo role"
+        }
+      ]
+    },
+
+    "apollo-membership": {
+      "label": "Gamificação & Conquistas",
+      "description": "Points, badges, ranks, and leaderboard system (Open Badge v2 compatible)",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 220,
+      "fields": [
+        {
+          "id":      "enable_points",
+          "label":   "Sistema de Pontos",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables point awarding/deduction via triggers and manual admin tools"
+        },
+        {
+          "id":      "enable_badges",
+          "label":   "Sistema de Badges / Conquistas",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables achievement tracking and the Open Badge v2 evidence/verify flow"
+        },
+        {
+          "id":      "enable_ranks",
+          "label":   "Sistema de Níveis / Ranks",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables rank hierarchy and automatic promotion based on point thresholds"
+        },
+        {
+          "id":      "points_per_post",
+          "label":   "Pontos por publicação",
+          "type":    "number",
+          "default": 10,
+          "description": "Points awarded when a user publishes any CPT. Applies to event, dj, classified, doc."
+        }
+      ]
+    },
+
+    "apollo-social": {
+      "label": "Feed Social",
+      "description": "Activity stream, follow system, and wow (reaction) features on the social feed",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 238,
+      "fields": [
+        {
+          "id":      "enable_activity",
+          "label":   "Feed de Atividade",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables the /explore and /mural social feed pages and GET /apollo/v1/feed endpoint"
+        },
+        {
+          "id":      "enable_follow",
+          "label":   "Sistema de Follow",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables follower/following relationships (stored in apollo_connections)"
+        },
+        {
+          "id":      "enable_reactions",
+          "label":   "Reações no feed",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables wow reactions on activity posts. Uses apollo-wow endpoints with context=activity"
+        }
+      ]
+    },
+
+    "apollo-chat": {
+      "label": "Mensagens & Chat",
+      "description": "Direct messages and group chat configuration",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 252,
+      "fields": [
+        {
+          "id":      "enable_dm",
+          "label":   "Mensagens Diretas",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables /mensagens page and POST /apollo/v1/chat/threads (1-to-1 threads)"
+        },
+        {
+          "id":      "enable_group_chat",
+          "label":   "Chat em Grupo",
+          "type":    "toggle",
+          "default": true,
+          "description": "When enabled, allows creating threads with multiple participants"
+        },
+        {
+          "id":      "max_message_length",
+          "label":   "Comprimento máximo da mensagem (chars)",
+          "type":    "number",
+          "default": 2000,
+          "description": "Character limit per message. Server-side validation rejects messages exceeding this."
+        }
+      ]
+    },
+
+    "apollo-groups": {
+      "label": "Grupos & Comunidades",
+      "description": "Group (nucleo / comuna) creation and membership limits",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 265,
+      "fields": [
+        {
+          "id":      "enable_groups",
+          "label":   "Sistema de Grupos",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables /grupos, /nucleos, /comunas pages and all /apollo/v1/groups endpoints"
+        },
+        {
+          "id":      "max_groups_per_user",
+          "label":   "Máximo de grupos por usuário",
+          "type":    "number",
+          "default": 10,
+          "description": "Maximum groups a single user can create. Membership (joining) is unlimited."
+        }
+      ]
+    },
+
+    "apollo-email": {
+      "label": "Email",
+      "description": "Transactional email configuration — SMTP, queue, sender identity",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 278,
+      "fields": [
+        {
+          "id":      "from_name",
+          "label":   "Nome do Remetente",
+          "type":    "text",
+          "default": "Apollo",
+          "description": "Displayed as the sender name in all transactional emails"
+        },
+        {
+          "id":      "from_email",
+          "label":   "Email do Remetente",
+          "type":    "email",
+          "default": "",
+          "description": "Sent as From header. Must be a verified domain if using external SMTP."
+        },
+        {
+          "id":      "enable_queue",
+          "label":   "Fila de envio",
+          "type":    "toggle",
+          "default": true,
+          "description": "Queues emails in apollo_email_queue and sends via WP-Cron for better deliverability"
+        },
+        {
+          "id":      "smtp_host",
+          "label":   "Host SMTP",
+          "type":    "text",
+          "default": "",
+          "description": "External SMTP server hostname. Leave blank to use wp_mail() default (local PHP mail)."
+        },
+        {
+          "id":      "smtp_port",
+          "label":   "Porta SMTP",
+          "type":    "number",
+          "default": 587,
+          "description": "SMTP port. 587=STARTTLS (recommended), 465=SSL, 25=plain"
+        }
+      ]
+    },
+
+    "apollo-events": {
+      "label": "Eventos",
+      "description": "Event RSVP, ticketing, calendar features and default currency",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 298,
+      "fields": [
+        {
+          "id":      "enable_rsvp",
+          "label":   "RSVP",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables POST /events/{id}/attendees and the RSVP UI on event pages"
+        },
+        {
+          "id":      "enable_tickets",
+          "label":   "Ingressos",
+          "type":    "toggle",
+          "default": false,
+          "description": "Enables ticket pricing fields and payment integrations on events"
+        },
+        {
+          "id":      "enable_calendar",
+          "label":   "Calendário",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables GET /events/calendar/{year}/{month} and calendar views on archive-event.php"
+        },
+        {
+          "id":      "default_currency",
+          "label":   "Moeda padrão",
+          "type":    "text",
+          "default": "BRL",
+          "description": "ISO 4217 currency code used when enable_tickets=true. BRL, USD, EUR."
+        }
+      ]
+    },
+
+    "apollo-djs": {
+      "label": "DJs",
+      "description": "DJ profile and carousel display settings",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 316,
+      "fields": [
+        {
+          "id":      "enable_profiles",
+          "label":   "Perfis de DJ",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables /djs and /dj/{slug} pages and all /apollo/v1/djs endpoints"
+        },
+        {
+          "id":      "enable_carousel",
+          "label":   "Carrossel de DJs",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables [apollo_dj_carousel] shortcode to display a featured DJ carousel"
+        }
+      ]
+    },
+
+    "apollo-loc": {
+      "label": "Locais (GPS)",
+      "description": "Location mapping and geocoding. NEVER use venue/local/location — always 'loc'.",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 328,
+      "fields": [
+        {
+          "id":      "enable_maps",
+          "label":   "Mapas",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables [apollo_map] shortcode and the /mapa page. Uses Leaflet.js."
+        },
+        {
+          "id":      "enable_geocoding",
+          "label":   "Geocodificação",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables GET /locals/nearby?lat=&lng=&radius= endpoint for proximity search"
+        },
+        {
+          "id":      "default_city",
+          "label":   "Cidade padrão",
+          "type":    "text",
+          "default": "Rio de Janeiro",
+          "description": "Default city used for map center coordinates when no geolocation is available"
+        }
+      ]
+    },
+
+    "apollo-notif": {
+      "label": "Notificações",
+      "description": "Push and email digest notification settings",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 343,
+      "fields": [
+        {
+          "id":      "enable_push",
+          "label":   "Notificações Push (Web Push)",
+          "type":    "toggle",
+          "default": false,
+          "description": "Enables the Web Push API flow. Requires VAPID keys (set separately via raw options). GET /notifications/push/vapid-public-key must return a key."
+        },
+        {
+          "id":      "enable_email_digest",
+          "label":   "Digest de Email",
+          "type":    "toggle",
+          "default": true,
+          "description": "Aggregates notifications and sends periodic summary emails via apollo-email"
+        },
+        {
+          "id":      "digest_frequency",
+          "label":   "Frequência do Digest",
+          "type":    "select",
+          "default": "weekly",
+          "options": ["daily","weekly","monthly"],
+          "description": "How often the digest email is sent when enable_email_digest=true"
+        }
+      ]
+    },
+
+    "apollo-dashboard": {
+      "label": "Painel do Usuário",
+      "description": "User dashboard widget and moderation queue settings",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 360,
+      "fields": [
+        {
+          "id":      "enable_quick_publish",
+          "label":   "Publicação Rápida",
+          "type":    "toggle",
+          "default": true,
+          "description": "Shows quick-publish compose box on /painel for creating events and classifieds"
+        },
+        {
+          "id":      "enable_mod_queue",
+          "label":   "Fila de moderação no painel",
+          "type":    "toggle",
+          "default": true,
+          "description": "Shows moderation queue widget on /painel for users with the 'moderator' role"
+        }
+      ]
+    },
+
+    "apollo-shortcodes": {
+      "label": "Shortcodes",
+      "description": "Global shortcode manager settings",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 373,
+      "fields": [
+        {
+          "id":      "enable_manager",
+          "label":   "Gerenciador de Shortcodes",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables the shortcode manager UI in wp-admin and GET /shortcodes REST endpoint"
+        }
+      ]
+    },
+
+    "apollo-templates": {
+      "label": "Templates",
+      "description": "Canvas template system and archive override settings",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 381,
+      "fields": [
+        {
+          "id":      "enable_blank_canvas",
+          "label":   "Blank Canvas",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables zero-theme templates (no wp_head/wp_footer — login, register, sign use this). Disabling falls back to active theme."
+        },
+        {
+          "id":      "override_archive",
+          "label":   "Sobrescrever páginas de arquivo",
+          "type":    "toggle",
+          "default": false,
+          "description": "When true, Apollo templates take over archive-{cpt}.php even if the active theme defines them"
+        }
+      ]
+    },
+
+    "apollo-docs": {
+      "label": "Documentos",
+      "description": "Document management versioning and table of contents",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 392,
+      "fields": [
+        {
+          "id":      "enable_versioning",
+          "label":   "Versionamento",
+          "type":    "toggle",
+          "default": false,
+          "description": "Saves each file upload as a new version in apollo_doc_versions (Git-like history)"
+        },
+        {
+          "id":      "enable_toc",
+          "label":   "Sumário (Table of Contents)",
+          "type":    "toggle",
+          "default": true,
+          "description": "Auto-generates TOC from headings when rendering document content"
+        }
+      ]
+    },
+
+    "apollo-secure-upload": {
+      "label": "Upload Seguro",
+      "description": "File upload restrictions and malware scanning",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 404,
+      "fields": [
+        {
+          "id":      "max_file_size",
+          "label":   "Tamanho máximo de arquivo (MB)",
+          "type":    "number",
+          "default": 10,
+          "description": "Maximum upload size in megabytes. Enforced server-side on all Apollo upload endpoints."
+        },
+        {
+          "id":      "scan_malware",
+          "label":   "Scan de malware",
+          "type":    "toggle",
+          "default": true,
+          "description": "Runs ClamAV (if installed) or signature-based check on uploaded files before saving"
+        },
+        {
+          "id":      "allowed_types",
+          "label":   "Tipos permitidos",
+          "type":    "text",
+          "default": "jpg,png,webp,pdf",
+          "description": "Comma-separated list of allowed file extensions. Case insensitive."
+        }
+      ]
+    },
+
+    "apollo-webp-compressor": {
+      "label": "WebP & Compressão",
+      "description": "Automatic image conversion and quality settings",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 418,
+      "fields": [
+        {
+          "id":      "auto_convert",
+          "label":   "Converter para WebP automaticamente",
+          "type":    "toggle",
+          "default": true,
+          "description": "Converts uploaded images (PNG/JPG) to WebP on save using GD or Imagick"
+        },
+        {
+          "id":      "quality",
+          "label":   "Qualidade WebP (1-100)",
+          "type":    "number",
+          "default": 82,
+          "description": "WebP encoding quality. 82 is optimal for web (good quality, ~50% size reduction vs JPG)"
+        }
+      ]
+    },
+
+    "apollo-hub": {
+      "label": "Hub de Usuário",
+      "description": "Public-facing Linktree-style hub pages (/hub/{username})",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 430,
+      "fields": [
+        {
+          "id":      "enable_search",
+          "label":   "Busca de Hubs",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables GET /hubs and hub discovery across the platform"
+        },
+        {
+          "id":      "enable_directory",
+          "label":   "Diretório de Hubs",
+          "type":    "toggle",
+          "default": true,
+          "description": "Shows a public hub directory page for browsing creators"
+        }
+      ]
+    },
+
+    "apollo-cdn": {
+      "label": "CDN",
+      "description": "CDN URL override and asset minification",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 441,
+      "fields": [
+        {
+          "id":      "cdn_url",
+          "label":   "CDN URL",
+          "type":    "text",
+          "default": "",
+          "description": "Override APOLLO_CDN_URL constant. Leave blank to use default https://cdn.apollo.rio.br/v1.0.0/"
+        },
+        {
+          "id":      "minify_js",
+          "label":   "Minificar JavaScript",
+          "type":    "toggle",
+          "default": false,
+          "description": "Minifies inline JS output from Apollo templates before sending to browser"
+        },
+        {
+          "id":      "minify_css",
+          "label":   "Minificar CSS",
+          "type":    "toggle",
+          "default": false,
+          "description": "Minifies inline CSS output from Apollo templates"
+        }
+      ]
+    },
+
+    "apollo-admin": {
+      "label": "Admin Panel",
+      "description": "Apollo CPanel (wp-admin) visual settings",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 454,
+      "fields": [
+        {
+          "id":      "admin_accent",
+          "label":   "Cor de Destaque Admin",
+          "type":    "color",
+          "default": "#6366f1",
+          "description": "Accent color for Apollo's wp-admin sidebar and UI components"
+        }
+      ]
+    },
+
+    "apollo-mod": {
+      "label": "Moderação",
+      "description": "Content moderation queue and auto-moderation thresholds",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 462,
+      "fields": [
+        {
+          "id":      "auto_mod",
+          "label":   "Moderação Automática",
+          "type":    "toggle",
+          "default": false,
+          "description": "Automatically hides content when report count reaches report_threshold. Requires manual review."
+        },
+        {
+          "id":      "report_threshold",
+          "label":   "Limite de denúncias para auto-moderação",
+          "type":    "number",
+          "default": 3,
+          "description": "Number of distinct-user reports before auto_mod hides the content (if auto_mod=true)"
+        }
+      ]
+    },
+
+    "apollo-coauthor": {
+      "label": "Coautoria",
+      "description": "Coauthor feature for shared content attribution",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 472,
+      "fields": [
+        {
+          "id":      "enable_coauthor",
+          "label":   "Sistema de Coautoria",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables PUT /coauthors/{post_id} and the coauthor taxonomy on CPTs: event, dj, classified, doc"
+        },
+        {
+          "id":      "show_in_frontend",
+          "label":   "Exibir coautores no frontend",
+          "type":    "toggle",
+          "default": true,
+          "description": "Shows the coauthor attribution section on single-{cpt}.php templates"
+        }
+      ]
+    },
+
+    "apollo-statistics": {
+      "label": "Estatísticas",
+      "description": "Analytics event tracking and data retention policy",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 483,
+      "fields": [
+        {
+          "id":      "track_logins",
+          "label":   "Rastrear logins",
+          "type":    "toggle",
+          "default": true,
+          "description": "Records login events to apollo_stats_users table (privacy-conscious — no IP stored)"
+        },
+        {
+          "id":      "track_pageviews",
+          "label":   "Rastrear visualizações de página",
+          "type":    "toggle",
+          "default": false,
+          "description": "Records pageview events (canvas template views) to apollo_stats_content"
+        },
+        {
+          "id":      "retention_days",
+          "label":   "Retenção de dados (dias)",
+          "type":    "number",
+          "default": 90,
+          "description": "Stat records older than this are purged by daily WP-Cron job. Minimum 7."
+        }
+      ]
+    },
+
+    "apollo-hardening": {
+      "label": "Segurança & Hardening",
+      "description": "WordPress hardening features (managed by apollo-login security classes)",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 495,
+      "fields": [
+        {
+          "id":      "disable_xmlrpc",
+          "label":   "Desabilitar XML-RPC",
+          "type":    "toggle",
+          "default": true,
+          "description": "Disables XML-RPC interface via WPHardening class. Removes Attack surface."
+        },
+        {
+          "id":      "disable_rest_anon",
+          "label":   "Bloquear REST API anônimo (exceto apollo/v1)",
+          "type":    "toggle",
+          "default": true,
+          "description": "Returns 401 for unauthenticated requests to /wp-json/wp/v2/ while keeping apollo/v1 open"
+        },
+        {
+          "id":      "cleanup_headers",
+          "label":   "Remover headers de versão",
+          "type":    "toggle",
+          "default": true,
+          "description": "Removes X-Powered-By, WP version from HTTP headers via SecurityHeaders class"
+        },
+        {
+          "id":      "login_lockout",
+          "label":   "Bloqueio por tentativas malsucedidas",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables Lockout class — blocks IP after lockout_attempts failed logins"
+        },
+        {
+          "id":      "lockout_attempts",
+          "label":   "Tentativas antes do bloqueio",
+          "type":    "number",
+          "default": 5,
+          "description": "Number of failed login attempts before IP is temporarily blocked (Duration: apollo_lockout_duration)"
+        }
+      ]
+    },
+
+    "apollo-adverts": {
+      "label": "Classificados / Anúncios",
+      "description": "Classified ad creation and moderation settings. NEVER use venue/local/location — use loc.",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 513,
+      "fields": [
+        {
+          "id":      "enable_classifieds",
+          "label":   "Sistema de Classificados",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables /anuncios, /anuncio/{slug}, /criar-anuncio pages and /apollo/v1/classifieds REST"
+        },
+        {
+          "id":      "require_approval",
+          "label":   "Requer aprovação moderação",
+          "type":    "toggle",
+          "default": true,
+          "description": "When true, new classifieds go to 'pending' status and require mod approval before public display"
+        }
+      ]
+    },
+
+    "apollo-suppliers": {
+      "label": "Fornecedores",
+      "description": "Industry-only supplier directory settings",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 525,
+      "fields": [
+        {
+          "id":      "enable_suppliers",
+          "label":   "Diretório de Fornecedores",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables /fornecedores and /fornecedor/{slug} industry-only pages and REST endpoints"
+        }
+      ]
+    },
+
+    "apollo-comment": {
+      "label": "Depoimentos",
+      "description": "Comment/review system — ALWAYS called 'depoimento', NEVER 'comment' or 'review'",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 533,
+      "fields": [
+        {
+          "id":      "enable_reactions",
+          "label":   "Reações em depoimentos",
+          "type":    "toggle",
+          "default": true,
+          "description": "Allows wow reactions on depoimento entries (requires apollo-wow active)"
+        },
+        {
+          "id":      "enable_threading",
+          "label":   "Threading de depoimentos",
+          "type":    "toggle",
+          "default": true,
+          "description": "Allows nested reply threads on depoimentos (parent_id field in REST POST body)"
+        }
+      ]
+    },
+
+    "apollo-fav": {
+      "label": "Favoritos",
+      "description": "Favorites system — ALWAYS called 'fav', NEVER 'interesse', 'interest', or 'bookmark'",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 546,
+      "fields": [
+        {
+          "id":      "enable_favorites",
+          "label":   "Favoritos",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables /favs REST endpoints and [apollo_fav] [apollo_my_favs] shortcodes"
+        }
+      ]
+    },
+
+    "apollo-wow": {
+      "label": "Wows (Reações)",
+      "description": "Reaction system — ALWAYS called 'wow', NEVER 'like', 'heart', or 'reaction'",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 554,
+      "fields": [
+        {
+          "id":      "enable_reactions",
+          "label":   "Sistema de Wows",
+          "type":    "toggle",
+          "default": true,
+          "description": "Enables /wows REST endpoints for adding/removing wow reactions on any post"
+        },
+        {
+          "id":      "available_types",
+          "label":   "Tipos de Wow disponíveis",
+          "type":    "text",
+          "default": "like,love,fire,support,celebrate",
+          "description": "Comma-separated list of wow type slugs. Each slug needs a corresponding entry in apollo_wow_types table."
+        }
+      ]
+    },
+
+    "apollo-rio": {
+      "label": "PWA (Progressive Web App)",
+      "description": "Web App Manifest and Service Worker settings",
+      "source_file": "apollo-admin/src/Settings.php",
+      "source_line": 565,
+      "note": "This section managed by apollo-pwa, stored under key 'apollo-rio' for legacy registry compatibility",
+      "fields": [
+        {
+          "id":      "pwa_name",
+          "label":   "Nome da App",
+          "type":    "text",
+          "default": "Apollo Rio",
+          "description": "Full name shown in OS install prompt and splash screen"
+        },
+        {
+          "id":      "pwa_short_name",
+          "label":   "Nome curto da App",
+          "type":    "text",
+          "default": "Apollo",
+          "description": "Short name (max 12 chars) shown on home screen icon label"
+        },
+        {
+          "id":      "pwa_theme_color",
+          "label":   "Cor do tema PWA",
+          "type":    "color",
+          "default": "#6366f1",
+          "description": "Browser chrome and OS task-bar color when app is installed"
+        },
+        {
+          "id":      "enable_sw",
+          "label":   "Ativar Service Worker",
+          "type":    "toggle",
+          "default": true,
+          "description": "Registers /sw.js for offline capability and background sync. Disable for debugging."
+        }
+      ]
+    }
+
+  },
+
+  "raw_options": {
+    "_note": "These WP options are NOT exposed in the Apollo admin UI. They are set directly via code constants, WP-CLI, or wp_update_option(). Cross-reference with code files before modifying.",
+
+    "apollo-login": [
+      {
+        "key":      "apollo_rate_max_hits",
+        "label":    "Rate limiter: máximo de requisições",
+        "default":  20,
+        "type":     "number",
+        "source":   "apollo-login/src/Security/RateLimiter.php",
+        "line":     49,
+        "constant": "APOLLO_RATE_LIMIT_MAX_HITS (optional override)"
+      },
+      {
+        "key":      "apollo_rate_window",
+        "label":    "Rate limiter: janela de tempo (segundos)",
+        "default":  60,
+        "type":     "number",
+        "source":   "apollo-login/src/Security/RateLimiter.php",
+        "line":     50
+      },
+      {
+        "key":      "apollo_rate_block",
+        "label":    "Rate limiter: duração do bloqueio (segundos)",
+        "default":  3600,
+        "type":     "number",
+        "source":   "apollo-login/src/Security/RateLimiter.php",
+        "line":     51
+      },
+      {
+        "key":      "apollo_lockout_max_attempts",
+        "label":    "Lockout: máximo de tentativas",
+        "default":  5,
+        "type":     "number",
+        "source":   "apollo-login/src/Security/Lockout.php",
+        "line":     45,
+        "note":     "Mirrors apollo-hardening.lockout_attempts — kept separate for runtime override"
+      },
+      {
+        "key":      "apollo_lockout_duration",
+        "label":    "Lockout: duração (segundos)",
+        "default":  3600,
+        "type":     "number",
+        "source":   "apollo-login/src/Security/Lockout.php",
+        "line":     46
+      },
+      {
+        "key":      "apollo_firewall_blacklist",
+        "label":    "Firewall: lista negra de IPs",
+        "default":  [],
+        "type":     "array",
+        "source":   "apollo-login/src/Security/Firewall.php",
+        "line":     327
+      },
+      {
+        "key":      "apollo_login_flush_rewrites",
+        "label":    "Flush rewrites pendente",
+        "default":  false,
+        "type":     "boolean",
+        "source":   "apollo-login/apollo-login.php",
+        "line":     null,
+        "note":     "Set to true on activation. Causes flush_rewrite_rules() on next request then deleted."
+      }
+    ],
+
+    "apollo-notif": [
+      {
+        "key":      "apollo_vapid_public_key",
+        "label":    "VAPID Public Key (Web Push)",
+        "default":  "",
+        "type":     "text",
+        "source":   "apollo-notif/src/Plugin.php",
+        "line":     1251,
+        "set_via":  "POST /apollo/v1/notifications/push/subscribe (auto-generated on first use) or wp_update_option()"
+      },
+      {
+        "key":      "apollo_vapid_private_key",
+        "label":    "VAPID Private Key (Web Push)",
+        "default":  "",
+        "type":     "text",
+        "source":   "apollo-notif/src/Plugin.php",
+        "line":     1287,
+        "security": "SENSITIVE — never expose in REST responses"
+      }
+    ],
+
+    "apollo-email": [
+      {
+        "key":      "apollo_email_settings",
+        "label":    "Email settings legacy array",
+        "default":  [],
+        "type":     "array",
+        "source":   "apollo-email/src/Plugin.php",
+        "line":     160,
+        "note":     "Separate from apollo_admin_settings['apollo-email']. Legacy compatibility. Keys: from_name, from_email, enable_queue, smtp_host, smtp_port, smtp_user, smtp_pass."
+      }
+    ],
+
+    "apollo-membership": [
+      {
+        "key":      "apollo_membership_settings",
+        "label":    "Membership settings array",
+        "default":  [],
+        "type":     "array",
+        "source":   "apollo-membership/src/Plugin.php",
+        "line":     284
+      },
+      {
+        "key":      "apollo_membership_trigger_points",
+        "label":    "Trigger → point mapping",
+        "default":  {},
+        "type":     "object",
+        "source":   "apollo-membership/src/Plugin.php",
+        "line":     287,
+        "note":     "Maps trigger slug to point value. E.g. { 'event_published': 10, 'first_login': 5 }"
+      },
+      {
+        "key":      "apollo_membership_db_version",
+        "label":    "Membership DB schema version",
+        "default":  "1.0",
+        "type":     "text",
+        "source":   "apollo-membership/src/Plugin.php",
+        "line":     null
+      }
+    ],
+
+    "apollo-adverts": [
+      {
+        "key":      "apollo_adverts_spam_log",
+        "label":    "Spam detection log array",
+        "default":  [],
+        "type":     "array",
+        "source":   "apollo-adverts/src/SpamProtection.php",
+        "line":     175,
+        "note":     "Auto-managed by SpamProtection. Array of {ip, timestamp, classified_id} for rate-limiting repeated classified submissions."
+      }
+    ],
+
+    "apollo-seo": [
+      {
+        "key":      "apollo_seo_settings",
+        "label":    "SEO settings",
+        "default":  {},
+        "type":     "object",
+        "source":   "apollo-seo/src/Settings.php",
+        "constant": "APOLLO_SEO_OPTION",
+        "line":     122,
+        "note":     "Managed by apollo-seo/src/Settings.php — admin page: wp-admin/admin.php?page=apollo-seo. Constant APOLLO_SEO_OPTION defined at line 122, used at line 135."
+      }
+    ],
+
+    "apollo-sheets": [
+      {
+        "key":      "apollo_sheets_tables",
+        "label":    "Sheets index",
+        "default":  [],
+        "type":     "array",
+        "source":   "apollo-sheets/src/Plugin.php",
+        "line":     382,
+        "note":     "Auto-managed. Array of { id, post_id, name, slug, columns } for quick lookup without WP_Query."
+      }
+    ],
+
+    "apollo-sign": [
+      {
+        "key":      "apollo_sign_db_version",
+        "label":    "Sign DB schema version",
+        "default":  "1.0",
+        "type":     "text",
+        "source":   "apollo-sign/src/Plugin.php",
+        "line":     null
+      }
+    ],
+
+    "apollo-gestor": [
+      {
+        "key":      "apollo_gestor_db_version",
+        "label":    "Gestor DB schema version",
+        "default":  "1.0",
+        "type":     "text",
+        "source":   "apollo-gestor/src/Plugin.php",
+        "line":     null
+      }
+    ],
+
+    "apollo-groups": [
+      {
+        "key":      "apollo_groups_rewrite_version",
+        "label":    "Groups rewrite flush version",
+        "default":  "1",
+        "type":     "text",
+        "source":   "apollo-groups/src/Plugin.php",
+        "line":     null
+      }
+    ],
+
+    "apollo-docs": [
+      {
+        "key":      "apollo_docs_db_version",
+        "label":    "Docs DB schema version",
+        "default":  "1.0",
+        "type":     "text",
+        "source":   "apollo-docs/src/Plugin.php",
+        "line":     112
+      }
+    ],
+
+    "apollo-chat": [
+      {
+        "key":      "apollo_tenor_api_key",
+        "label":    "Tenor GIF API Key",
+        "default":  "",
+        "type":     "text",
+        "source":   "apollo-chat/src/Plugin.php",
+        "line":     917,
+        "set_via":  "wp_update_option('apollo_tenor_api_key', 'YOUR_KEY') or filter apollo_tenor_api_key",
+        "note":     "Required for GET /apollo/v1/chat/gif-search proxy. Get key at tenor.google.com/dashboard."
+      }
+    ],
+
+    "apollo-core": [
+      {
+        "key":      "apollo_cdn_registered",
+        "label":    "CDN scripts registered flag",
+        "default":  false,
+        "type":     "boolean",
+        "source":   "apollo-core/src/Plugin.php",
+        "line":     null,
+        "note":     "Set to true after CDN scripts are registered on first boot. Prevents double-registration."
+      }
+    ],
+
+    "apollo-social": [
+      {
+        "key":      "apollo_social_version",
+        "label":    "Social plugin version (installed)",
+        "default":  "1.0.0",
+        "type":     "text",
+        "source":   "apollo-social/src/Plugin.php",
+        "line":     null,
+        "note":     "Used to trigger DB/rewrite migrations on update."
+      }
+    ]
+  },
+
+  "_summary": {
+    "total_settings_sections": 32,
+    "total_ui_fields": 84,
+    "total_raw_options": 26,
+    "sections_verified_against": "apollo-admin/src/Settings.php::get_schema() — ALL 32 schemas confirmed present",
+    "last_updated": "2026-02-20 (Settings.php fully read and cross-checked — 32 sections, 84 fields, 0 gaps)",
+    "single_option_key": "apollo_admin_settings",
+    "admin_panel": "wp-admin/admin.php?page=apollo-settings",
+    "schema_source": "apollo-admin/src/Settings.php::get_schema()",
+    "rest_get_all": "GET /wp-json/apollo/v1/settings",
+    "rest_get_plugin": "GET /wp-json/apollo/v1/settings/{plugin-slug}",
+    "rest_save_plugin": "POST /wp-json/apollo/v1/settings/{plugin-slug}",
+    "rest_schema": "GET /wp-json/apollo/v1/settings/{plugin-slug}/schema",
+    "rest_export": "GET /wp-json/apollo/v1/settings/export",
+    "rest_import": "POST /wp-json/apollo/v1/settings/import",
+    "all_field_types": ["text","email","number","color","toggle","select","textarea"]
+  }
+}

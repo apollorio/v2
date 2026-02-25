@@ -1,0 +1,186 @@
+{
+  "_meta": {
+    "version": "3.0.0",
+    "engine": "ApolloSlider v2.1 (page-layout.js)",
+    "attribute": "data-panel (NEVER data-pane)",
+    "updated": "2025-07-15",
+    "note": "Dual-state skeleton: GUEST panels (home/acesso/event-page/mural) vs LOGGED panels (explore/forms/chat-list/chat-inbox/dynamic/mural)"
+  },
+
+  "directions": {
+    "LEFT":  "chat panels — slide left for conversations (chat-list → chat-inbox)",
+    "UP":    "mural — universal dynamic single-page viewer, both states",
+    "DOWN":  "acesso (guest login+suggest) / forms (logged create/edit)",
+    "RIGHT": "event-page (guest single event) / dynamic (logged all singles)"
+  },
+
+  "states": {
+    "guest": {
+      "center": "home",
+      "navbar": ["logo", "apps"],
+      "panels": ["home", "acesso", "event-page", "mural"],
+      "note": "NO chat/notif/profile navbar icons. Restricted URLs → acesso?pra=chat"
+    },
+    "logged": {
+      "center": "explore",
+      "navbar": ["logo", "apps", "chat", "notif", "profile"],
+      "panels": ["explore", "forms", "chat-list", "chat-inbox", "dynamic", "mural"],
+      "note": "Full navbar. ?pra= param auto-navigates to target panel after login"
+    }
+  },
+
+  "panels": [
+    {
+      "id": "home",
+      "glyph": "H",
+      "role": "center",
+      "auth": false,
+      "state": "guest",
+      "description": "Guest landing — hero, marquee, tracks, events, classifieds, map, footer"
+    },
+    {
+      "id": "explore",
+      "glyph": "✦",
+      "role": "center",
+      "auth": true,
+      "state": "logged",
+      "description": "Logged landing — social feed + discovery. Filter tabs: Tudo/Eventos/Social/Anúncios/DJs"
+    },
+    {
+      "id": "acesso",
+      "glyph": "▼",
+      "role": "down",
+      "auth": false,
+      "state": "guest",
+      "description": "Guest login form + register link + public event suggestion form (day/month/year/name/ticket_url mandatory)"
+    },
+    {
+      "id": "forms",
+      "glyph": "✎",
+      "role": "down",
+      "auth": true,
+      "state": "logged",
+      "description": "Logged create/edit — switchable sections: create-event, create-ad, create-group, report, depoimento"
+    },
+    {
+      "id": "event-page",
+      "glyph": "►",
+      "role": "right",
+      "auth": false,
+      "state": "guest",
+      "description": "Guest single event view via REST. CTA gate at bottom redirects to acesso for interaction"
+    },
+    {
+      "id": "dynamic",
+      "glyph": "─",
+      "role": "right",
+      "auth": true,
+      "state": "logged",
+      "description": "Universal single-page viewer for ALL CPTs: event/dj/local/classified/group/post/profile/hub. Context actions per type"
+    },
+    {
+      "id": "mural",
+      "glyph": "▲",
+      "role": "up",
+      "auth": null,
+      "state": "both",
+      "description": "Dynamic content viewer — UP direction. REST-based loader for any type. Shared between guest and logged"
+    },
+    {
+      "id": "chat-list",
+      "glyph": "◄",
+      "role": "left",
+      "auth": true,
+      "state": "logged",
+      "description": "Chat conversations listing. Search + new conversation. Each card → chat-inbox LEFT"
+    },
+    {
+      "id": "chat-inbox",
+      "glyph": "✉",
+      "role": "left-deep",
+      "auth": true,
+      "state": "logged",
+      "description": "Single chat thread — messages + compose bar. REST fetch for thread messages"
+    }
+  ],
+
+  "nav": [
+    { "from": "home",       "to": "acesso",      "dir": "down",  "text": "Login",        "state": "guest", "icon": "ri-key-2-fill" },
+    { "from": "home",       "to": "event-page",  "dir": "right", "text": "Ver Evento",   "state": "guest", "icon": "ri-calendar-event-fill", "trigger": "data-to='event-page' data-dir='right' data-type='event' data-id='{id}'" },
+    { "from": "home",       "to": "mural",       "dir": "up",    "text": "Mural",        "state": "guest", "icon": "ri-signal-tower-fill" },
+    { "from": "explore",    "to": "forms",       "dir": "down",  "text": "Criar",        "state": "logged", "icon": "ri-add-line" },
+    { "from": "explore",    "to": "chat-list",   "dir": "left",  "text": "Chat",         "state": "logged", "icon": "ri-message-3-fill" },
+    { "from": "explore",    "to": "dynamic",     "dir": "right", "text": "Detalhes",     "state": "logged", "icon": "ri-arrow-right-line" },
+    { "from": "explore",    "to": "mural",       "dir": "up",    "text": "Mural",        "state": "logged", "icon": "ri-signal-tower-fill" },
+    { "from": "chat-list",  "to": "chat-inbox",  "dir": "left",  "text": "Thread",       "state": "logged", "icon": "ri-chat-1-fill" },
+    { "from": "dynamic",    "to": "forms",       "dir": "down",  "text": "Formulário",   "state": "logged", "note": "depoimento, report, RSVP from detail → forms DOWN" }
+  ],
+
+  "forms_rule": {
+    "direction": "down",
+    "guest_panel": "acesso",
+    "logged_panel": "forms",
+    "guest_forms": [
+      { "id": "login",              "label": "Login",                    "hook": "apollo/login/render_panel" },
+      { "id": "suggest-event",      "label": "Sugerir Evento (público)", "ajax": "apollo_suggest_event" }
+    ],
+    "logged_forms": [
+      { "id": "create-event",       "label": "Criar Evento",             "hook": "apollo/events/render_create_form" },
+      { "id": "create-ad",          "label": "Criar Anúncio",            "hook": "apollo/adverts/render_create_form" },
+      { "id": "create-group",       "label": "Criar Grupo / Comuna",     "hook": "apollo/groups/render_create_form" },
+      { "id": "report",             "label": "Reportar Conteúdo",        "hook": "apollo/mod/render_report_form" },
+      { "id": "depoimento",         "label": "Escrever Depoimento",      "hook": "apollo/comment/render_depoimento_form" },
+      { "id": "rsvp",               "label": "RSVP Evento",              "hook": "apollo/events/render_rsvp_form" }
+    ]
+  },
+
+  "detail_rule": {
+    "direction": "right",
+    "guest_panel": "event-page",
+    "logged_panel": "dynamic",
+    "guest_types": ["event"],
+    "types": [
+      { "type": "event",      "rest": "events/{id}",     "hook": "apollo/events/render_single" },
+      { "type": "dj",         "rest": "djs/{id}",        "hook": "apollo/djs/render_single" },
+      { "type": "local",      "rest": "locals/{id}",     "hook": "apollo/loc/render_single" },
+      { "type": "classified", "rest": "classifieds/{id}", "hook": "apollo/adverts/render_single" },
+      { "type": "group",      "rest": "groups/{id}",     "hook": "apollo/groups/render_single" },
+      { "type": "post",       "rest": "feed/{id}",       "hook": "apollo/social/render_single_post" },
+      { "type": "profile",    "rest": "profile/{id}",    "hook": "apollo/users/render_profile" },
+      { "type": "hub",        "rest": "hubs/{id}",       "hook": "apollo/hub/render_single" }
+    ]
+  },
+
+  "auth_gate": {
+    "description": "Guest redirect for restricted actions",
+    "attribute": "data-auth-required",
+    "redirect_panel": "acesso",
+    "redirect_dir": "down",
+    "post_login_param": "pra",
+    "default_redirect": "chat",
+    "url_pattern": "acesso?pra={target}"
+  },
+
+  "persistent_ui": {
+    "description": "Always visible, outside all data-panel sections",
+    "components": [
+      { "file": "navbar.php",   "position": "top",          "visibility": "always", "note": "Auth-aware: guest=logo+apps only, logged=full icons" },
+      { "file": "menu-fab.php", "position": "bottom-right", "visibility": "always", "note": "9 apps auth-aware + create actions" }
+    ]
+  },
+
+  "tiers": {
+    "tier1_fullscreen_panels": {
+      "description": "Canvas mode with dual-state panel slider engine",
+      "pages": ["/", "/explore"]
+    },
+    "tier2_single_panel_navbar": {
+      "description": "Single panel + persistent navbar + FAB",
+      "pages": ["/id/{username}", "/mensagens", "/notificacoes", "/documentos", "/djs", "/gps", "/grupos", "/sobre", "/radar", "/conquistas", "/placar", "/mapa"]
+    },
+    "tier3_blank_canvas": {
+      "description": "Zero theme — no navbar, no FAB, isolated",
+      "pages": ["/acesso", "/registre", "/assinar/{hash}"]
+    }
+  }
+}

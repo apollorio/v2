@@ -1,0 +1,74 @@
+jQuery(function($) {
+    jQuery(".dependant-taxonomy-dropdown-ui").each(function(index, item) {
+        new DependantTaxonomyDropdown( jQuery( item ) ); 
+    });
+});
+
+function DependantTaxonomyDropdown( e ) {
+    this.wrap = e;
+    this.select = e.find( ".dependant-taxonomy-dropdown" );
+    this.hidden = e.find( ".dependant-taxonomy-dropdown-value" );
+    this.loader = e.find( ".dependant-taxonomy-loader .animate-spin");
+    
+    this.OnChange();
+};
+
+DependantTaxonomyDropdown.prototype.OnChange = function( e ) {
+    var id = null;
+    var prev = null;
+    
+    if( typeof e !== 'undefined') {
+        id = jQuery( e.target ).val();
+    } else {
+        id = this.hidden.val();
+    }
+    
+    if( id === "" && typeof e !== 'undefined' && jQuery( e.target ).prev().length > 0 ) {
+        prev = jQuery( e.target ).prev();
+    }
+    
+    if( id === "" &&  prev !== null && prev.prop("tagName").toLowerCase() === "select" ) {
+        id = prev.val();
+    }
+    
+    this.loader.css("display", "inline-block");
+    this.wrap.css( "opacity", "0.5" );
+    
+    this.HandleSubmit( false );
+    
+    jQuery.ajax({
+        url: dependant_taxonomy_dropdown.ajaxurl,
+        type: "post",
+        dataType: "json",
+        data: {
+            action: "dependant_taxonomy_dropdown",
+            id: id,
+            taxonomy: this.wrap.data("taxonomy")
+        },
+        success: jQuery.proxy( this.OnChangeSuccess, this )
+    });
+};
+
+DependantTaxonomyDropdown.prototype.OnChangeSuccess = function( response ) {
+    this.select.html( response.html );
+    this.select.find("select").on( "change", jQuery.proxy( this.OnChange, this ) );
+    this.hidden.val( response.selected );
+    this.wrap.css( "opacity", "1" );
+    this.loader.css("display", "none");
+    this.HandleSubmit( response.is_enabled );
+};
+
+DependantTaxonomyDropdown.prototype.HandleSubmit = function( is_enabled ) {
+    
+    if( jQuery( ".preselect-ad-category-dtd-submit").length < 1 ) {
+        return;
+    }
+    
+    if( is_enabled ) {
+        jQuery( ".preselect-ad-category-dtd-submit").attr( "disabled", null );
+        jQuery( ".preselect-ad-category-dtd-submit").css( "opacity", "1" );
+    } else {
+        jQuery( ".preselect-ad-category-dtd-submit").attr( "disabled", "disabled" );
+        jQuery( ".preselect-ad-category-dtd-submit").css( "opacity", "0.6" );
+    }
+};

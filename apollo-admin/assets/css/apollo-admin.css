@@ -1,0 +1,703 @@
+/**
+ * Apollo Admin — Main Stylesheet
+ *
+ * @package Apollo\Admin
+ */
+
+/* ─── CSS Variables ───────────────────────────────────────────── */
+:root {
+	--apollo-primary: #6366f1;
+	--apollo-primary-hover: #4f46e5;
+	--apollo-primary-light: #eef2ff;
+	--apollo-success: #22c55e;
+	--apollo-warning: #f59e0b;
+	--apollo-danger: #ef4444;
+	--apollo-muted: #94a3b8;
+	--apollo-bg: #f8fafc;
+	--apollo-card-bg: #ffffff;
+	--apollo-border: #e2e8f0;
+	--apollo-text: #1e293b;
+	--apollo-text-secondary: #64748b;
+	--apollo-sidebar-w: 260px;
+	--apollo-radius: 8px;
+	--apollo-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+	--apollo-shadow-lg: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.05);
+}
+
+/* ─── Wrap ────────────────────────────────────────────────────── */
+.apollo-admin-wrap {
+	max-width: 1400px;
+	margin: 20px 20px 20px 0;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	color: var(--apollo-text);
+}
+
+/* ─── Header ──────────────────────────────────────────────────── */
+.apollo-admin-header {
+	background: linear-gradient(135deg, var(--apollo-primary) 0%, #8b5cf6 100%);
+	color: #fff;
+	padding: 24px 32px;
+	border-radius: var(--apollo-radius) var(--apollo-radius) 0 0;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.apollo-admin-header h1 {
+	font-size: 22px;
+	font-weight: 700;
+	color: #fff;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.apollo-admin-header h1 .dashicons {
+	font-size: 28px;
+	width: 28px;
+	height: 28px;
+}
+
+.apollo-admin-subtitle {
+	margin: 0;
+	opacity: .8;
+	font-size: 13px;
+}
+
+/* ─── Layout ──────────────────────────────────────────────────── */
+.apollo-admin-layout {
+	display: flex;
+	background: var(--apollo-bg);
+	border: 1px solid var(--apollo-border);
+	border-top: none;
+	border-radius: 0 0 var(--apollo-radius) var(--apollo-radius);
+	min-height: 600px;
+	box-shadow: var(--apollo-shadow);
+}
+
+/* ─── Sidebar ─────────────────────────────────────────────────── */
+.apollo-admin-sidebar {
+	width: var(--apollo-sidebar-w);
+	min-width: var(--apollo-sidebar-w);
+	background: var(--apollo-card-bg);
+	border-right: 1px solid var(--apollo-border);
+	padding: 12px 0;
+	overflow-y: auto;
+	max-height: 80dvh;
+}
+
+.apollo-layer-header {
+	padding: 10px 16px 4px;
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: .08em;
+	color: var(--apollo-text-secondary);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-top: 8px;
+}
+
+.apollo-layer-header:first-child {
+	margin-top: 0;
+}
+
+.apollo-layer-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--apollo-primary-light);
+	color: var(--apollo-primary);
+	border-radius: 4px;
+	padding: 1px 5px;
+	font-size: 9px;
+	font-weight: 800;
+	line-height: 1.4;
+}
+
+.apollo-tab-link {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 16px;
+	text-decoration: none;
+	color: var(--apollo-text);
+	font-size: 13px;
+	font-weight: 500;
+	transition: all .15s ease;
+	border-left: 3px solid transparent;
+	position: relative;
+}
+
+.apollo-tab-link:hover {
+	background: var(--apollo-primary-light);
+	color: var(--apollo-primary);
+	text-decoration: none;
+}
+
+.apollo-tab-link:focus {
+	outline: none;
+	box-shadow: inset 0 0 0 1px var(--apollo-primary);
+}
+
+.apollo-tab-link.active {
+	background: var(--apollo-primary-light);
+	color: var(--apollo-primary);
+	border-left-color: var(--apollo-primary);
+	font-weight: 600;
+}
+
+.apollo-tab-link.not-installed {
+	opacity: .5;
+}
+
+.apollo-tab-link.not-installed:hover {
+	opacity: .8;
+}
+
+.apollo-tab-link .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	color: inherit;
+	opacity: .7;
+}
+
+.apollo-tab-label {
+	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Status dots */
+.apollo-status-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.apollo-status-dot.active {
+	background: var(--apollo-success);
+	box-shadow: 0 0 0 2px rgba(34,197,94,.2);
+}
+
+.apollo-status-dot.installed {
+	background: var(--apollo-warning);
+}
+
+.apollo-status-dot.missing {
+	background: var(--apollo-border);
+}
+
+/* ─── Content Area ────────────────────────────────────────────── */
+.apollo-admin-content {
+	flex: 1;
+	padding: 28px 32px;
+	overflow-y: auto;
+}
+
+.apollo-tab-header {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	margin-bottom: 24px;
+	padding-bottom: 16px;
+	border-bottom: 1px solid var(--apollo-border);
+}
+
+.apollo-tab-icon-large {
+	font-size: 32px !important;
+	width: 32px !important;
+	height: 32px !important;
+	color: var(--apollo-primary);
+	background: var(--apollo-primary-light);
+	padding: 8px;
+	border-radius: var(--apollo-radius);
+}
+
+.apollo-tab-header h2 {
+	font-size: 20px;
+	font-weight: 700;
+	margin: 0;
+	padding: 0;
+	color: var(--apollo-text);
+}
+
+.apollo-tab-header .description {
+	font-size: 13px;
+	color: var(--apollo-text-secondary);
+	margin: 4px 0 0;
+}
+
+/* ─── Notices ─────────────────────────────────────────────────── */
+.apollo-notice {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 12px 16px;
+	border-radius: var(--apollo-radius);
+	font-size: 13px;
+	margin-bottom: 20px;
+}
+
+.apollo-notice.warning {
+	background: #fef3c7;
+	color: #92400e;
+	border: 1px solid #fbbf24;
+}
+
+.apollo-notice.info {
+	background: var(--apollo-primary-light);
+	color: var(--apollo-primary);
+	border: 1px solid #c7d2fe;
+}
+
+.apollo-notice .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	flex-shrink: 0;
+}
+
+/* ─── Settings Table ──────────────────────────────────────────── */
+.apollo-settings-table {
+	background: var(--apollo-card-bg);
+	border: 1px solid var(--apollo-border);
+	border-radius: var(--apollo-radius);
+	box-shadow: var(--apollo-shadow);
+	overflow: hidden;
+}
+
+.apollo-settings-table th {
+	padding: 14px 20px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--apollo-text);
+	width: 220px;
+	vertical-align: middle;
+}
+
+.apollo-settings-table td {
+	padding: 14px 20px;
+	vertical-align: middle;
+}
+
+.apollo-settings-table tr {
+	border-bottom: 1px solid var(--apollo-border);
+}
+
+.apollo-settings-table tr:last-child {
+	border-bottom: none;
+}
+
+.apollo-settings-table tr:hover {
+	background: var(--apollo-bg);
+}
+
+/* ─── Form Fields ─────────────────────────────────────────────── */
+.apollo-field {
+	border: 1px solid var(--apollo-border) !important;
+	border-radius: 6px !important;
+	padding: 6px 12px !important;
+	font-size: 13px !important;
+	transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.apollo-field:focus {
+	border-color: var(--apollo-primary) !important;
+	box-shadow: 0 0 0 3px rgba(99,102,241,.15) !important;
+	outline: none !important;
+}
+
+.apollo-color-field {
+	width: 60px;
+	height: 36px;
+	padding: 2px !important;
+	border: 1px solid var(--apollo-border);
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+/* ─── Toggle Switch ───────────────────────────────────────────── */
+.apollo-toggle {
+	position: relative;
+	display: inline-block;
+	width: 44px;
+	height: 24px;
+	cursor: pointer;
+}
+
+.apollo-toggle input[type="checkbox"] {
+	opacity: 0;
+	width: 0;
+	height: 0;
+	position: absolute;
+}
+
+.apollo-toggle-slider {
+	position: absolute;
+	inset: 0;
+	background: #cbd5e1;
+	border-radius: 24px;
+	transition: all .25s ease;
+}
+
+.apollo-toggle-slider::before {
+	content: '';
+	position: absolute;
+	width: 18px;
+	height: 18px;
+	left: 3px;
+	bottom: 3px;
+	background: #fff;
+	border-radius: 50%;
+	transition: transform .25s ease;
+	box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+
+.apollo-toggle input:checked + .apollo-toggle-slider {
+	background: var(--apollo-primary);
+}
+
+.apollo-toggle input:checked + .apollo-toggle-slider::before {
+	transform: translateX(20px);
+}
+
+.apollo-toggle input:focus + .apollo-toggle-slider {
+	box-shadow: 0 0 0 3px rgba(99,102,241,.2);
+}
+
+/* ─── Save Button ─────────────────────────────────────────────── */
+.apollo-save-btn.button-primary {
+	background: var(--apollo-primary) !important;
+	border-color: var(--apollo-primary) !important;
+	border-radius: 6px !important;
+	padding: 6px 24px !important;
+	font-size: 13px !important;
+	font-weight: 600 !important;
+	height: auto !important;
+	line-height: 1.6 !important;
+	transition: all .15s ease;
+	text-shadow: none !important;
+	box-shadow: none !important;
+}
+
+.apollo-save-btn.button-primary:hover {
+	background: var(--apollo-primary-hover) !important;
+	border-color: var(--apollo-primary-hover) !important;
+}
+
+.apollo-save-btn.button-primary:focus {
+	box-shadow: 0 0 0 3px rgba(99,102,241,.3) !important;
+}
+
+/* ─── Success Notice Override ─────────────────────────────────── */
+.apollo-admin-wrap > .notice-success {
+	border-left-color: var(--apollo-success);
+	margin-bottom: 16px;
+}
+
+/* ─── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 960px) {
+	.apollo-admin-layout {
+		flex-direction: column;
+	}
+	.apollo-admin-sidebar {
+		width: 100%;
+		min-width: 100%;
+		max-height: none;
+		border-right: none;
+		border-bottom: 1px solid var(--apollo-border);
+		display: flex;
+		flex-wrap: wrap;
+		padding: 8px;
+		gap: 4px;
+	}
+	.apollo-layer-header {
+		width: 100%;
+		padding: 6px 8px 2px;
+	}
+	.apollo-tab-link {
+		padding: 6px 10px;
+		border-radius: 6px;
+		border-left: none;
+		font-size: 12px;
+	}
+	.apollo-tab-link.active {
+		background: var(--apollo-primary);
+		color: #fff;
+		border-left-color: transparent;
+	}
+	.apollo-tab-link.active .dashicons {
+		color: #fff;
+	}
+	.apollo-admin-content {
+		padding: 20px;
+	}
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────── */
+.apollo-admin-sidebar::-webkit-scrollbar {
+	width: 4px;
+}
+
+.apollo-admin-sidebar::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.apollo-admin-sidebar::-webkit-scrollbar-thumb {
+	background: var(--apollo-border);
+	border-radius: 4px;
+}
+
+.apollo-admin-sidebar::-webkit-scrollbar-thumb:hover {
+	background: var(--apollo-muted);
+}
+/* ═══════════════════════════════════════════════════════════════
+   STATUS OVERVIEW
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Stats Grid ──────────────────────────────────────────────── */
+.apollo-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 16px;
+	margin: 24px 0 32px;
+}
+
+.apollo-stat-card {
+	background: var(--apollo-card-bg);
+	border: 2px solid var(--apollo-border);
+	border-radius: var(--apollo-radius);
+	padding: 20px;
+	text-align: center;
+	transition: all 0.2s ease;
+}
+
+.apollo-stat-card:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--apollo-shadow-lg);
+}
+
+.apollo-stat-card.active {
+	border-color: var(--apollo-success);
+	background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.apollo-stat-card.installed {
+	border-color: var(--apollo-primary);
+	background: linear-gradient(135deg, var(--apollo-primary-light) 0%, #ddd6fe 100%);
+}
+
+.apollo-stat-card.missing {
+	border-color: var(--apollo-danger);
+	background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+}
+
+.apollo-stat-card.compliance {
+	border-color: var(--apollo-warning);
+	background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+.apollo-stat-value {
+	font-size: 32px;
+	font-weight: 700;
+	color: var(--apollo-text);
+	margin-bottom: 4px;
+}
+
+.apollo-stat-label {
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--apollo-text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+/* ─── Layer Section ───────────────────────────────────────────── */
+.apollo-layer-section {
+	margin-bottom: 32px;
+}
+
+.apollo-layer-title {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-size: 16px;
+	font-weight: 600;
+	color: var(--apollo-text);
+	margin-bottom: 16px;
+	padding-bottom: 8px;
+	border-bottom: 2px solid var(--apollo-border);
+}
+
+.apollo-layer-count {
+	margin-left: auto;
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--apollo-text-secondary);
+	background: var(--apollo-bg);
+	padding: 4px 12px;
+	border-radius: 12px;
+}
+
+/* ─── Plugins Grid ────────────────────────────────────────────── */
+.apollo-plugins-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+	gap: 16px;
+}
+
+.apollo-plugin-card {
+	background: var(--apollo-card-bg);
+	border: 2px solid var(--apollo-border);
+	border-left: 4px solid var(--apollo-muted);
+	border-radius: var(--apollo-radius);
+	padding: 16px;
+	transition: all 0.2s ease;
+}
+
+.apollo-plugin-card:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--apollo-shadow-lg);
+}
+
+.apollo-plugin-card.active {
+	border-left-color: var(--apollo-success);
+	background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+}
+
+.apollo-plugin-card.installed {
+	border-left-color: var(--apollo-primary);
+	background: linear-gradient(135deg, #ffffff 0%, var(--apollo-primary-light) 100%);
+}
+
+.apollo-plugin-card.missing {
+	border-left-color: var(--apollo-danger);
+	background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+	opacity: 0.7;
+}
+
+.apollo-plugin-header {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+.apollo-plugin-icon {
+	font-size: 24px;
+	color: var(--apollo-primary);
+	flex-shrink: 0;
+}
+
+.apollo-plugin-card.active .apollo-plugin-icon {
+	color: var(--apollo-success);
+}
+
+.apollo-plugin-card.missing .apollo-plugin-icon {
+	color: var(--apollo-muted);
+}
+
+.apollo-plugin-info {
+	flex: 1;
+	min-width: 0;
+}
+
+.apollo-plugin-name {
+	font-size: 15px;
+	font-weight: 600;
+	margin: 0 0 4px;
+}
+
+.apollo-plugin-name a {
+	color: var(--apollo-text);
+	text-decoration: none;
+	transition: color 0.2s;
+}
+
+.apollo-plugin-name a:hover {
+	color: var(--apollo-primary);
+}
+
+.apollo-plugin-meta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 12px;
+	color: var(--apollo-text-secondary);
+}
+
+.apollo-plugin-slug {
+	font-family: 'Courier New', monospace;
+}
+
+.apollo-plugin-version {
+	padding: 2px 6px;
+	background: var(--apollo-bg);
+	border-radius: 4px;
+	font-weight: 500;
+}
+
+.apollo-plugin-status {
+	flex-shrink: 0;
+}
+
+.apollo-status-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 4px 10px;
+	border-radius: 12px;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.apollo-status-badge.active {
+	background: var(--apollo-success);
+	color: #fff;
+}
+
+.apollo-status-badge.installed {
+	background: var(--apollo-primary);
+	color: #fff;
+}
+
+.apollo-status-badge.missing {
+	background: var(--apollo-danger);
+	color: #fff;
+}
+
+.apollo-plugin-description {
+	font-size: 13px;
+	color: var(--apollo-text-secondary);
+	line-height: 1.5;
+	margin: 0 0 8px;
+}
+
+.apollo-plugin-file {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	color: var(--apollo-text-secondary);
+	padding-top: 8px;
+	border-top: 1px solid var(--apollo-border);
+}
+
+.apollo-plugin-file .dashicons {
+	font-size: 14px;
+}
+
+.apollo-plugin-file code {
+	background: var(--apollo-bg);
+	padding: 2px 6px;
+	border-radius: 4px;
+	font-size: 11px;
+}

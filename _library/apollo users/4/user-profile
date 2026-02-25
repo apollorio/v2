@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rafael Valle | Apollo Profile</title>
+
+    <!-- Apollo CDN: Base Stylesheet + GSAP + RemixIcon + jQuery -->
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
+
+    <!-- Material Symbols for Player Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+    <!-- SoundCloud Widget API -->
+    <script src="https://w.soundcloud.com/player/api.js"></script>
+
+    <style>
+        /* ═══════════════════════════════════════════════════════════
+           APOLLO LUXURY PROFILE — MINIMALIST GRADE
+           Background: #fff | Accent: var(--primary) Orange
+           ═══════════════════════════════════════════════════════════ */
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(32px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(244, 95, 0, 0.4); }
+            50% { box-shadow: 0 0 24px 6px rgba(244, 95, 0, 0.2); }
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.15; }
+            50% { opacity: 0.35; }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #fff;
+            color: var(--txt-color);
+            font-family: var(--ff-main);
+            font-size: var(--fs-p);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            padding-top: 40px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.25s var(--ease-default);
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .container {
+            width: 100%;
+            padding: 0 5px;
+            margin: 0 auto;
+        }
+
+        /* ═══════════════════ HERO WITH YOUTUBE VIDEO ═══════════════════ */
+        .hero {
+            position: relative;
+            padding: 0 0 var(--space-3) 0;
+            animation: fadeIn 0.8s var(--ease-default);
+        }
+
+        .hero-media {
+            width: 100%;
+            height: 400px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            position: relative;
+            background: var(--black-1);
+            border: 0.3px solid var(--border);
+            margin-bottom: -200px;
+            box-shadow:
+                0 20px 60px -12px rgba(0,0,0,0.08),
+                0 0 0 1px rgba(0,0,0,0.02);
+        }
+
+        .hero-media iframe {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 130%;
+            height: 130%;
+            transform: translate(-50%, -50%) scale(1);
+            border: none;
+            pointer-events: none;
+        }
+
+        .hero-media::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 30% 40%, rgba(244, 95, 0, 0.06) 0%, transparent 60%),
+                linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.12) 100%);
+            animation: breathe 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* ═══════════════════ PROFILE CARD ═══════════════════ */
+        .profile-card {
+            background: #fff; max-width:95%;margin:0 3% 0 2%;
+            border: 0.3px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow:
+                0 32px 64px -24px rgba(0,0,0,0.06),
+                0 0 0 1px rgba(0,0,0,0.01);
+            position: relative;
+            animation: fadeUp 0.8s var(--ease-default) 0.1s both;
+        }
+
+        /* Profile Controls - Only visible to profile owner */
+        .profile-controls {
+            position: absolute;
+            top: var(--space-3);
+            right: var(--space-3);
+            display: flex;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .profile-control-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gray-1);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-smooth);
+            color: var(--gray-9);
+            font-size: 16px;
+        }
+
+        .profile-control-btn:hover {
+            background: var(--black-1);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: var(--space-3);
+        }
+
+        .avatar {
+            width: 130px;
+            height: 130px;
+            border-radius: 30%;
+            border: 3px solid #fff;
+            background: var(--gray-2);
+            object-fit: cover;
+            box-shadow:
+                0 16px 40px -8px rgba(0,0,0,0.035),
+                0 0 0 1px rgba(0,0,0,0.03);
+            flex-shrink: 0;
+            transition: transform 0.6s var(--ease-smooth);
+            cursor: pointer;
+          margin-top: -40px;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        .profile-identity {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 0px;
+        }
+
+        .name {
+            font-size: clamp(24px, 6vw, 36px);
+            font-weight: 700;
+            line-height: 1;
+            color: var(--black-1);
+            letter-spacing: -0.03em;
+        }
+
+      .user-membership-badge i {
+        font-size: 1.5rem;
+        margin: -2px 0 2px;
+        display: inline-block;
+        color: rgba(0,0,0,.33);
+        mix-blend-mode:hard-light;
+      }
+
+
+        .handle {
+            font-size: 12px;
+            color: var(--gray-9);
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+            line-height: 1.5;
+        }
+
+        .handle:hover {
+            color: var(--primary);
+        }
+
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 0px;
+        }
+
+        .tag {
+            font-family: var(--ff-mono);
+            font-size: 8px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            color: var(--gray-10);
+            background: var(--gray-1);
+            letter-spacing: 0.06em;
+            font-weight: 600;
+            transition: all 0.4s var(--ease-smooth);
+            cursor: default;
+        }
+
+        .tag:hover {
+            background: var(--black-1);
+            color: #fff;
+            border-color: var(--black-1);
+            transform: translateY(-2px);
+        }
+
+        .bio {
+            font-size: 13px;
+            color: var(--txt-color);
+            line-height: 1.6;
+            margin: 12px 0;
+        }
+
+        .link {
+            font-family: var(--ff-mono);
+            font-size: 10px;
+            color: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+            transition: gap 0.3s var(--ease-default);
+        }
+
+        .link:hover {
+            gap: 6px;
+        }
+
+        .sound-preferences {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        /* ═══════════════════ SOUNDCLOUD PLAYER ═══════════════════ */
+        .player-section {
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px solid var(--border);
+        }
+
+        .player-card {
+            border: 1px solid rgba(0,0,0,0.04);
+            padding: 0px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.6s var(--ease-smooth);
+        }
+
+        .player-card:hover {
+            transform: scale(1.02);
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .player-logo {
+            color: var(--primary);
+            font-size: 20px;
+            transition: transform 0.6s var(--ease-smooth);
+        }
+
+        .player-logo:hover {
+            transform: rotate(-10deg) scale(1.15);
+        }
+
+        .player-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .track-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--black-1);
+            margin: 0 0 2px 0;
+            letter-spacing: -0.01em;
+        }
+
+        .track-info p {
+            font-size: 11px;
+            color: var(--txt-muted);
+            margin: 0;
+        }
+
+        .play-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fff, var(--gray-1));
+            border: 1px solid rgba(0,0,0,0.04);
+            box-shadow:
+                0 6px 20px -4px rgba(0,0,0,0.08),
+                inset 0 1px 0 rgba(255,255,255,1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.6s var(--ease-smooth);
+            flex-shrink: 0;
+        }
+
+        .play-button:hover {
+            transform: scale(1.12);
+            box-shadow: 0 8px 24px -4px rgba(0,0,0,0.12);
+        }
+
+        .play-button:active {
+            transform: scale(0.96);
+        }
+
+        .play-button.is-playing {
+            animation: pulseGlow 2.5s ease-in-out infinite;
+        }
+
+        .play-button .material-symbols-outlined {
+            font-size: 26px;
+            color: var(--black-1);
+        }
+
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-track {
+            flex: 1;
+            height: 5px;
+            background: rgba(0,0,0,0.06);
+            border-radius: 100px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            transition: height 0.2s;
+        }
+
+        .progress-track:hover {
+            height: 7px;
+        }
+
+        .progress-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), #ff8a4c);
+            border-radius: 100px;
+            transition: width 0.4s linear;
+            box-shadow: 0 0 8px rgba(244, 95, 0, 0.4);
+        }
+
+        .progress-time {
+            font-family: var(--ff-mono);
+            font-size: 10px;
+            color: var(--txt-muted);
+            min-width: 40px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+        }
+
+        .member-badge {
+            text-align: center;
+            font-family: var(--ff-mono);
+            font-size: 8px;
+            color: var(--gray-8);
+            letter-spacing: 0.12em;
+            margin: 25px auto 0px;
+            padding:0px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        #sc-widget {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ═══════════════════ STATS SECTION ═══════════════════ */
+        .stats-section {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            animation: fadeUp 0.8s var(--ease-default) 0.2s both;
+        }
+
+        .stat-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: var(--space-3);
+            box-shadow: 0 8px 24px -8px rgba(0,0,0,0.04);
+            transition: all 0.6s var(--ease-smooth);
+        }
+
+        .stat-card:hover {
+            border-color: var(--gray-5);
+            transform: translateY(-3px);
+            box-shadow: 0 16px 40px -12px rgba(0,0,0,0.08);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .stat-title {
+            font-family: var(--ff-mono);
+            font-size: 9px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--txt-muted);
+            letter-spacing: 0.08em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .stat-item {
+            background: var(--gray-1);
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            transition: all 0.6s var(--ease-smooth);
+            cursor: default;
+            border: 1px solid transparent;
+        }
+
+        .stat-item:hover {
+            background: var(--black-1);
+            transform: translateY(-2px);
+            border-color: var(--black-1);
+        }
+
+        .stat-item:hover .stat-label,
+        .stat-item:hover .stat-value {
+            color: #fff;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: var(--gray-8);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            transition: color 0.3s;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--black-1);
+            font-variant-numeric: tabular-nums;
+            transition: color 0.3s;
+            letter-spacing: -0.02em;
+        }
+
+        /* Ratings - Start at zero */
+        .ratings-content {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-2);
+        }
+
+        .rating-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .rating-column:nth-child(1) {
+            flex-direction: column;
+        }
+
+        .rating-column:nth-child(2),
+        .rating-column:nth-child(3) {
+            flex-direction: column-reverse;
+        }
+
+        .rating-label {
+            font-size: 11px;
+            color: var(--gray-10);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.6;
+            text-align: center;
+        }
+
+        .rating-icons {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        .rating-icon {
+            font-size: 20px;
+            color: var(--black-1);
+            opacity: 0.15;
+            cursor: pointer;
+            transition: all 0.6s var(--ease-smooth);
+            filter: grayscale(100%);
+        }
+
+        .rating-icon:hover {
+            opacity: 0.5;
+            transform: scale(1.2);
+        }
+
+        .rating-icon.filled {
+            opacity: 1;
+        }
+
+        .rating-icon.filled:hover {
+            transform: scale(1.15) rotate(-3deg);
+        }
+
+        /* Publications - Clean Simple List */
+        .pub-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .pub-item {
+            display: block;
+            padding: 10px 0;
+            transition: all 0.3s var(--ease-smooth);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pub-item:last-child {
+            border-bottom: none;
+        }
+
+        .pub-item:hover {
+            padding-left: 8px;
+        }
+
+        .pub-item:hover .pub-title {
+            color: var(--primary);
+        }
+
+        .pub-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--black-1);
+            margin-bottom: 2px;
+            transition: color 0.3s;
+        }
+
+        .pub-meta {
+            font-size: 9px;
+            color: var(--txt-muted);
+            font-family: var(--ff-mono);
+        }
+
+        /* ═══════════════════ FEED SECTION WITH TABS ═══════════════════ */
+        .feed-section {
+            margin-top: var(--space-6);
+            animation: fadeUp 0.8s var(--ease-default) 0.4s both;
+        }
+
+        .feed-tabs {
+            display: flex;
+            gap: var(--space-2);
+            margin-bottom: 28px;
+            padding-bottom: var(--space-3);
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .feed-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Tab: All Posts = All content posted by user */
+        /* Tab: Events = Events favorited by user */
+        /* Tab: Classifieds = Classified ads posted by user */
+        .feed-tab {
+            padding: 10px 18px;
+            font-family: var(--ff-mono);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--txt-muted);
+            border-radius: 100px;
+            border: 1px solid transparent;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-smooth);
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .feed-tab:hover {
+            background: var(--gray-1);
+            color: var(--black-1);
+        }
+
+        .feed-tab.active {
+            background: var(--black-1);
+            color: #fff;
+            border-color: var(--black-1);
+        }
+
+        .feed-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-3);
+            margin-bottom: var(--space-6);
+        }
+
+        /* Feed cards are clickable buttons that open post page */
+        .feed-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            position: relative;
+            transition: all 0.5s var(--ease-smooth);
+            box-shadow: 0 4px 16px -4px rgba(0,0,0,0.04);
+            cursor: pointer;
+        }
+
+        .feed-card:hover {
+            border-color: var(--black-1);
+            transform: translateY(-6px);
+            box-shadow: 0 24px 60px -16px rgba(0,0,0,0.12);
+        }
+
+        .feed-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.05);
+            transition: all 0.6s var(--ease-smooth);
+        }
+
+        .feed-card:hover .feed-image {
+            filter: grayscale(0%);
+            transform: scale(1.05);
+        }
+
+        .feed-body {
+            padding: var(--space-4);
+        }
+
+        .feed-meta {
+            font-family: var(--ff-mono);
+            font-size: 10px;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 0.08em;
+        }
+
+        .feed-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--black-1);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .feed-text {
+            font-size: 14px;
+            color: var(--txt-muted);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        /* Reactions: wow and comments */
+        .feed-reactions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .reaction-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: var(--ff-mono);
+            font-size: 12px;
+            color: var(--gray-9);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s var(--ease-smooth);
+        }
+
+        .reaction-btn:hover {
+            color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .reaction-btn i {
+            font-size: 18px;
+        }
+
+        .reaction-btn.reacted {
+            color: var(--primary);
+        }
+
+        .feed-card.dark {
+            background: var(--black-1);
+            border-color: var(--black-1);
+        }
+
+        .feed-card.dark .feed-meta {
+            color: #fff;
+        }
+
+        .feed-card.dark .feed-title {
+            color: #fff;
+        }
+
+        .feed-card.dark .feed-text {
+            color: var(--gray-5);
+        }
+
+        .playlist-visual {
+            margin: var(--space-3) 0;
+            background: rgba(255,255,255,0.08);
+            padding: var(--space-3);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            transition: background 0.4s;
+        }
+
+        .playlist-visual:hover {
+            background: rgba(255,255,255,0.12);
+        }
+
+        .playlist-visual i {
+            font-size: 36px;
+            color: #fff;
+            transition: transform 0.4s var(--ease-smooth);
+        }
+
+        .playlist-visual:hover i {
+            transform: scale(1.15) rotate(-5deg);
+        }
+
+        .playlist-bar-container {
+            height: 4px;
+            flex: 1;
+            background: rgba(255,255,255,0.2);
+            position: relative;
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .playlist-bar-fill {
+            width: 70%;
+            height: 100%;
+            background: linear-gradient(90deg, #fff, rgba(255,255,255,0.6));
+            position: absolute;
+            border-radius: 100px;
+        }
+
+        /* ═══════════════════ TESTIMONIALS - CLEAN MINIMALIST ═══════════════════ */
+        .testimonials-section {
+            margin: 64px 0 80px 0;
+            animation: fadeUp 0.8s var(--ease-default) 0.6s both;
+        }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: var(--space-5);
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+
+        .divider-label {
+            font-family: var(--ff-mono);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--gray-8);
+            white-space: nowrap;
+            font-weight: 700;
+        }
+
+        .testimonials-header {
+            margin-bottom: var(--space-5);
+        }
+
+        .testimonials-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--black-1);
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: var(--space-2);
+        }
+
+        .testimonials-subtitle {
+            font-family: var(--ff-mono);
+            font-size: 12px;
+            color: var(--txt-muted);
+            font-weight: 600;
+        }
+
+        .testimonials-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Clean testimonial design - no borders */
+        .testimonial-container {
+            width: 100%;
+            border-radius: 20px;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: center;
+            column-gap: 20px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .testimonial-img {
+            width: 145px;
+            height: 145px;
+            scale: 1.2;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .testimonial-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100px;
+          padding: 0 2rem;
+        }
+
+        .testimonial-copy {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--black-1);
+            margin-bottom: 16px;
+        }
+
+        .testimonial-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .testimonial-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--black-1);
+        }
+
+        .testimonial-post {
+            font-size: 13px;
+            color: #c1c1c1;
+            font-family: var(--ff-mono);
+        }
+
+        /* Statistics Modal */
+        .stats-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(140,140,140,0.13);
+            backdrop-filter: blur(6px) grayscale(100%);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .stats-modal.active {
+            display: flex;
+        }
+
+        .stats-modal-content {
+            background: #fff;
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.3);
+        }
+
+        .stats-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .stats-modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--black-1);
+        }
+
+        .stats-modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gray-1);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .stats-modal-close:hover {
+            background: var(--black-1);
+            color: #fff;
+        }
+
+        .stats-period-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: var(--space-4);
+        }
+
+        .stats-period-tab {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: var(--ff-mono);
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--gray-1);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .stats-period-tab.active {
+            background: var(--black-1);
+            color: #fff;
+        }
+
+        .stats-chart-placeholder {
+            width: 100%;
+            height: 300px;
+            background: var(--gray-1);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--ff-mono);
+            font-size: 14px;
+            color: var(--txt-muted);
+        }
+
+        /* ═══════════════════ DESKTOP: 980px+ ═══════════════════ */
+        @media (min-width: 980px) {
+            body {
+                padding-top: 0px;
+            }
+
+            .container {
+                max-width: 1400px;
+                padding: 0 var(--space-6);
+            }
+
+            .hero {
+                padding: 0 0 var(--space-5) 0;
+            }
+
+            .hero-media {
+                height: 500px;
+                margin-bottom: -250px;
+            }
+
+            .hero-layout {
+                display: grid;margin:0 3% 0 2%;
+                grid-template-columns: 1fr 380px;
+                gap: 2px;
+                position: relative;
+                z-index: 10;
+            }
+
+            .profile-card {
+                padding: 1.5rem;
+               margin:0 2px 0 3.5%;
+            }
+
+            .avatar {
+                width: 140px;
+                height: 140px;
+            }
+
+            .name {
+                font-size: var(--fs-h2);
+            }
+
+            .feed-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 4px;
+            }
+
+            .feed-image {
+                height: 280px;
+            }
+
+            .testimonial-container {
+                padding: 32px 40px;
+            }
+
+            .testimonial-img {
+                width: 160px;
+                height: 160px;
+            }
+
+            .testimonial-copy {
+                font-size: 17px;
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1600px;
+            }
+
+            .hero-layout {
+                grid-template-columns: 1fr 420px;
+                gap: var(--space-5);
+            }
+
+            .feed-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <section class="hero">
+        <div class="hero-media">
+            <iframe
+                src="https://www.youtube.com/embed/p_HEbzf1VeU?autoplay=1&mute=1&loop=1&playlist=p_HEbzf1VeU&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1"
+                allow="autoplay; encrypted-media"
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <div class="hero-layout">
+            <div class="profile-card">
+                <!-- Profile Controls: Only visible to profile owner -->
+                <div class="profile-controls">
+                    <button class="profile-control-btn" id="stats-btn" title="Statistics">
+                        <i class="ri-bar-chart-fill"></i>
+                    </button>
+                    <button class="profile-control-btn" id="edit-btn" title="Edit Profile">
+                        <i class="ri-pencil-ruler-2-line"></i>
+                    </button>
+                </div>
+
+                <div class="profile-header">
+                 <span id="userPicture_ID" class="editable-info">   <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400&auto=format&fit=crop"
+                         class="avatar"
+                         alt="Rafael Valle"></span>
+                    <div class="profile-identity">
+                      <h1 class="name"><span id="username_ID" class="editable-info">Rafael Valle</span><span id="user-membership-badge" class="user-membership-badge">
+<i class="i-apollo-fill" title="Apollo team"></i>
+<i class="ri-shield-check-fill" title="Verificado"></i>
+</span></h1>
+
+                        <div class="tags">
+                            <span class="tag">Nucleo Rara</span>
+                            <span class="tag">Nucleo Selvagem</span>
+                        </div>
+                          <span class="handle">@looper_rio</span>
+                    </div>
+                </div>
+
+                <p class="bio"><span id="userbio_ID" class="editable-info">Sound architect bridging Rio & Berlin. Vinyl collector, event curator, and seeker of the perfect loop.</span></p>
+
+                <a href="#" class="link">
+                    <i class="ri-links-line"></i>
+                    <span id="userlink_ID" class="editable-info">apollo.rio.br/hub/looper_rio</span>
+                </a>
+
+                <div class="sound-preferences">
+                    <span class="tag">House</span>
+                    <span class="tag">Minimal</span>
+                    <span class="tag">Dub</span>
+                </div>
+
+                <div class="member-badge">Member since 2026</div>
+
+                <div class="player-section">
+                    <iframe id="sc-widget"
+                            allow="autoplay"
+                            scrolling="no"
+                            frameborder="no"
+                            src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fvalle-px%2Falo-som&auto_play=false&show_artwork=false">
+                    </iframe>
+
+                    <div class="player-card">
+                        <div class="player-header">
+                            <div class="player-logo">
+                                <i class="ri-soundcloud-fill"></i>
+                            </div>
+                        </div>
+
+                        <div class="player-content">
+                            <div class="track-info">
+                                <h4 id="track-name">Alo Som</h4>
+                                <p id="track-artist">Valle PX</p>
+                            </div>
+                            <button class="play-button" id="play-btn">
+                                <span class="material-symbols-outlined" id="play-icon">play_arrow</span>
+                            </button>
+                        </div>
+
+                        <div class="progress-bar">
+                            <div class="progress-track" id="progress-track">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                            <span class="progress-time" id="time-display">0:00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <!-- Ratings: All start at zero -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">
+                            <i class="ri-star-smile-fill"></i>
+                            Ratings
+                        </span>
+                    </div>
+                    <div class="ratings-content">
+                        <div class="rating-column">
+                            <span class="rating-label">Sexy</span>
+                            <div class="rating-icons">
+                                <!-- Start with empty cubes, fill with hearts -->
+                                <i class="ri-heart-3-line rating-icon" data-filled="ri-heart-3-fill"></i>
+                                <i class="ri-heart-3-line rating-icon" data-filled="ri-heart-3-fill"></i>
+                                <i class="ri-heart-3-line rating-icon" data-filled="ri-heart-3-fill"></i>
+                            </div>
+                        </div>
+
+                        <div class="rating-column">
+                            <div class="rating-icons">
+                                <i class="ri-user-smile-line rating-icon" data-filled="ri-user-smile-fill"></i>
+                                <i class="ri-user-smile-line rating-icon" data-filled="ri-user-smile-fill"></i>
+                                <i class="ri-user-smile-line rating-icon" data-filled="ri-user-smile-fill"></i>
+                            </div>
+                            <span class="rating-label">Legal</span>
+                        </div>
+
+                        <div class="rating-column">
+                            <div class="rating-icons">
+                                <i class="ri-instance-line rating-icon" data-filled="ri-instance-fill"></i>
+                                <i class="ri-instance-line rating-icon" data-filled="ri-instance-fill"></i>
+                                <i class="ri-instance-line rating-icon" data-filled="ri-instance-fill"></i>
+                            </div>
+                            <span class="rating-label">Confiável</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats: Ranking replaces Visits -->
+                <!-- Ranking #2 = User's position relative to all users based on participation: posts, favorites, interactions -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">
+                            <i class="ri-bar-chart-fill"></i>
+                            Stats
+                        </span>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Favs</span>
+                            <span class="stat-value">128</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Hits</span>
+                            <span class="stat-value">9.4k</span>
+                        </div>
+                        <div class="stat-item" title="User ranking based on total activity: posts, favorites, interactions across the platform">
+                            <span class="stat-label">Ranking</span>
+                            <span class="stat-value">#2</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rate</span>
+                            <span class="stat-value">5.0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Publications: Clean list without borders -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">
+                            <i class="ri-article-line"></i>
+                            Pubs
+                        </span>
+                    </div>
+                    <div class="pub-list">
+                        <a href="#" class="pub-item">
+                            <span class="pub-title">Techno BR</span>
+                            <div class="pub-meta">2 days ago</div>
+                        </a>
+                        <a href="#" class="pub-item">
+                            <span class="pub-title">Top 10 Lapa</span>
+                            <div class="pub-meta">3 wks ago</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feed with Tab System -->
+    <section class="feed-section">
+        <!-- Tab System: All Posts | Events (Favorited) | Classifieds (Posted) -->
+        <div class="feed-tabs">
+            <button class="feed-tab active" data-tab="all">All Posts</button>
+            <button class="feed-tab" data-tab="events">Events</button>
+            <button class="feed-tab" data-tab="classifieds">Classifieds</button>
+        </div>
+
+        <div class="feed-grid">
+            <!-- Event Card: Clickable button with reactions -->
+            <article class="feed-card" data-type="event" onclick="openPost('event-1')">
+                <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&auto=format&fit=crop"
+                     class="feed-image"
+                     alt="Event">
+                <div class="feed-body">
+                    <div class="feed-meta">Favorited Event</div>
+                    <h3 class="feed-title">Sunset Theory: Vol. 4</h3>
+                    <p class="feed-text">Open-air session at Museum of Tomorrow.</p>
+
+                    <!-- Reactions: wow and comments -->
+                    <div class="feed-reactions">
+                        <button class="reaction-btn wow-btn">
+                            <i class="ri-brain-ai-3-line"></i>
+                            <span>36</span>
+                        </button>
+                        <button class="reaction-btn comment-btn">
+                            <i class="ri-chat-smile-2-line"></i>
+                            <span>3</span>
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Post Card (Dark) -->
+            <article class="feed-card dark" data-type="post" onclick="openPost('post-1')">
+                <div class="feed-body">
+                    <div class="feed-meta"><i class="ri-spotify-fill"></i> Playlist</div>
+                    <h3 class="feed-title">Rio Underground Essentials</h3>
+                    <div class="playlist-visual">
+                        <i class="ri-play-circle-fill"></i>
+                        <div class="playlist-bar-container">
+                            <div class="playlist-bar-fill"></div>
+                        </div>
+                    </div>
+                    <p class="feed-text">Curated selection of the finest local producers.</p>
+
+                    <div class="feed-reactions">
+                        <button class="reaction-btn wow-btn reacted">
+                            <i class="ri-brain-ai-3-fill"></i>
+                            <span>89</span>
+                        </button>
+                        <button class="reaction-btn comment-btn reacted">
+                            <i class="ri-chat-smile-2-fill"></i>
+                            <span>15</span>
+                        </button>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Testimonials: Clean Minimalist Design -->
+    <section class="testimonials-section">
+        <div class="section-divider">
+            <div class="divider-line"></div>
+            <span class="divider-label">Comunidade::rio</span>
+            <div class="divider-line"></div>
+        </div>
+
+        <div class="testimonials-header">
+            <h2 class="testimonials-title">Depoimentos</h2>
+            <p class="testimonials-subtitle">O que dizem sobre Rafael</p>
+        </div>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-container">
+                <img src="https://randomuser.me/api/portraits/women/65.jpg"
+                     alt="Clara Mendez"
+                     class="testimonial-img" />
+                <div class="testimonial-content">
+                    <p class="testimonial-copy">"Rafael has an incredible ear for detail. Every event he touches turns to gold. The community he's built in Rio is truly special."</p>
+                    <div class="testimonial-detail">
+                        <p class="testimonial-name">Clara Mendez</p>
+                        <p class="testimonial-post">Event Producer at Ministry of Sound</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-container">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg"
+                     alt="Lucas Silva"
+                     class="testimonial-img" />
+                <div class="testimonial-content">
+                    <p class="testimonial-copy">"Trusted seller. The gear was exactly as described and he even gave me production tips when I picked it up. True professional."</p>
+                    <div class="testimonial-detail">
+                        <p class="testimonial-name">Lucas Silva</p>
+                        <p class="testimonial-post">DJ / Producer</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Statistics Modal -->
+<div class="stats-modal" id="stats-modal">
+    <div class="stats-modal-content">
+        <div class="stats-modal-header">
+            <h3 class="stats-modal-title">Visit Statistics</h3>
+            <button class="stats-modal-close" id="stats-modal-close">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+
+        <div class="stats-period-tabs">
+            <button class="stats-period-tab active">Week</button>
+            <button class="stats-period-tab">Month</button>
+            <button class="stats-period-tab">Year</button>
+            <button class="stats-period-tab">5 Years</button>
+        </div>
+
+        <div class="stats-chart-placeholder">
+            Chart visualization would appear here
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ═══ GSAP ANIMATIONS ═══
+    if (typeof gsap !== 'undefined') {
+        gsap.from('.profile-card', { y: 40, opacity: 0, duration: 1, ease: 'power3.out' });
+        gsap.from('.stat-card', { y: 30, opacity: 0, duration: 0.8, stagger: 0.15, ease: 'power2.out', delay: 0.3 });
+        gsap.from('.tag', { scale: 0.7, opacity: 0, duration: 0.5, stagger: 0.06, ease: 'back.out(2)', delay: 0.6 });
+
+        if (typeof ScrollTrigger !== 'undefined') {
+            gsap.from('.feed-card', { y: 50, opacity: 0, duration: 0.8, stagger: 0.2, ease: 'power3.out', scrollTrigger: { trigger: '.feed-grid', start: 'top 80%' }});
+            gsap.from('.testimonial-container', { y: 40, opacity: 0, duration: 0.7, stagger: 0.2, ease: 'power3.out', scrollTrigger: { trigger: '.testimonials-section', start: 'top 75%' }});
+        }
+    }
+
+    // ═══ RATING INTERACTIVITY - Fill from 0 to clicked ═══
+    document.querySelectorAll('.rating-column').forEach(column => {
+        const icons = column.querySelectorAll('.rating-icon');
+        icons.forEach((icon, idx) => {
+            icon.addEventListener('click', () => {
+                icons.forEach((ic, i) => {
+                    if (i <= idx) {
+                        const filledClass = ic.getAttribute('data-filled');
+                        ic.className = filledClass + ' rating-icon filled';
+                    } else {
+                        const baseClass = ic.getAttribute('data-filled').replace('-fill', '-line');
+                        ic.className = baseClass + ' rating-icon';
+                    }
+                });
+            });
+        });
+    });
+
+    // ═══ FEED TABS ═══
+    const tabs = document.querySelectorAll('.feed-tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            // Filter feed cards based on data-type attribute
+            const tabType = tab.getAttribute('data-tab');
+            console.log('Showing:', tabType);
+        });
+    });
+
+    // ═══ REACTION BUTTONS ═══
+    document.querySelectorAll('.wow-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            btn.classList.toggle('reacted');
+            const icon = btn.querySelector('i');
+            if (btn.classList.contains('reacted')) {
+                icon.className = 'ri-brain-ai-3-fill';
+            } else {
+                icon.className = 'ri-brain-ai-3-line';
+            }
+        });
+    });
+
+    document.querySelectorAll('.comment-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            btn.classList.toggle('reacted');
+            const icon = btn.querySelector('i');
+            if (btn.classList.contains('reacted')) {
+                icon.className = 'ri-chat-smile-2-fill';
+            } else {
+                icon.className = 'ri-chat-smile-2-line';
+            }
+        });
+    });
+
+    // ═══ STATISTICS MODAL ═══
+    const statsBtn = document.getElementById('stats-btn');
+    const statsModal = document.getElementById('stats-modal');
+    const statsModalClose = document.getElementById('stats-modal-close');
+
+    statsBtn.addEventListener('click', () => {
+        statsModal.classList.add('active');
+    });
+
+    statsModalClose.addEventListener('click', () => {
+        statsModal.classList.remove('active');
+    });
+
+    statsModal.addEventListener('click', (e) => {
+        if (e.target === statsModal) {
+            statsModal.classList.remove('active');
+        }
+    });
+
+    // Period tabs
+    document.querySelectorAll('.stats-period-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.stats-period-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+    });
+
+    // ═══ EDIT PROFILE ═══
+    document.getElementById('edit-btn').addEventListener('click', () => {
+        console.log('Edit profile clicked');
+        // Navigate to edit profile page
+    });
+
+    // ═══ SOUNDCLOUD PLAYER ═══
+    const playBtn = document.getElementById('play-btn');
+    const playIcon = document.getElementById('play-icon');
+    const progressFill = document.getElementById('progress-fill');
+    const progressTrack = document.getElementById('progress-track');
+    const timeDisplay = document.getElementById('time-display');
+
+    let duration = 0;
+    let scWidget = null;
+    let pollInterval = null;
+
+    function initSCWidget() {
+        try {
+            if (typeof SC === 'undefined' || !SC.Widget) {
+                setTimeout(initSCWidget, 500);
+                return;
+            }
+
+            const iframe = document.getElementById('sc-widget');
+            if (!iframe) return;
+
+            scWidget = SC.Widget(iframe);
+
+            scWidget.bind(SC.Widget.Events.READY, function() {
+                scWidget.getDuration(function(d) { duration = d; });
+                scWidget.getCurrentSound(function(sound) {
+                    if (sound) {
+                        if (sound.title) document.getElementById('track-name').textContent = sound.title;
+                        if (sound.user && sound.user.username) {
+                            document.getElementById('track-artist').textContent = sound.user.username;
+                        }
+                    }
+                });
+            });
+
+            scWidget.bind(SC.Widget.Events.PLAY, function() {
+                playIcon.textContent = 'pause';
+                playBtn.classList.add('is-playing');
+            });
+
+            scWidget.bind(SC.Widget.Events.PAUSE, function() {
+                playIcon.textContent = 'play_arrow';
+                playBtn.classList.remove('is-playing');
+            });
+
+            scWidget.bind(SC.Widget.Events.FINISH, function() {
+                playIcon.textContent = 'play_arrow';
+                playBtn.classList.remove('is-playing');
+                progressFill.style.width = '0%';
+                timeDisplay.textContent = '0:00';
+            });
+
+            if (pollInterval) clearInterval(pollInterval);
+            pollInterval = setInterval(function() {
+                if (!scWidget) return;
+                try {
+                    scWidget.getPosition(function(pos) {
+                        if (duration > 0) {
+                            progressFill.style.width = (pos / duration * 100) + '%';
+                            const m = Math.floor(pos / 60000);
+                            const s = Math.floor((pos % 60000) / 1000);
+                            timeDisplay.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+                        }
+                    });
+                } catch(e) {}
+            }, 200);
+
+        } catch(e) {
+            setTimeout(initSCWidget, 1000);
+        }
+    }
+
+    initSCWidget();
+
+    playBtn.addEventListener('click', function() {
+        if (scWidget) scWidget.toggle();
+    });
+
+    progressTrack.addEventListener('click', function(e) {
+        if (!scWidget || duration <= 0) return;
+        const rect = progressTrack.getBoundingClientRect();
+        const pct = (e.clientX - rect.left) / rect.width;
+        scWidget.seekTo(duration * pct);
+    });
+});
+
+// Open post page (to be implemented)
+function openPost(postId) {
+    console.log('Opening post:', postId);
+    // Navigate to post detail page with comments
+}
+</script>
+</body>
+</html>

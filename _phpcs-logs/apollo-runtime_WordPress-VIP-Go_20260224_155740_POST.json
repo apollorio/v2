@@ -1,0 +1,14 @@
+﻿DEPRECATED: Scanning CSS/JS files is deprecated and support will be removed in PHP_CodeSniffer 4.0.
+The WordPressVIPMinimum.JS.DangerouslySetInnerHTML sniff is listening for JS.
+DEPRECATED: Scanning CSS/JS files is deprecated and support will be removed in PHP_CodeSniffer 4.0.
+The WordPressVIPMinimum.JS.HTMLExecutingFunctions sniff is listening for JS.
+DEPRECATED: Scanning CSS/JS files is deprecated and support will be removed in PHP_CodeSniffer 4.0.
+The WordPressVIPMinimum.JS.InnerHTML sniff is listening for JS.
+DEPRECATED: Scanning CSS/JS files is deprecated and support will be removed in PHP_CodeSniffer 4.0.
+The WordPressVIPMinimum.JS.StringConcat sniff is listening for JS.
+DEPRECATED: Scanning CSS/JS files is deprecated and support will be removed in PHP_CodeSniffer 4.0.
+The WordPressVIPMinimum.JS.StrippingTags sniff is listening for JS.
+DEPRECATED: Scanning CSS/JS files is deprecated and support will be removed in PHP_CodeSniffer 4.0.
+The WordPressVIPMinimum.JS.Window sniff is listening for JS.
+
+{"totals":{"errors":0,"warnings":0,"fixable":0},"files":{"C:\\Users\\rafae\\Local Sites\\apollo\\app\\public\\wp-content\\plugins\\apollo-runtime\\apollo-runtime.php":{"errors":0,"warnings":0,"messages":[]},"C:\\Users\\rafae\\Local Sites\\apollo\\app\\public\\wp-content\\plugins\\apollo-runtime\\bootstrap.php":{"errors":0,"warnings":0,"messages":[]},"C:\\Users\\rafae\\Local Sites\\apollo\\app\\public\\wp-content\\plugins\\apollo-runtime\\config\\constants.php":{"errors":0,"warnings":0,"messages":[]},"C:\\Users\\rafae\\Local Sites\\apollo\\app\\public\\wp-content\\plugins\\apollo-runtime\\config\\cpts.php":{"errors":0,"warnings":0,"messages":[]},"C:\\Users\\rafae\\Local Sites\\apollo\\app\\public\\wp-content\\plugins\\apollo-runtime\\config\\env.php":{"errors":0,"warnings":0,"messages":[]},"C:\\Users\\rafae\\Local Sites\\apollo\\app\\public\\wp-content\\plugins\\apollo-runtime\\config\\meta.php":{"errors":0,"warnings":0,"messages":[]},"C:\\Users\\rafae\\Local Sites\\apollo\\app\\public\\wp-content\\plugins\\apollo-runtime\\config\\options.php":{"errors":0,"warnings":0,"messages":[]},"C:\\Users\\rafae\\Local Sites\\apollo\\app\\public\\wp-content\\plugins\\apollo-runtime\\config\\roles.php":{"errors":0,"warnings":0,"messages":[]}}}

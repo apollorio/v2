@@ -1,0 +1,1225 @@
+{
+  "_meta": {
+    "generated": "2026-02-18",
+    "registry_version": "6.3.0",
+    "rest_namespace": "apollo/v1",
+    "rest_base_url": "/?rest_route=/apollo/v1",
+    "cdn_url": "https://cdn.apollo.rio.br/v1.0.0/core.min.js",
+    "profile_pattern": "/id/{username}",
+    "hub_pattern": "/hub/{username}",
+    "chat_pattern": "/mensagens/{thread_id}",
+    "explore_pattern": "/explore OR /mural",
+    "note": "Single source of truth. All pages are virtual rewrites unless type=archive or type=single. All REST routes under namespace apollo/v1."
+  },
+
+  "apollo-core": {
+    "layer": "L0",
+    "status": "IMPLEMENTED",
+    "pages": [
+      { "slug": "/",            "title": "Home / Mural router",  "template": null,               "type": "virtual",  "auth": false,  "note": "Routes to explore.php or home template" },
+      { "slug": "classificados","title": "Classificados",         "template": null,               "type": "virtual",  "auth": false  },
+      { "slug": "classificados/novo", "title": "Novo Classificado", "template": null,            "type": "virtual",  "auth": true   },
+      { "slug": "editar/{cpt}", "title": "Editar CPT",            "template": null,               "type": "virtual",  "auth": true   },
+      { "slug": "editar/{cpt}/{id}", "title": "Editar Item",      "template": null,               "type": "virtual",  "auth": true   }
+    ],
+    "rest_routes": [
+      { "route": "/health",                      "methods": ["GET"],         "auth": false,    "description": "Health check" },
+      { "route": "/registry",                    "methods": ["GET"],         "auth": false,    "description": "Registry overview" },
+      { "route": "/registry/cpts",               "methods": ["GET"],         "auth": false,    "description": "All registered CPTs" },
+      { "route": "/registry/taxonomies",         "methods": ["GET"],         "auth": false,    "description": "All registered taxonomies" },
+      { "route": "/registry/status",             "methods": ["GET"],         "auth": false,    "description": "Plugin registry status" },
+      { "route": "/registry/tables",             "methods": ["GET"],         "auth": "admin",  "description": "All DB tables" },
+      { "route": "/sounds",                      "methods": ["GET"],         "auth": false,    "description": "List sound taxonomy terms" },
+      { "route": "/sounds/tree",                 "methods": ["GET"],         "auth": false,    "description": "Sound taxonomy as tree" },
+      { "route": "/sounds/{id}",                 "methods": ["GET"],         "auth": false,    "description": "Single sound term" },
+      { "route": "/sounds/user",                 "methods": ["GET"],         "auth": true,     "description": "User's saved sound preferences" },
+      { "route": "/sounds/popular",              "methods": ["GET"],         "auth": false,    "description": "Most popular sounds" }
+    ],
+    "templates": [],
+    "template_parts": [],
+    "db_tables": [
+      "apollo_quiz_results","apollo_simon_scores","apollo_login_attempts","apollo_url_rewrites","apollo_audit_log"
+    ]
+  },
+
+  "apollo-login": {
+    "layer": "L1",
+    "status": "IMPLEMENTED",
+    "pages": [
+      { "slug": "acesso",           "title": "Acesso",          "template": "login.php",        "type": "virtual",     "auth": false,  "blank_canvas": true,  "note": "Real 404 for /wp-login.php" },
+      { "slug": "registre",         "title": "Registre-se",     "template": "register.php",     "type": "virtual",     "auth": false,  "blank_canvas": true,  "note": "7-step conversational registration" },
+      { "slug": "sair",             "title": "Sair",            "template": null,               "type": "redirect",    "auth": false  },
+      { "slug": "reset",            "title": "Resetar Senha",   "template": "reset.php",        "type": "virtual",     "auth": false  },
+      { "slug": "verificar-email",  "title": "Verificar Email", "template": "verify-email.php", "type": "virtual",     "auth": false  }
+    ],
+    "rest_routes": [
+      { "route": "/auth/login",               "methods": ["POST"],        "auth": false,    "description": "Authenticate user" },
+      { "route": "/auth/register",            "methods": ["POST"],        "auth": false,    "description": "Create account (social_name, instagram, email, password, sounds, quiz)" },
+      { "route": "/auth/logout",              "methods": ["POST"],        "auth": true,     "description": "End session" },
+      { "route": "/auth/reset-request",       "methods": ["POST"],        "auth": false,    "description": "Request password reset" },
+      { "route": "/auth/reset-confirm",       "methods": ["POST"],        "auth": false,    "description": "Confirm new password" },
+      { "route": "/auth/verify-email",        "methods": ["POST"],        "auth": false,    "description": "Verify email address" },
+      { "route": "/auth/resend-verification", "methods": ["POST"],        "auth": false,    "description": "Resend verification email" },
+      { "route": "/auth/check-username",      "methods": ["GET"],         "auth": false,    "description": "Check username availability" },
+      { "route": "/auth/check-email",         "methods": ["GET"],         "auth": false,    "description": "Check email availability" },
+      { "route": "/quiz/submit",              "methods": ["POST"],        "auth": false,    "description": "Submit quiz answers" },
+      { "route": "/quiz/questions",           "methods": ["GET"],         "auth": false,    "description": "Get quiz questions" },
+      { "route": "/simon/submit",             "methods": ["POST"],        "auth": false,    "description": "Submit Simon score" },
+      { "route": "/simon/highscores",         "methods": ["GET"],         "auth": false,    "description": "Simon leaderboard" },
+      { "route": "/security/rewrites",        "methods": ["GET"],         "auth": "admin",  "description": "Get URL rewrites" },
+      { "route": "/security/attempts",        "methods": ["GET"],         "auth": "admin",  "description": "Get login attempts log" }
+    ],
+    "templates": [
+      { "file": "templates/login.php",        "type": "blank_canvas",  "description": "Login form — 7G Firewall protected, custom /acesso URL" },
+      { "file": "templates/register.php",     "type": "blank_canvas",  "description": "7-step multi-step register (social_name → instagram → email → password → confirm → sounds → quiz)" },
+      { "file": "templates/reset.php",        "type": "blank_canvas",  "description": "Password reset form" },
+      { "file": "templates/verify-email.php", "type": "blank_canvas",  "description": "Email verification page" },
+      { "file": "templates/profile.php",      "type": "blank_canvas",  "description": "Login-layer profile (used before redirect to /id/username)" }
+    ],
+    "template_parts": [
+      "templates/parts/login-form.php",
+      "templates/parts/new_login-form.php",
+      "templates/parts/register-form.php",
+      "templates/parts/new_register-form.php",
+      "templates/parts/new_header.php",
+      "templates/parts/new_footer.php",
+      "templates/parts/new_aptitude-quiz.php",
+      "templates/parts/quiz-overlay.php",
+      "templates/parts/email-verification.php",
+      "templates/parts/password-reset-form.php",
+      "templates/parts/password-recovery-overlay.php",
+      "templates/parts/new_lockout-overlay.php"
+    ],
+    "source_file": "apollo-login/src/Core/Plugin.php",
+    "note_path": "Main plugin class at non-standard path: src/Core/Plugin.php (not src/Plugin.php)",
+    "db_tables": ["apollo_quiz_results","apollo_simon_scores","apollo_login_attempts","apollo_url_rewrites"],
+    "security_classes": ["Firewall (7G)","SecurityHeaders","WPHardening","RateLimiter","Lockout","URLRewriter"]
+  },
+
+  "apollo-users": {
+    "layer": "L1",
+    "status": "IMPLEMENTED",
+    "pages": [
+      { "slug": "id/{username}",     "title": "Perfil",        "template": "single-profile.php",  "type": "virtual",  "auth": false, "note": "ALWAYS /id/username — NEVER /user/username" },
+      { "slug": "radar",             "title": "Radar",         "template": "user-radar.php",       "type": "virtual",  "auth": false, "description": "Discover all users — each user is a new spot to track" },
+      { "slug": "editar-perfil",     "title": "Editar Perfil", "template": "edit-profile.php",     "type": "virtual",  "auth": true  }
+    ],
+    "rest_routes": [
+      { "route": "/users",                    "methods": ["GET"],         "auth": false,    "description": "List users" },
+      { "route": "/users/me",                 "methods": ["GET","PUT"],   "auth": true,     "description": "Get/Update current user" },
+      { "route": "/users/{id}",               "methods": ["GET","PUT"],   "auth": "owner",  "description": "Get/Update user" },
+      { "route": "/users/{username}",         "methods": ["GET"],         "auth": false,    "description": "Get user by username" },
+      { "route": "/users/{id}/preferences",   "methods": ["GET","PUT"],   "auth": true,     "description": "User preferences" },
+      { "route": "/users/{id}/matchmaking",   "methods": ["GET"],         "auth": true,     "description": "Get matches" },
+      { "route": "/users/{id}/fields",        "methods": ["GET","PUT"],   "auth": "owner",  "description": "Custom profile fields" },
+      { "route": "/users/search",             "methods": ["GET"],         "auth": false,    "description": "Search users" },
+      { "route": "/users/radar",              "methods": ["GET"],         "auth": false,    "description": "Radar — all new user spots" },
+      { "route": "/profile/{username}",       "methods": ["GET"],         "auth": false,    "description": "Public profile data" },
+      { "route": "/profile/{username}/view",  "methods": ["POST"],        "auth": false,    "description": "Record profile view" },
+      { "route": "/profile/avatar",           "methods": ["POST","DELETE"],"auth": true,    "description": "Upload/Delete avatar" },
+      { "route": "/profile/cover",            "methods": ["POST","DELETE"],"auth": true,    "description": "Upload/Delete cover image" },
+      { "route": "/profile/views",            "methods": ["GET"],         "auth": true,     "description": "Get profile view count" }
+    ],
+    "templates": [
+      { "file": "templates/single-profile.php",         "type": "canvas",  "description": "Full user profile page" },
+      { "file": "templates/edit-profile.php",           "type": "canvas",  "description": "Profile edit form" },
+      { "file": "templates/user-radar.php",             "type": "canvas",  "description": "Radar — user discovery grid" },
+      { "file": "templates/profile-private.php",        "type": "canvas",  "description": "Private profile fallback" },
+      { "file": "templates/profile-login-required.php", "type": "canvas",  "description": "Login required state" }
+    ],
+    "template_parts": [
+      "templates/parts/profile-feed.php",
+      "templates/parts/profile-edit-form.php",
+      "templates/parts/profile-display.php",
+      "templates/parts/profile-fields.php",
+      "templates/parts/matchmaking-widget.php",
+      "templates/parts/user-radar.php",
+      "templates/parts/user-card.php",
+      "templates/parts/profile-sidebar.php",
+      "templates/parts/profile-hero.php"
+    ],
+    "db_tables": ["apollo_matchmaking","apollo_user_fields","apollo_profile_views"]
+  },
+
+  "apollo-membership": {
+    "layer": "L1",
+    "status": "TEMPLATE_ONLY",
+    "pages": [
+      { "slug": "conquistas",          "title": "Conquistas",         "template": "achievements.php",       "type": "virtual",  "auth": false,  "description": "Achievement gallery with AJAX, filter, grid/list, Load More" },
+      { "slug": "conquista/{slug}",    "title": "Conquista",          "template": "single-achievement.php", "type": "virtual",  "auth": false  },
+      { "slug": "minhas-conquistas",   "title": "Minhas Conquistas",  "template": "user-achievements.php",  "type": "virtual",  "auth": true   },
+      { "slug": "pontos",              "title": "Pontos",             "template": "points.php",             "type": "virtual",  "auth": true   },
+      { "slug": "niveis",              "title": "Níveis",             "template": "ranks.php",              "type": "virtual",  "auth": false  },
+      { "slug": "nivel/{slug}",        "title": "Nível",              "template": "single-rank.php",        "type": "virtual",  "auth": false  },
+      { "slug": "placar",              "title": "Placar",             "template": "leaderboard.php",        "type": "virtual",  "auth": false  },
+      { "slug": "evidencia/{hash}",    "title": "Evidência",          "template": "evidence.php",           "type": "virtual",  "auth": false,  "description": "Open Badge v2 evidence verification" }
+    ],
+    "rest_routes": [
+      { "route": "/membership/achievements",              "methods": ["GET"],         "auth": false,    "description": "List all achievements" },
+      { "route": "/membership/achievements/{id}",         "methods": ["GET"],         "auth": false,    "description": "Get single achievement" },
+      { "route": "/membership/user-achievements",         "methods": ["GET"],         "auth": "optional","description": "User's earned achievements" },
+      { "route": "/membership/achievements/award",        "methods": ["POST"],        "auth": "admin",  "description": "Award achievement to user" },
+      { "route": "/membership/achievements/revoke",       "methods": ["POST"],        "auth": "admin",  "description": "Revoke achievement from user" },
+      { "route": "/membership/points",                    "methods": ["GET"],         "auth": true,     "description": "User's point totals" },
+      { "route": "/membership/points/award",              "methods": ["POST"],        "auth": "admin",  "description": "Award points" },
+      { "route": "/membership/points/deduct",             "methods": ["POST"],        "auth": "admin",  "description": "Deduct points" },
+      { "route": "/membership/points/reset",              "methods": ["POST"],        "auth": "admin",  "description": "Reset user points" },
+      { "route": "/membership/points/history",            "methods": ["GET"],         "auth": true,     "description": "Points transaction history" },
+      { "route": "/membership/ranks",                     "methods": ["GET"],         "auth": false,    "description": "List all ranks" },
+      { "route": "/membership/ranks/{id}",                "methods": ["GET"],         "auth": false,    "description": "Get single rank" },
+      { "route": "/membership/ranks/award",               "methods": ["POST"],        "auth": "admin",  "description": "Award rank to user" },
+      { "route": "/membership/user-rank",                 "methods": ["GET"],         "auth": true,     "description": "User's current rank" },
+      { "route": "/membership/user-summary",              "methods": ["GET"],         "auth": true,     "description": "Complete membership summary" },
+      { "route": "/membership/leaderboard",               "methods": ["GET"],         "auth": false,    "description": "Points leaderboard" },
+      { "route": "/membership/leaderboard/user/{id}",     "methods": ["GET"],         "auth": false,    "description": "User's leaderboard position" },
+      { "route": "/membership/membership-badge",          "methods": ["GET","POST"],  "auth": true,     "description": "Get/Set membership badge (visual only)" },
+      { "route": "/membership/triggers",                  "methods": ["GET"],         "auth": false,    "description": "List available triggers" },
+      { "route": "/membership/evidence/{achievement_id}", "methods": ["GET"],         "auth": false,    "description": "Open Badge evidence page" },
+      { "route": "/membership/verify/{hash}",             "methods": ["GET"],         "auth": false,    "description": "Verify Open Badge assertion" }
+    ],
+    "templates": [
+      { "file": "achievements.php",      "type": "canvas",  "description": "Achievement gallery — PLANNED" },
+      { "file": "single-achievement.php","type": "canvas",  "description": "Single achievement — PLANNED" },
+      { "file": "user-achievements.php", "type": "canvas",  "description": "User earned achievements — PLANNED" },
+      { "file": "points.php",            "type": "canvas",  "description": "Points overview — PLANNED" },
+      { "file": "ranks.php",             "type": "canvas",  "description": "Rank hierarchy — PLANNED" },
+      { "file": "single-rank.php",       "type": "canvas",  "description": "Single rank detail — PLANNED" },
+      { "file": "leaderboard.php",       "type": "canvas",  "description": "Points leaderboard — PLANNED" },
+      { "file": "evidence.php",          "type": "canvas",  "description": "Open Badge v2 evidence — PLANNED" }
+    ],
+    "template_parts": [],
+    "db_tables": ["apollo_achievements","apollo_points","apollo_ranks","apollo_triggers","apollo_steps","apollo_membership_log"]
+  },
+
+  "apollo-events": {
+    "layer": "L2",
+    "status": "IMPLEMENTED",
+    "pages": [
+      { "slug": "eventos",       "title": "Eventos",        "template": "styles/base/archive-event.php",  "type": "archive", "auth": false },
+      { "slug": "evento/{slug}", "title": "Evento",         "template": "styles/base/single-event.php",   "type": "single",  "auth": false },
+      { "slug": "criar-evento",  "title": "Criar Evento",   "template": "styles/base/create-event.php",   "type": "virtual", "auth": true  }
+    ],
+    "rest_routes": [
+      { "route": "/events",                              "methods": ["GET","POST"],      "auth": "POST=auth", "description": "List/Create events", "params_GET": ["search","category","type","sound","season","date_from","date_to","loc_id","dj_id","privacy","event_status","include_gone","orderby","order","per_page","page"] },
+      { "route": "/events/{id}",                         "methods": ["GET","PUT","DELETE"],"auth": "owner",  "description": "CRUD event" },
+      { "route": "/events/upcoming",                     "methods": ["GET"],             "auth": false,     "description": "Future events" },
+      { "route": "/events/past",                         "methods": ["GET"],             "auth": false,     "description": "Past events" },
+      { "route": "/events/today",                        "methods": ["GET"],             "auth": false,     "description": "Today's events" },
+      { "route": "/events/search",                       "methods": ["GET"],             "auth": false,     "description": "Full-text search events", "params": ["q","per_page","page"] },
+      { "route": "/events/calendar/{year}/{month}",      "methods": ["GET"],             "auth": false,     "description": "Events grouped by day for calendar view" },
+      { "route": "/events/my",                           "methods": ["GET"],             "auth": true,      "description": "Authenticated user's events" },
+      { "route": "/events/my/rsvp",                      "methods": ["GET"],             "auth": true,      "description": "User's RSVP'd events", "params": ["status","per_page","page"] },
+      { "route": "/events/batch",                        "methods": ["POST"],            "auth": true,      "description": "Bulk: delete/publish/draft/cancel", "params": ["action","ids"] },
+      { "route": "/events/by-date/{date}",               "methods": ["GET"],             "auth": false,     "description": "Events on specific date (YYYY-MM-DD)" },
+      { "route": "/events/by-loc/{loc_id}",              "methods": ["GET"],             "auth": false,     "description": "Events at location" },
+      { "route": "/events/by-dj/{dj_id}",                "methods": ["GET"],             "auth": false,     "description": "Events with DJ" },
+      { "route": "/events/{id}/djs",                     "methods": ["GET","POST","DELETE"],"auth": "owner","description": "Manage event lineup DJs" },
+      { "route": "/events/{id}/banner",                  "methods": ["POST","DELETE"],   "auth": true,      "description": "Upload/delete event banner" },
+      { "route": "/events/{id}/clone",                   "methods": ["POST"],            "auth": true,      "description": "Duplicate event as draft" },
+      { "route": "/events/{id}/stats",                   "methods": ["GET"],             "auth": false,     "description": "Event stats: views, fav, wow, RSVP counts" },
+      { "route": "/events/{id}/attendees",               "methods": ["GET","POST","DELETE"],"auth": "POST+DELETE=auth","description": "Get attendees / RSVP / cancel RSVP" },
+      { "route": "/events/{id}/attendees/{user_id}/check-in","methods": ["POST"],        "auth": "editor",  "description": "Check-in attendee at door" }
+    ],
+    "templates": [
+      { "file": "styles/base/archive-event.php", "type": "canvas",  "description": "Event listing / archive" },
+      { "file": "styles/base/single-event.php",  "type": "canvas",  "description": "Single event detail page" },
+      { "file": "styles/base/create-event.php",  "type": "canvas",  "description": "Event creation form" }
+    ],
+    "template_parts": [],
+    "db_tables": ["apollo_event_rsvp"],
+    "cpt": "event",
+    "cpt_rewrite": "evento"
+  },
+
+  "apollo-djs": {
+    "layer": "L2",
+    "status": "IMPLEMENTED",
+    "pages": [
+      { "slug": "djs",         "title": "DJs",  "template": "styles/base/archive-dj.php",  "type": "archive", "auth": false },
+      { "slug": "dj/{slug}",   "title": "DJ",   "template": "styles/base/single-dj.php",   "type": "single",  "auth": false }
+    ],
+    "rest_routes": [
+      { "route": "/djs",              "methods": ["GET","POST"],      "auth": "POST=auth",  "description": "List/Create DJs" },
+      { "route": "/djs/{id}",         "methods": ["GET","PUT","DELETE"],"auth": "owner",    "description": "CRUD DJ" },
+      { "route": "/djs/{id}/events",  "methods": ["GET"],             "auth": false,        "description": "DJ's events" },
+      { "route": "/djs/by-sound/{sound}","methods": ["GET"],          "auth": false,        "description": "DJs by genre" },
+      { "route": "/djs/search",       "methods": ["GET"],             "auth": false,        "description": "Search DJs" }
+    ],
+    "templates": [
+      { "file": "styles/base/archive-dj.php", "type": "canvas",  "description": "DJ listing / archive" },
+      { "file": "styles/base/single-dj.php",  "type": "canvas",  "description": "Single DJ detail page" }
+    ],
+    "template_parts": [],
+    "db_tables": [],
+    "cpt": "dj",
+    "cpt_rewrite": "dj"
+  },
+
+  "apollo-loc": {
+    "layer": "L2",
+    "status": "IMPLEMENTED",
+    "note": "FORBIDDEN: venue, local, location — use 'loc'",
+    "pages": [
+      { "slug": "gps",         "title": "GPS",    "template": "styles/base/archive-local.php", "type": "archive", "auth": false },
+      { "slug": "gps/{slug}",  "title": "Local",  "template": "styles/base/single-local.php",  "type": "single",  "auth": false },
+      { "slug": "mapa",        "title": "Mapa",   "template": "shortcode:[apollo_map]",          "type": "virtual", "auth": false,  "description": "Created on activation, renders [apollo_map]" }
+    ],
+    "rest_routes": [
+      { "route": "/locals",              "methods": ["GET","POST"],      "auth": "POST=auth",  "description": "List/Create locations" },
+      { "route": "/locals/{id}",         "methods": ["GET","PUT","DELETE"],"auth": "owner",    "description": "CRUD location" },
+      { "route": "/locals/nearby",       "methods": ["GET"],             "auth": false,        "description": "Locations near coords", "params": ["lat","lng","radius","per_page"] }
+    ],
+    "templates": [
+      { "file": "styles/base/archive-local.php", "type": "canvas",  "description": "Location listing / archive" },
+      { "file": "styles/base/single-local.php",  "type": "canvas",  "description": "Single location detail page" }
+    ],
+    "template_parts": [],
+    "db_tables": [],
+    "cpt": "local",
+    "cpt_rewrite": "gps"
+  },
+
+  "apollo-adverts": {
+    "layer": "L2",
+    "status": "IMPLEMENTED",
+    "pages": [
+      { "slug": "anuncios",         "title": "Classificados",   "template": "archive-classified.php",  "type": "archive", "auth": false, "note": "Template pending — see divergences" },
+      { "slug": "anuncio/{slug}",   "title": "Anúncio",         "template": "single-classified.php",   "type": "single",  "auth": false },
+      { "slug": "criar-anuncio",    "title": "Criar Anúncio",   "template": "create-classified.php",   "type": "virtual", "auth": true  }
+    ],
+    "rest_routes": [
+      { "route": "/classifieds",        "methods": ["GET","POST"],      "auth": "POST=auth",  "description": "List/Create ads" },
+      { "route": "/classifieds/{id}",   "methods": ["GET","PUT","DELETE"],"auth": "owner",    "description": "CRUD ad" },
+      { "route": "/classifieds/search", "methods": ["GET"],             "auth": false,        "description": "Search ads" },
+      { "route": "/classifieds/my",     "methods": ["GET"],             "auth": true,         "description": "User's ads" }
+    ],
+    "templates": [
+      { "file": "archive-classified.php", "type": "canvas",  "description": "Classifieds listing — PENDING template creation" },
+      { "file": "single-classified.php",  "type": "canvas",  "description": "Single classified — PENDING template creation" },
+      { "file": "create-classified.php",  "type": "canvas",  "description": "Classified creation form — PENDING template creation" }
+    ],
+    "template_parts": [],
+    "db_tables": [],
+    "cpt": "classified",
+    "cpt_rewrite": "anuncio"
+  },
+
+  "apollo-classifieds": {
+    "layer": "L2",
+    "status": "IMPLEMENTED",
+    "note": "Frontend complement to apollo-adverts. Handles marketplace template and user-facing features.",
+    "pages": [
+      { "slug": "marketplace", "title": "Marketplace", "template": "classifieds-page.php", "type": "virtual", "auth": false }
+    ],
+    "rest_routes": [],
+    "ajax_handlers": [
+      { "action": "apollo_classifieds_init_chat",  "auth": true,  "description": "Initialize chat after safety disclaimer acceptance", "params": ["user_id","classified_id"] }
+    ],
+    "templates": [
+      { "file": "templates/classifieds-page.php", "type": "canvas",  "description": "Main marketplace page" }
+    ],
+    "template_parts": [
+      "templates/parts/page-header.php",
+      "templates/parts/filters-row.php",
+      "templates/parts/section-header.php",
+      "templates/parts/card-ticket.php",
+      "templates/parts/card-accommodation.php",
+      "templates/parts/info-box.php",
+      "templates/parts/modal-disclaimer.php"
+    ],
+    "db_tables": []
+  },
+
+  "apollo-suppliers": {
+    "layer": "L2",
+    "status": "PLANNED",
+    "access": "industry-only",
+    "pages": [
+      { "slug": "fornecedores",       "title": "Fornecedores",  "template": "archive-supplier.php",  "type": "archive", "auth": "industry" },
+      { "slug": "fornecedor/{slug}",  "title": "Fornecedor",    "template": "single-supplier.php",   "type": "single",  "auth": "industry" }
+    ],
+    "rest_routes": [
+      { "route": "/suppliers",              "methods": ["GET","POST"],      "auth": "industry",  "description": "List/Create suppliers" },
+      { "route": "/suppliers/{id}",         "methods": ["GET","PUT","DELETE"],"auth": "industry","description": "CRUD supplier" },
+      { "route": "/suppliers/search",       "methods": ["GET"],             "auth": "industry",  "description": "Search suppliers" },
+      { "route": "/suppliers/categories",   "methods": ["GET"],             "auth": "industry",  "description": "List categories" }
+    ],
+    "templates": [],
+    "template_parts": [],
+    "db_tables": [],
+    "cpt": "supplier",
+    "cpt_rewrite": "fornecedor"
+  },
+
+  "apollo-social": {
+    "layer": "L3",
+    "status": "IMPLEMENTED",
+    "note": "FORBIDDEN: like, heart, reaction → use 'wow'. No image uploads allowed in POST /feed/post.",
+    "source_file": "apollo-social/src/Plugin.php",
+    "rewrite_line": 115,
+    "pages": [
+      { "slug": "explore", "title": "Explore",  "template": "templates/explore.php",  "type": "virtual",  "auth": true,  "rewrite": "^explore/?$", "source_line": 117 },
+      { "slug": "mural",   "title": "Mural (redirect)",  "template": null,  "type": "redirect_301",  "redirect_to": "/explore",  "note": "^mural/?$ → 301 redirect to /explore — NOT a separate page", "source_line": 122 },
+      { "slug": "feed",    "title": "Feed (redirect)",   "template": null,  "type": "redirect_301",  "redirect_to": "/explore",  "note": "^feed/?$ → 301 redirect to /explore — NOT a separate page", "source_line": 127 }
+    ],
+    "shortcodes": [
+      { "tag": "apollo_feed",       "source_line": 555,  "description": "Renders the social feed" },
+      { "tag": "apollo_follow_btn", "source_line": 556,  "description": "Follow/Unfollow button for a user" }
+    ],
+    "rest_routes": [
+      { "route": "/feed",                     "methods": ["GET"],         "auth": true,     "description": "Get activity feed", "params": ["per_page","page","component"] },
+      { "route": "/feed/post",                "methods": ["POST"],        "auth": true,     "description": "Create post (no images — URLs only)" },
+      { "route": "/activity/{id}",            "methods": ["DELETE","PUT"],"auth": "owner",  "description": "Delete / Edit own activity post (within 15 min)" },
+      { "route": "/activity/{id}/replies",    "methods": ["GET","POST"],  "auth": "POST=auth","description": "Get/Create replies" },
+      { "route": "/activity/{id}/spam",       "methods": ["POST","DELETE"],"auth": "auth/mod","description": "Report / Unmark spam" },
+      { "route": "/followers/{user_id}",      "methods": ["GET"],         "auth": false,    "description": "Get user followers" },
+      { "route": "/following/{user_id}",      "methods": ["GET"],         "auth": false,    "description": "Get user following" },
+      { "route": "/blocks",                   "methods": ["GET"],         "auth": true,     "description": "Get blocked users list" },
+      { "route": "/block/{user_id}",          "methods": ["POST","DELETE"],"auth": true,    "description": "Block/Unblock user" },
+      { "route": "/members",                  "methods": ["GET"],         "auth": false,    "description": "Member directory", "params": ["search","per_page","page","type"] },
+      { "route": "/members/suggestions",      "methods": ["GET"],         "auth": true,     "description": "Suggested members", "params": ["limit"] }
+    ],
+    "rest_planned": [
+      { "route": "/follow/{user_id}",   "methods": ["POST"],  "auth": true,  "description": "Follow user — PENDING IMPLEMENTATION" },
+      { "route": "/unfollow/{user_id}", "methods": ["POST"],  "auth": true,  "description": "Unfollow user — PENDING IMPLEMENTATION" }
+    ],
+    "templates": [
+      { "file": "templates/explore.php",  "type": "canvas",  "description": "Social feed / mural page" }
+    ],
+    "template_parts": [
+      "templates/parts/head.php",
+      "templates/parts/sidebar-left.php",
+      "templates/parts/sidebar-right.php",
+      "templates/parts/sidebar.php",
+      "templates/parts/feed-header.php",
+      "templates/parts/compose-box.php",
+      "templates/parts/feed-container.php",
+      "templates/parts/tab-bar.php",
+      "templates/parts/preloader.php",
+      "templates/parts/settings-panel.php",
+      "templates/parts/modal-delete.php",
+      "templates/parts/modal-safety.php",
+      "templates/parts/scripts.php"
+    ],
+    "db_tables": ["apollo_activity","apollo_connections"],
+    "embed_types": ["youtube","soundcloud","spotify_track","spotify_album","spotify_playlist","apollo_event"]
+  },
+
+  "apollo-groups": {
+    "layer": "L3",
+    "status": "IMPLEMENTED",
+    "pages": [
+      { "slug": "grupos",         "title": "Grupos",       "template": "groups.php",       "type": "virtual",  "auth": false },
+      { "slug": "grupo/{slug}",   "title": "Grupo",        "template": "single-group.php", "type": "virtual",  "auth": false },
+      { "slug": "nucleos",        "title": "Núcleos",      "template": "nucleos.php",       "type": "virtual",  "auth": false,  "description": "Private work teams" },
+      { "slug": "comunas",        "title": "Comunas",      "template": "comunas.php",       "type": "virtual",  "auth": false,  "description": "Open communities" },
+      { "slug": "criar-grupo",    "title": "Criar Grupo",  "template": "create-group.php",  "type": "virtual",  "auth": true  }
+    ],
+    "rest_routes": [
+      { "route": "/groups",                                "methods": ["GET","POST"],       "auth": "POST=auth", "description": "List/Create groups", "params_GET": ["search","type","per_page","page"] },
+      { "route": "/groups/{id}",                           "methods": ["GET","PUT","DELETE"],"auth": "owner",   "description": "CRUD group" },
+      { "route": "/groups/{id}/members",                   "methods": ["GET"],              "auth": false,      "description": "Get members" },
+      { "route": "/groups/{id}/members/{user_id}/promote", "methods": ["POST"],             "auth": true,       "description": "Promote to moderator/admin" },
+      { "route": "/groups/{id}/members/{user_id}/demote",  "methods": ["POST"],             "auth": true,       "description": "Demote moderator to member" },
+      { "route": "/groups/{id}/members/{user_id}/ban",     "methods": ["POST","DELETE"],    "auth": true,       "description": "Ban/Unban member" },
+      { "route": "/groups/{id}/members/{user_id}",         "methods": ["DELETE"],           "auth": true,       "description": "Remove member" },
+      { "route": "/groups/{id}/bans",                      "methods": ["GET"],              "auth": true,       "description": "Get banned members" },
+      { "route": "/groups/{id}/invitations",               "methods": ["GET","POST"],       "auth": true,       "description": "Get/Send invitations" },
+      { "route": "/groups/{id}/invitations/accept",        "methods": ["POST"],             "auth": true,       "description": "Accept invitation" },
+      { "route": "/groups/{id}/invitations/reject",        "methods": ["POST"],             "auth": true,       "description": "Reject invitation" },
+      { "route": "/groups/{id}/requests",                  "methods": ["GET","POST"],       "auth": true,       "description": "Get/Send membership requests" },
+      { "route": "/groups/{id}/requests/{user_id}/accept", "methods": ["POST"],             "auth": true,       "description": "Accept membership request" },
+      { "route": "/groups/{id}/requests/{user_id}/reject", "methods": ["POST"],             "auth": true,       "description": "Reject membership request" },
+      { "route": "/groups/{id}/feed",                      "methods": ["GET"],              "auth": false,      "description": "Group activity feed", "params": ["per_page","page"] },
+      { "route": "/groups/{id}/avatar",                    "methods": ["POST","DELETE"],    "auth": true,       "description": "Upload/delete group avatar" },
+      { "route": "/groups/{id}/cover",                     "methods": ["POST","DELETE"],    "auth": true,       "description": "Upload/delete group cover image" },
+      { "route": "/groups/{id}/join",                      "methods": ["POST"],             "auth": true,       "description": "Join group" },
+      { "route": "/groups/{id}/leave",                     "methods": ["POST"],             "auth": true,       "description": "Leave group" },
+      { "route": "/groups/nucleos",                        "methods": ["GET"],              "auth": false,      "description": "List núcleos" },
+      { "route": "/groups/comunas",                        "methods": ["GET"],              "auth": false,      "description": "List comunas" },
+      { "route": "/groups/my",                             "methods": ["GET"],              "auth": true,       "description": "User's groups" },
+      { "route": "/groups/search",                         "methods": ["GET"],              "auth": false,      "description": "Search groups", "params": ["q","type","per_page"] },
+      { "route": "/my/group-invitations",                  "methods": ["GET"],              "auth": true,       "description": "All pending group invitations for current user" }
+    ],
+    "templates": [
+      { "file": "templates/groups.php",       "type": "canvas",  "description": "Groups listing page" },
+      { "file": "templates/single-group.php", "type": "canvas",  "description": "Single group page" },
+      { "file": "templates/nucleos.php",      "type": "canvas",  "description": "Núcleos (private work teams) listing" },
+      { "file": "templates/comunas.php",      "type": "canvas",  "description": "Comunas (open communities) listing" },
+      { "file": "templates/create-group.php", "type": "canvas",  "description": "Group creation form" }
+    ],
+    "template_parts": [
+      "templates/parts/directory/create-cta.php",
+      "templates/parts/directory/featured.php",
+      "templates/parts/directory/grid.php",
+      "templates/parts/directory/head.php",
+      "templates/parts/directory/hero.php",
+      "templates/parts/directory/loader.php",
+      "templates/parts/directory/scripts.php",
+      "templates/parts/directory/search-bar.php",
+      "templates/parts/directory/stats-strip.php",
+      "templates/parts/directory/tabs.php",
+      "templates/parts/directory/trending.php",
+      "templates/parts/single/channels.php",
+      "templates/parts/single/composer.php",
+      "templates/parts/single/drawer.php",
+      "templates/parts/single/feed.php",
+      "templates/parts/single/head.php",
+      "templates/parts/single/header.php",
+      "templates/parts/single/loader.php",
+      "templates/parts/single/pinned.php",
+      "templates/parts/single/post-poll.php",
+      "templates/parts/single/post-thread.php",
+      "templates/parts/single/post.php",
+      "templates/parts/single/scripts.php",
+      "templates/parts/single/sidebar-about.php",
+      "templates/parts/single/sidebar-cover.php",
+      "templates/parts/single/sidebar-join.php",
+      "templates/parts/single/sidebar-members.php",
+      "templates/parts/single/sidebar-rules.php",
+      "templates/parts/single/sidebar-stats.php",
+      "templates/parts/single/sidebar-tags.php"
+    ],
+    "shortcodes": [
+      { "tag": "apollo_groups",    "source_line": 770,  "description": "Groups listing" },
+      { "tag": "apollo_group",     "source_line": 771,  "description": "Single group embed" },
+      { "tag": "apollo_my_groups", "source_line": 772,  "description": "User's groups" }
+    ],
+    "db_tables": ["apollo_groups","apollo_group_members","apollo_group_meta","apollo_group_invitations","apollo_group_bans","apollo_group_requests"]
+  },
+
+  "apollo-fav": {
+    "layer": "L3",
+    "status": "IMPLEMENTED",
+    "note": "FORBIDDEN: interesse, interest, bookmark — use 'fav'",
+    "pages": [],
+    "rest_routes": [
+      { "route": "/favs",                "methods": ["GET"],         "auth": true,  "description": "User's favorites" },
+      { "route": "/favs",                "methods": ["POST"],        "auth": true,  "description": "Add favorite" },
+      { "route": "/favs/{post_id}",      "methods": ["DELETE"],      "auth": true,  "description": "Remove favorite" },
+      { "route": "/favs/toggle/{post_id}","methods": ["POST"],       "auth": true,  "description": "Toggle favorite" },
+      { "route": "/favs/count/{post_id}","methods": ["GET"],         "auth": false, "description": "Get fav count" },
+      { "route": "/favs/check/{post_id}","methods": ["GET"],         "auth": true,  "description": "Check if favorited" }
+    ],
+    "templates": [],
+    "template_parts": [],
+    "db_tables": ["apollo_favs"]
+  },
+
+  "apollo-wow": {
+    "layer": "L3",
+    "status": "SKELETON",
+    "note": "FORBIDDEN: like, heart, reaction — use 'wow'",
+    "source_file": "apollo-wow/src/Plugin.php",
+    "rest_register_line": 41,
+    "pages": [],
+    "shortcodes": [
+      { "tag": "apollo_wow",       "source_line": 146,  "description": "Wow reaction button for a post" },
+      { "tag": "apollo_wow_chart", "source_line": 147,  "description": "Wow chart showing reaction distribution. NOT in apollo-registry.json — DIVERGENCE.", "divergence": true }
+    ],
+    "rest_routes": [
+      { "route": "/wows",           "methods": ["POST"],        "auth": true,  "description": "Add wow reaction",   "source_line": 47 },
+      { "route": "/wows/{post_id}", "methods": ["GET"],         "auth": false, "description": "Get wow count",      "source_line": 57 },
+      { "route": "/wows/{post_id}", "methods": ["DELETE"],      "auth": true,  "description": "Remove wow reaction", "source_line": 74 },
+      { "route": "/wows/types",     "methods": ["GET"],         "auth": false, "description": "Get wow types",      "source_line": 84 }
+    ],
+    "templates": [],
+    "template_parts": [],
+    "db_tables": ["apollo_wows","apollo_wow_types"]
+  },
+
+  "apollo-comment": {
+    "layer": "L3",
+    "status": "IMPLEMENTED",
+    "note": "FORBIDDEN: comment, review — use 'depoimento'",
+    "source_file": "apollo-comment/src/Plugin.php",
+    "rest_register_line": 55,
+    "pages": [],
+    "rest_routes": [
+      { "route": "/depoimentos",      "methods": ["GET","POST"],      "auth": "POST=auth",  "description": "List/Create depoimentos",  "source_file": "apollo-comment/src/API/DepoimentoController.php", "source_line": 26 },
+      { "route": "/depoimentos/{id}", "methods": ["GET","PUT","DELETE"],"auth": "owner",  "description": "CRUD depoimento",          "source_file": "apollo-comment/src/API/DepoimentoController.php", "source_line": 79 }
+    ],
+    "templates": [
+      { "file": "templates/depoimento-form.php", "type": "canvas", "description": "Depoimento submission form" },
+      { "file": "templates/depoimento-list.php", "type": "canvas", "description": "Depoimentos listing" }
+    ],
+    "template_parts": [],
+    "db_tables": []
+  },
+
+  "apollo-notif": {
+    "layer": "L4",
+    "status": "IMPLEMENTED",
+    "pages": [
+      { "slug": "notificacoes", "title": "Notificações", "template": "notifications.php", "type": "virtual", "auth": true }
+    ],
+    "rest_routes": [
+      { "route": "/notifications",                         "methods": ["GET"],         "auth": true,  "description": "Get notifications", "params": ["since","type","channel","severity"] },
+      { "route": "/notifications/{id}/read",              "methods": ["POST"],        "auth": true,  "description": "Mark as read" },
+      { "route": "/notifications/{id}/displayed",         "methods": ["POST"],        "auth": true,  "description": "Mark as displayed (seen in dropdown)" },
+      { "route": "/notifications/{id}",                   "methods": ["DELETE"],      "auth": true,  "description": "Delete single notification" },
+      { "route": "/notifications/read-all",               "methods": ["POST"],        "auth": true,  "description": "Mark all as read" },
+      { "route": "/notifications/read",                   "methods": ["DELETE"],      "auth": true,  "description": "Delete all read notifications" },
+      { "route": "/notifications/unread-count",           "methods": ["GET"],         "auth": true,  "description": "Get unread count" },
+      { "route": "/notifications/preferences",            "methods": ["GET","PUT"],   "auth": true,  "description": "Notification preferences" },
+      { "route": "/notifications/preferences/snooze",     "methods": ["POST","DELETE"],"auth": true, "description": "Snooze/Unsnooze notification type" },
+      { "route": "/notifications/push/subscribe",         "methods": ["POST"],        "auth": true,  "description": "Subscribe to Web Push (saves PushSubscription)" },
+      { "route": "/notifications/push/unsubscribe",       "methods": ["DELETE"],      "auth": true,  "description": "Remove Web Push subscription" },
+      { "route": "/notifications/push/vapid-public-key",  "methods": ["GET"],         "auth": false, "description": "Get VAPID public key for PushManager.subscribe()" }
+    ],
+    "templates": [
+      { "file": "templates/notifications.php", "type": "canvas",  "description": "Notifications page with severity colors, snooze, filters, polling (60s)" }
+    ],
+    "template_parts": [],
+    "db_tables": ["apollo_notifications","apollo_notif_prefs"],
+    "hooks_listens": [
+      "apollo/chat/message_sent","apollo/social/activity_created","apollo/social/reply_created",
+      "apollo/groups/user_joined","apollo/wow/added","apollo/mod/reported",
+      "comment_post","user_register","wp_login",
+      "apollo/social/follow","apollo/notif/mention","apollo/event/published",
+      "apollo/fav/saved","apollo/coauthor/invited","apollo/membership/upgraded","apollo/users/profile_visited"
+    ]
+  },
+
+  "apollo-email": {
+    "layer": "L4",
+    "status": "IMPLEMENTED",
+    "pages": [],
+    "rest_routes": [
+      { "route": "/email/send",              "methods": ["POST"],        "auth": "admin",  "description": "Send email" },
+      { "route": "/email/test",              "methods": ["POST"],        "auth": "admin",  "description": "Send test email" },
+      { "route": "/email/stats",             "methods": ["GET"],         "auth": "admin",  "description": "Email dashboard stats" },
+      { "route": "/email/queue",             "methods": ["GET"],         "auth": "admin",  "description": "View queue" },
+      { "route": "/email/queue/{id}/cancel", "methods": ["POST"],        "auth": "admin",  "description": "Cancel queued email" },
+      { "route": "/email/queue/{id}/retry",  "methods": ["POST"],        "auth": "admin",  "description": "Retry queued email" },
+      { "route": "/email/queue/purge",       "methods": ["POST"],        "auth": "admin",  "description": "Purge email queue", "params": ["days"] },
+      { "route": "/email/templates",         "methods": ["GET","POST"],  "auth": "admin",  "description": "List/Create email templates" },
+      { "route": "/email/templates/{id}",    "methods": ["GET","PUT","DELETE"],"auth": "admin","description": "CRUD email template" },
+      { "route": "/email/log",               "methods": ["GET"],         "auth": "admin",  "description": "View email log" },
+      { "route": "/email/log/purge",         "methods": ["POST"],        "auth": "admin",  "description": "Purge email log", "params": ["days"] },
+      { "route": "/email/preferences",       "methods": ["GET","PUT"],   "auth": true,     "description": "User email preferences" }
+    ],
+    "templates": [],
+    "template_parts": [],
+    "db_tables": ["apollo_email_queue","apollo_email_log"],
+    "cpt": "email_aprio"
+  },
+
+  "apollo-chat": {
+    "layer": "L4",
+    "status": "IMPLEMENTED",
+    "pages": [
+      { "slug": "mensagens",      "title": "Mensagens",  "template": "chat.php", "type": "virtual", "auth": true,  "description": "Chat inbox with thread list" },
+      { "slug": "mensagens/{id}", "title": "Conversa",   "template": "chat.php", "type": "virtual", "auth": true,  "description": "Single thread conversation view" }
+    ],
+    "rest_routes": [
+      { "route": "/chat/threads",                   "methods": ["GET","POST"],       "auth": true,   "description": "List user's threads / Create new thread" },
+      { "route": "/chat/threads/{id}",              "methods": ["GET","DELETE"],     "auth": true,   "description": "Get thread messages / Delete thread" },
+      { "route": "/chat/threads/{id}/messages",     "methods": ["GET","POST"],       "auth": true,   "description": "Get older messages / Send new message" },
+      { "route": "/chat/threads/{id}/read",         "methods": ["POST"],             "auth": true,   "description": "Mark thread as read (read receipts)" },
+      { "route": "/chat/threads/{id}/members",      "methods": ["GET","POST","DELETE"],"auth": true, "description": "Get/Add/Remove thread members (group chat)" },
+      { "route": "/chat/threads/{id}/older",        "methods": ["GET"],              "auth": true,   "description": "Load older messages (scroll-up pagination)" },
+      { "route": "/chat/threads/{id}/mute",         "methods": ["POST","DELETE"],    "auth": true,   "description": "Mute/Unmute thread" },
+      { "route": "/chat/threads/{id}/pin",          "methods": ["POST","DELETE"],    "auth": true,   "description": "Pin/Unpin message within thread" },
+      { "route": "/chat/threads/{id}/pinned",       "methods": ["GET"],              "auth": true,   "description": "Get all pinned messages in thread" },
+      { "route": "/chat/threads/{id}/export",       "methods": ["GET"],              "auth": true,   "description": "Export thread as CSV" },
+      { "route": "/chat/messages/{id}",             "methods": ["PUT","DELETE"],     "auth": "owner","description": "Edit / Delete message (soft delete)" },
+      { "route": "/chat/messages/{id}/react",       "methods": ["POST"],             "auth": true,   "description": "Add/remove emoji reaction" },
+      { "route": "/chat/messages/{id}/pin",         "methods": ["POST"],             "auth": true,   "description": "Pin/Unpin message" },
+      { "route": "/chat/messages/{id}/forward",     "methods": ["POST"],             "auth": true,   "description": "Forward message to another thread" },
+      { "route": "/chat/messages/{id}/report",      "methods": ["POST"],             "auth": true,   "description": "Report message as spam" },
+      { "route": "/chat/typing",                    "methods": ["POST"],             "auth": true,   "description": "Send typing indicator (3s TTL)", "params": ["thread_id","is_typing"] },
+      { "route": "/chat/poll",                      "methods": ["GET"],              "auth": true,   "description": "Poll for new messages/updates (3s interval)", "params": ["since","thread_id"] },
+      { "route": "/chat/unread",                    "methods": ["GET"],              "auth": true,   "description": "Get unread message count" },
+      { "route": "/chat/more",                      "methods": ["GET"],              "auth": true,   "description": "Load more threads (pagination)", "params": ["offset","limit"] },
+      { "route": "/chat/presence",                  "methods": ["PUT"],              "auth": true,   "description": "Update presence status", "params": ["status"] },
+      { "route": "/chat/online",                    "methods": ["GET"],              "auth": true,   "description": "Get online contacts list" },
+      { "route": "/chat/search",                    "methods": ["GET"],              "auth": true,   "description": "Search messages across all threads", "params": ["query","thread_id","limit"] },
+      { "route": "/chat/upload",                    "methods": ["POST"],             "auth": true,   "description": "Upload file/image/audio/video attachment" },
+      { "route": "/chat/block",                     "methods": ["POST"],             "auth": true,   "description": "Block user from messaging", "params": ["user_id"] },
+      { "route": "/chat/unblock",                   "methods": ["POST"],             "auth": true,   "description": "Unblock user", "params": ["user_id"] },
+      { "route": "/chat/block/{user_id}",           "methods": ["POST","DELETE"],    "auth": true,   "description": "Block/Unblock user (path-param variant)" },
+      { "route": "/chat/mute",                      "methods": ["POST"],             "auth": true,   "description": "Mute thread notifications", "params": ["thread_id","duration"] },
+      { "route": "/chat/unmute",                    "methods": ["POST"],             "auth": true,   "description": "Unmute thread", "params": ["thread_id"] },
+      { "route": "/chat/send",                      "methods": ["POST"],             "auth": true,   "description": "Send message (flat route)" },
+      { "route": "/chat/thread-for-context",        "methods": ["POST"],             "auth": true,   "description": "Find or create thread by context", "params": ["recipient_id","context","subject","message"] },
+      { "route": "/chat/gif-search",                "methods": ["GET"],              "auth": true,   "description": "GIF search via Tenor proxy", "params": ["q","pos","limit"] },
+      { "route": "/chat/reports",                   "methods": ["GET"],              "auth": "admin","description": "Admin: list spam reports" },
+      { "route": "/chat/reports/{id}/action",       "methods": ["POST"],             "auth": "admin","description": "Admin: resolve spam report" }
+    ],
+    "templates": [
+      { "file": "templates/chat.php", "type": "canvas",  "description": "Full chat UI — inbox + thread view combined via JS routing" }
+    ],
+    "template_parts": [],
+    "db_tables": ["apollo_chat_messages","apollo_chat_threads","apollo_chat_participants","apollo_chat_reactions","apollo_chat_typing","apollo_chat_presence","apollo_chat_blocks","apollo_chat_attachments","apollo_chat_reports"],
+    "features": {
+      "real_time": "AJAX polling 3s + BroadcastChannel cross-tab sync",
+      "read_receipts": "3-state: sent → delivered → read",
+      "attachments": "Drag-drop + paste (images/files/audio/video)",
+      "voice_messages": "MediaRecorder API",
+      "emoji_picker": "Native Unicode",
+      "reply_threading": "Reply-to quotes",
+      "user_presence": "online/away/busy/offline"
+    }
+  },
+
+  "apollo-docs": {
+    "layer": "L5",
+    "status": "IMPLEMENTED",
+    "pages": [
+      { "slug": "documentos", "title": "Documentos", "template": "documents.php",          "type": "admin",   "auth": true,  "note": "wp-admin panel" },
+      { "slug": "documentos", "title": "Documentos", "template": "frontend-documents.php", "type": "virtual", "auth": true,  "navbar": true, "url": "/documentos" }
+    ],
+    "rest_routes": [
+      { "route": "/docs",                "methods": ["GET","POST"],       "auth": true,   "description": "List/Upload documents" },
+      { "route": "/docs/{id}",           "methods": ["GET","PUT","DELETE"],"auth": "owner","description": "Get/Update/Delete document" },
+      { "route": "/docs/{id}/download",  "methods": ["GET"],              "auth": true,   "description": "Download document" },
+      { "route": "/docs/{id}/versions",  "methods": ["GET"],              "auth": true,   "description": "Get version history" },
+      { "route": "/docs/{id}/lock",      "methods": ["POST"],             "auth": true,   "description": "Lock document" },
+      { "route": "/docs/{id}/finalize",  "methods": ["POST"],             "auth": true,   "description": "Finalize document" },
+      { "route": "/docs/{id}/upload",    "methods": ["POST"],             "auth": true,   "description": "Upload file attachment" },
+      { "route": "/docs/folders",        "methods": ["GET","POST"],       "auth": true,   "description": "List/Create folders" },
+      { "route": "/docs/folders/{id}",   "methods": ["PUT","DELETE"],     "auth": "owner","description": "Update/Delete folder" }
+    ],
+    "ajax_handlers": [
+      "load_documents","create_document","update_document","delete_document",
+      "load_folders","create_folder","delete_folder",
+      "load_versions","lock_document","finalize_document","update_status"
+    ],
+    "templates": [
+      { "file": "templates/frontend-documents.php", "type": "canvas",  "description": "Frontend document library" }
+    ],
+    "template_parts": [],
+    "db_tables": ["apollo_doc_versions","apollo_doc_downloads"],
+    "cpt": "doc"
+  },
+
+  "apollo-sign": {
+    "layer": "L5",
+    "status": "IMPLEMENTED",
+    "version": "1.2.0",
+    "pages": [
+      { "slug": "assinar/{hash}", "title": "Assinar Documento", "template": "sign.php", "type": "virtual", "auth": false, "description": "ICP-Brasil digital signing with PDF.js viewer" }
+    ],
+    "rest_routes": [
+      { "route": "/signatures",                   "methods": ["POST"],        "auth": true,  "description": "Create signature" },
+      { "route": "/signatures/{id}",              "methods": ["GET"],         "auth": false, "description": "Get signature" },
+      { "route": "/signatures/{id}/sign",         "methods": ["POST"],        "auth": true,  "description": "Sign with PFX certificate (accepts placement coords)" },
+      { "route": "/signatures/{id}/audit",        "methods": ["GET"],         "auth": true,  "description": "Get audit trail" },
+      { "route": "/signatures/{id}/placement",    "methods": ["POST","GET"],  "auth": true,  "description": "Save/get visual signature placement coordinates" },
+      { "route": "/signatures/verify/{hash}",     "methods": ["GET"],         "auth": false, "description": "Public signature verification" }
+    ],
+    "templates": [
+      { "file": "templates/sign.php",              "type": "canvas",  "description": "PDF viewer with interactive signature placement" },
+      { "file": "templates/signature-pad.php",     "type": "canvas",  "description": "Standalone signature pad drawing canvas" },
+      { "file": "templates/admin-signatures.php",  "type": "admin",   "description": "Admin panel — signatures list and management" }
+    ],
+    "template_parts": [
+      "parts/head.php","parts/header.php","parts/doc-info.php",
+      "parts/pdf-viewer.php","parts/placement-modal.php",
+      "parts/signature-pad-canvas.php",
+      "parts/signing-form.php","parts/signed-info.php",
+      "parts/footer.php","parts/scripts.php"
+    ],
+    "db_tables": ["apollo_signatures","apollo_signature_audit"],
+    "js_files": [
+      { "file": "assets/js/sign-placement.js",   "description": "State-machine PDF viewer + interactive placement (PDF.js + interact.js)" },
+      { "file": "assets/js/signature-pad.js",    "description": "Hand-drawn signature pad (canvas draw, upload, undo, clear, color, PNG export)" }
+    ]
+  },
+
+  "apollo-gestor": {
+    "layer": "L5",
+    "status": "IMPLEMENTED",
+    "pages": [
+      { "slug": "apollo-gestor", "title": "Gestor Apollo", "template": "gestor.php", "type": "admin", "auth": true, "description": "Event production management — tasks, team, budget, suppliers, timeline, kanban" }
+    ],
+    "rest_routes": [],
+    "ajax_handlers": [
+      "load_events","load_overview",
+      "load_tasks","toggle_task","create_task","update_task","delete_task",
+      "load_team","add_team_member","remove_team_member","update_team_member",
+      "load_payments","create_payment","update_payment","delete_payment",
+      "load_milestones","create_milestone","toggle_milestone",
+      "update_event_status","save_permissions",
+      "load_activity","load_suppliers"
+    ],
+    "templates": [
+      { "file": "templates/gestor.php", "type": "admin",  "description": "Event production management dashboard" }
+    ],
+    "template_parts": [],
+    "db_tables": ["apollo_gestor_tasks","apollo_gestor_team","apollo_gestor_payments","apollo_gestor_milestones","apollo_gestor_activity"]
+  },
+
+  "apollo-journal": {
+    "layer": "L5",
+    "status": "IMPLEMENTED",
+    "note": "Magazine & editorial platform — NREP auto-coding, custom taxonomies (music/culture/rio/formato), shortcodes, REST API, magazine layouts.",
+    "pages": [],
+    "rest_routes": [
+      { "route": "/journal/posts", "methods": ["GET"], "auth": false, "description": "Paginated journal posts — category/taxonomy/term filters" }
+    ],
+    "templates": [
+      { "file": "templates/archive-journal.php", "type": "Canvas", "description": "Magazine-style archive for categories and custom taxonomies" }
+    ],
+    "template_parts": [
+      { "file": "templates/parts/news-grid.php", "description": "Embeddable 3-column news grid widget for mural page" }
+    ],
+    "shortcodes": [
+      { "tag": "apollo_journal", "source": "src/Shortcodes.php", "description": "News grid widget (count, category, columns, loadmore)" },
+      { "tag": "apollo_journal_marquee", "source": "src/Shortcodes.php", "description": "Horizontal scrolling news ticker" },
+      { "tag": "apollo_journal_card", "source": "src/Shortcodes.php", "description": "Single article card embed by ID or category" }
+    ],
+    "db_tables": [],
+    "extra": {
+      "taxonomies": ["music", "culture", "rio", "formato"],
+      "meta_keys": ["_nrep_code", "_nrep_year", "_nrep_seq"],
+      "hooks_fired": ["apollo/journal/initialized", "apollo/journal/nrep_assigned"],
+      "features": ["NREP auto-coding on nota-de-repudio publish", "Dashboard widget", "Sortable NREP column", "Taxonomy filters in admin"]
+    }
+  },
+
+  "apollo-shortcodes": {
+    "layer": "L6",
+    "status": "IMPLEMENTED",
+    "note": "Registers ALL shortcodes from all Apollo plugins. Also handles global search + newsletter + cult calendar.",
+    "pages": [],
+    "rest_routes": [
+      { "route": "/shortcodes",              "methods": ["GET"],     "auth": false,    "description": "List all shortcodes" },
+      { "route": "/shortcodes/{tag}",        "methods": ["GET"],     "auth": false,    "description": "Get shortcode info" },
+      { "route": "/shortcodes/render",       "methods": ["POST"],    "auth": false,    "description": "Render shortcode" },
+      { "route": "/search",                  "methods": ["GET"],     "auth": false,    "description": "Global search across all content types" },
+      { "route": "/search/events",           "methods": ["GET"],     "auth": false,    "description": "Search events" },
+      { "route": "/search/users",            "methods": ["GET"],     "auth": false,    "description": "Search users" },
+      { "route": "/search/classifieds",      "methods": ["GET"],     "auth": false,    "description": "Search classifieds" },
+      { "route": "/search/djs",              "methods": ["GET"],     "auth": false,    "description": "Search DJs" },
+      { "route": "/search/locs",             "methods": ["GET"],     "auth": false,    "description": "Search locations" },
+      { "route": "/search/posts",            "methods": ["GET"],     "auth": false,    "description": "Search blog posts" },
+      { "route": "/search/pages",            "methods": ["GET"],     "auth": false,    "description": "Search pages" },
+      { "route": "/cena-rio/agenda",         "methods": ["GET"],     "auth": "industry","description": "Industry calendar (CENA-RIO / cult)" },
+      { "route": "/cena-rio/enviar",         "methods": ["POST"],    "auth": "industry","description": "Submit expected event" },
+      { "route": "/cena-rio/confirmar/{id}", "methods": ["POST"],    "auth": "industry","description": "Confirm event" },
+      { "route": "/cena-rio/cancelar/{id}",  "methods": ["POST"],    "auth": "industry","description": "Unconfirm event" },
+      { "route": "/newsletter/subscribe",    "methods": ["POST"],    "auth": false,    "description": "Newsletter email subscription" },
+      { "route": "/newsletter/subscribers",  "methods": ["GET"],     "auth": "admin",  "description": "List newsletter subscribers" }
+    ],
+    "templates": [],
+    "template_parts": []
+  },
+
+  "apollo-templates": {
+    "layer": "L6",
+    "status": "IMPLEMENTED",
+    "source_file": "apollo-templates/src/Plugin.php",
+    "note": "Composite module: Canvas templates, Auth flow pieces, Home parts, Mural parts, Navbar, Weather, FrontendEditor, FrontendRouter",
+    "pages": [
+      { "slug": "sobre",    "title": "Sobre",    "template": "templates/page-sobre.php",    "type": "canvas",   "auth": false, "description": "About Apollo page" },
+      { "slug": "about-us", "title": "About Us", "template": null,                            "type": "redirect", "auth": false, "description": "Redirect 301 → /sobre" }
+    ],
+    "rest_routes": [
+      { "route": "/templates",           "methods": ["GET"],     "auth": false,  "description": "List templates",    "source_line": 149 },
+      { "route": "/templates/calendars", "methods": ["GET"],     "auth": false,  "description": "Calendar types",    "source_line": 160 },
+      { "route": "/canvas/save",         "methods": ["POST"],    "auth": true,   "description": "Save canvas page",  "source_line": 171 },
+      { "route": "/canvas/blocks",       "methods": ["GET"],     "auth": false,  "description": "Available blocks", "source_line": 182 }
+    ],
+    "templates": [
+      { "file": "templates/page-home.php",         "type": "canvas",  "description": "Home page template" },
+      { "file": "templates/page-mural.php",        "type": "canvas",  "description": "Mural / social feed page template" },
+      { "file": "templates/page-classificados.php","type": "canvas",  "description": "Classifieds page template" },
+      { "file": "templates/edit-post.php",         "type": "canvas",  "description": "Post editor page" },
+      { "file": "templates/page-test.php",         "type": "canvas",  "description": "Test template" },
+      { "file": "templates/event/listing.php",     "type": "canvas",  "description": "Event listing template variant" },
+      { "file": "templates/event/card-style-01.php","type": "partial",  "description": "Event card style variant" },
+      { "file": "templates/auth/login-register.php","type": "canvas",  "description": "Combined login/register auth page" },
+      { "file": "templates/page-sobre.php",          "type": "canvas",  "description": "Sobre — About Apollo page. Canvas mode, uses navbar.v1.php" }
+    ],
+    "template_parts": [
+      "templates/auth/parts/new_login-form.php",
+      "templates/auth/parts/new_register-form.php",
+      "templates/auth/parts/new_header.php",
+      "templates/auth/parts/new_footer.php",
+      "templates/auth/parts/new_aptitude-quiz.php",
+      "templates/auth/parts/new_lockout-overlay.php",
+      "templates/template-parts/navbar.v1.php",
+      "templates/template-parts/navbar-old-backup.php",
+      "templates/template-parts/new-home/navbar.php",
+      "templates/template-parts/new-home/hero.php",
+      "templates/template-parts/new-home/events.php",
+      "templates/template-parts/new-home/crash.php",
+      "templates/template-parts/new-home/classifieds.php",
+      "templates/template-parts/new-home/tracks.php",
+      "templates/template-parts/new-home/map.php",
+      "templates/template-parts/new-home/radio.php",
+      "templates/template-parts/new-home/marquee.php",
+      "templates/template-parts/new-home/menu-fab.php",
+      "templates/template-parts/new-home/panel-chat.php",
+      "templates/template-parts/new-home/panel-notif.php",
+      "templates/template-parts/new-home/footer.php",
+      "templates/template-parts/home/hero.php",
+      "templates/template-parts/home/events-listing.php",
+      "templates/template-parts/home/hub-section.php",
+      "templates/template-parts/home/classifieds.php",
+      "templates/template-parts/home/coupon-modal.php",
+      "templates/template-parts/home/marquee.php",
+      "templates/template-parts/home/mission.php",
+      "templates/template-parts/home/infra.php",
+      "templates/template-parts/home/tools-accordion.php",
+      "templates/template-parts/home/footer.php",
+      "templates/template-parts/mural/greeting.php",
+      "templates/template-parts/mural/weather-hero.php",
+      "templates/template-parts/mural/upcoming.php",
+      "templates/template-parts/mural/same-vibe.php",
+      "templates/template-parts/mural/sounds.php",
+      "templates/template-parts/mural/classifieds.php",
+      "templates/template-parts/mural/favorites.php",
+      "templates/template-parts/mural/news.php",
+      "templates/template-parts/mural/ticker.php"
+    ],
+    "includes": [
+      { "file": "includes/mural-router.php",          "description": "Mural page JS router" },
+      { "file": "includes/pages.php",                 "description": "Page slug/template registration" },
+      { "file": "includes/class-navbar-settings.php", "description": "Navbar settings class" },
+      { "file": "includes/weather-helpers.php",       "description": "Weather API helpers" }
+    ],
+    "db_tables": []
+  },
+
+  "apollo-dashboard": {
+    "layer": "L6",
+    "status": "IMPLEMENTED",
+    "source_file": "apollo-dashboard/src/Plugin.php",
+    "note": "Single dashboard.php with JS-routed panels. Sub-pages are virtual panel switches, not separate templates.",
+    "pages": [
+      { "slug": "painel",               "title": "Painel",           "template": "templates/dashboard.php",  "type": "virtual", "auth": true },
+      { "slug": "painel/eventos",       "title": "Meus Eventos",     "template": "templates/dashboard.php",  "type": "virtual", "auth": true, "note": "Panel switch only — same template" },
+      { "slug": "painel/favoritos",     "title": "Meus Favoritos",   "template": "templates/dashboard.php",  "type": "virtual", "auth": true, "note": "Panel switch only — same template" },
+      { "slug": "painel/grupos",        "title": "Meus Grupos",      "template": "templates/dashboard.php",  "type": "virtual", "auth": true, "note": "Panel switch only — same template" },
+      { "slug": "painel/configuracoes", "title": "Configurações",    "template": "templates/dashboard.php",  "type": "virtual", "auth": true, "note": "Panel switch only — same template" }
+    ],
+    "rest_routes": [
+      { "route": "/dashboard",           "methods": ["GET"],         "auth": true,  "description": "Dashboard data" },
+      { "route": "/dashboard/widgets",   "methods": ["GET"],         "auth": true,  "description": "Available widgets" },
+      { "route": "/dashboard/settings",  "methods": ["GET","PUT"],   "auth": true,  "description": "Dashboard settings" },
+      { "route": "/dashboard/layout",    "methods": ["GET","PUT"],   "auth": true,  "description": "Widget layout" }
+    ],
+    "templates": [
+      { "file": "templates/dashboard.php",  "type": "canvas",  "description": "Main dashboard — single SPA shell with JS panel routing" }
+    ],
+    "template_parts": [
+      "templates/template-parts/dashboard/panel-feed.php",
+      "templates/template-parts/dashboard/panel-events.php",
+      "templates/template-parts/dashboard/panel-favs.php",
+      "templates/template-parts/dashboard/panel-comunas.php",
+      "templates/template-parts/dashboard/panel-settings.php",
+      "templates/template-parts/dashboard/scripts.php",
+      "templates/template-parts/dashboard/styles.php"
+    ],
+    "db_tables": []
+  },
+
+  "apollo-hub": {
+    "layer": "L6",
+    "status": "PLANNED",
+    "note": "HUB is public Linktree-style page (/hub/). PROFILE is full page (/id/).",
+    "pages": [
+      { "slug": "hub/{username}", "title": "Hub",        "template": "single-hub.php", "type": "single",  "auth": false },
+      { "slug": "editar-hub",     "title": "Editar Hub", "template": "edit-hub.php",   "type": "virtual", "auth": true  }
+    ],
+    "rest_routes": [
+      { "route": "/hubs",                     "methods": ["GET"],         "auth": false,  "description": "List hubs" },
+      { "route": "/hubs/{username}",          "methods": ["GET","PUT"],   "auth": "owner","description": "Get/Update hub" },
+      { "route": "/hubs/{username}/links",    "methods": ["GET","PUT"],   "auth": "owner","description": "Manage links" }
+    ],
+    "templates": [],
+    "template_parts": [],
+    "db_tables": [],
+    "cpt": "hub"
+  },
+
+  "apollo-admin": {
+    "layer": "L7",
+    "status": "IMPLEMENTED",
+    "note": "MANDATORY unified admin panel — one tab per plugin, grouped by layer. Option key: apollo_admin_settings",
+    "source_file": "apollo-admin/src/Plugin.php",
+    "rest_register_line": 90,
+    "pages": [],
+    "admin_pages": [
+      { "slug": "apollo",          "title": "Apollo",          "menu_title": "Apollo",        "capability": "manage_options", "icon": "dashicons-superhero-alt", "position": 3 },
+      { "slug": "apollo-settings", "title": "Configurações",   "parent": "apollo",            "capability": "manage_options" },
+      { "slug": "apollo-events",   "title": "Eventos",         "parent": "apollo",            "capability": "edit_posts" },
+      { "slug": "apollo-djs",      "title": "DJs",             "parent": "apollo",            "capability": "edit_posts" },
+      { "slug": "apollo-locs",     "title": "Locais",          "parent": "apollo",            "capability": "edit_posts" },
+      { "slug": "apollo-users",    "title": "Usuários",        "parent": "apollo",            "capability": "list_users" },
+      { "slug": "apollo-mod",      "title": "Moderação",       "parent": "apollo",            "capability": "moderate_comments" },
+      { "slug": "apollo-stats",    "title": "Estatísticas",    "parent": "apollo",            "capability": "manage_options" }
+    ],
+    "rest_routes": [
+      { "route": "/settings",              "methods": ["GET"],         "auth": "admin",  "description": "All settings",          "source_file": "apollo-admin/src/Rest/SettingsController.php", "source_line": 41 },
+      { "route": "/settings/{slug}",       "methods": ["GET","POST"],  "auth": "admin",  "description": "Plugin settings",       "source_file": "apollo-admin/src/Rest/SettingsController.php", "source_line": 52 },
+      { "route": "/settings/{slug}/schema","methods": ["GET"],         "auth": "admin",  "description": "Settings schema",       "source_file": "apollo-admin/src/Rest/SettingsController.php", "source_line": 87 },
+      { "route": "/registry",              "methods": ["GET"],         "auth": "admin",  "description": "Get registered plugins", "source_file": "apollo-admin/src/Rest/SettingsController.php", "source_line": 106 },
+      { "route": "/registry/refresh",      "methods": ["POST"],        "auth": "admin",  "description": "Refresh registry cache", "source_file": "apollo-admin/src/Rest/SettingsController.php", "source_line": 117 },
+      { "route": "/settings/export",       "methods": ["GET"],         "auth": "admin",  "description": "Export all settings",    "source_file": "apollo-admin/src/Rest/SettingsController.php", "source_line": 129 },
+      { "route": "/settings/import",       "methods": ["POST"],        "auth": "admin",  "description": "Import settings",        "source_file": "apollo-admin/src/Rest/SettingsController.php", "source_line": 139 }
+    ],
+    "templates": [
+      { "file": "templates/dashboard.php", "type": "admin",  "description": "Main Apollo CPanel — tabbed settings UI" }
+    ],
+    "template_parts": [
+      "templates/partials/sections/admin/membership.php",
+      "templates/partials/sections/admin/moderate.php",
+      "templates/partials/sections/admin/notify.php",
+      "templates/partials/sections/admin/overview.php",
+      "templates/partials/sections/admin/spreadsheet.php",
+      "templates/partials/sections/admin/users.php",
+      "templates/partials/sections/email/logger.php",
+      "templates/partials/sections/email/rss.php",
+      "templates/partials/sections/email/settings.php",
+      "templates/partials/sections/email/stats.php",
+      "templates/partials/sections/email/subscribers.php",
+      "templates/partials/sections/email/templates.php",
+      "templates/partials/sections/email/tools.php",
+      "templates/partials/sections/email/unsub.php",
+      "templates/partials/sections/email/workflows.php",
+      "templates/partials/sections/events/calendar.php",
+      "templates/partials/sections/events/custom.php",
+      "templates/partials/sections/events/eventcard.php",
+      "templates/partials/sections/events/eventtop.php",
+      "templates/partials/sections/events/general.php",
+      "templates/partials/sections/events/maps.php",
+      "templates/partials/sections/events/repeat.php",
+      "templates/partials/sections/events/single.php",
+      "templates/partials/sections/events/social.php",
+      "templates/partials/sections/events/theme.php",
+      "templates/partials/sections/identity/login.php",
+      "templates/partials/sections/identity/membership.php",
+      "templates/partials/sections/identity/users.php",
+      "templates/partials/sections/social/activity.php",
+      "templates/partials/sections/social/chat.php",
+      "templates/partials/sections/social/groups.php",
+      "templates/partials/sections/social/notif.php",
+      "templates/partials/sections/social/reactions.php",
+      "templates/partials/sections/system/content.php",
+      "templates/partials/sections/system/core.php",
+      "templates/partials/sections/system/pwa.php",
+      "templates/partials/sections/system/security.php",
+      "templates/partials/sections/system/seo.php",
+      "templates/partials/sections/system/stats.php",
+      "templates/partials/sections/system/templates.php",
+      "templates/partials/footer.php",
+      "templates/partials/sidebar.php",
+      "templates/partials/styles.php",
+      "templates/partials/topbar.php"
+    ],
+    "src_classes": [
+      "AdminAssets","AdminMenuCustomizer","AdminPage","ErrorLogViewer",
+      "Plugin","Registry","Settings","ToolbarCustomizer","UserPreferences"
+    ],
+    "db_tables": []
+  },
+
+  "apollo-mod": {
+    "layer": "L7",
+    "status": "SKELETON",
+    "source_file": "apollo-mod/src/Plugin.php",
+    "rest_register_line": 43,
+    "pages": [],
+    "rest_routes": [
+      { "route": "/mod/queue",                "methods": ["GET"],     "auth": "mod",   "description": "Get moderation queue",    "source_line": 49 },
+      { "route": "/mod/queue/{id}/approve",   "methods": ["POST"],    "auth": "mod",   "description": "Approve item",            "source_line": 65 },
+      { "route": "/mod/queue/{id}/reject",    "methods": ["POST"],    "auth": "mod",   "description": "Reject item",             "source_line": 76 },
+      { "route": "/mod/queue/{id}/flag",      "methods": ["POST"],    "auth": "mod",   "description": "Flag item",               "source_line": 87 },
+      { "route": "/mod/log",                  "methods": ["GET"],     "auth": "mod",   "description": "Get moderation log",      "source_line": 98 },
+      { "route": "/mod/stats",                "methods": ["GET"],     "auth": "mod",   "description": "Moderation stats",         "source_line": 108 },
+      { "route": "/mod/report",               "methods": ["POST"],    "auth": true,    "description": "Report content (user-facing). NOT in apollo-registry.json — DIVERGENCE.", "source_line": 119, "divergence": true }
+    ],
+    "ajax_handlers": [
+      { "action": "apollo_report_content", "auth": true, "source_line": 39, "description": "Legacy AJAX fallback for report content" }
+    ],
+    "templates": [],
+    "template_parts": [],
+    "db_tables": ["apollo_mod_queue","apollo_mod_log","apollo_mod_reports","apollo_mod_actions"]
+  },
+
+  "apollo-coauthor": {
+    "layer": "L7",
+    "status": "IMPLEMENTED",
+    "source_file": "apollo-coauthor/src/API/CoauthorController.php",
+    "note": "10 Component classes: BulkEdit, CoauthorIterator, ContentFilter, GuestAuthors, MetaBox, NotifyCoauthors, QueryIntegration, Shortcodes, Taxonomy, UserPostCount",
+    "pages": [],
+    "rest_routes": [
+      { "route": "/coauthors/{post_id}", "methods": ["GET","PUT"], "auth": true, "description": "Get/Set coauthors for a post",  "source_line": 58 },
+      { "route": "/coauthors/search",   "methods": ["GET"],       "auth": true, "description": "Search users to add as coauthors", "source_line": 115 }
+    ],
+    "templates": [],
+    "template_parts": [],
+    "db_tables": []
+  },
+
+  "apollo-statistics": {
+    "layer": "L7",
+    "status": "IMPLEMENTED",
+    "source_file": "apollo-statistics/includes/class-rest-controller.php",
+    "note": "NO src/Plugin.php — REST registered via includes/class-rest-controller.php",
+    "pages": [],
+    "rest_routes": [
+      { "route": "/stats/overview", "methods": ["GET"],  "auth": "admin",  "description": "Platform overview stats",      "source_line": 34 },
+      { "route": "/stats/events",   "methods": ["GET"],  "auth": "admin",  "description": "Event statistics",            "source_line": 54 },
+      { "route": "/stats/users",    "methods": ["GET"],  "auth": "admin",  "description": "User statistics",             "source_line": 66 },
+      { "route": "/stats/content",  "methods": ["GET"],  "auth": "admin",  "description": "Content statistics",          "source_line": 78 },
+      { "route": "/stats/export",   "methods": ["GET"],  "auth": "admin",  "description": "Export stats as CSV",         "source_line": 106 },
+      { "route": "/stats/health",   "methods": ["GET"],  "auth": "admin",  "description": "Platform health check",       "source_line": 132 },
+      { "route": "/stats/trend",    "methods": ["GET"],  "auth": "admin",  "description": "Trend data over time",        "source_line": 143 },
+      { "route": "/stats/chart",    "methods": ["GET"],  "auth": "admin",  "description": "Chart data for admin graphs", "source_line": 174 }
+    ],
+    "templates": [],
+    "template_parts": [],
+    "db_tables": ["apollo_stats_events","apollo_stats_users","apollo_stats_content"]
+  },
+
+  "apollo-seo": {
+    "layer": "L10",
+    "status": "IMPLEMENTED",
+    "pages": [],
+    "admin_pages": [
+      { "slug": "apollo-seo", "title": "Apollo SEO", "capability": "manage_options" }
+    ],
+    "rest_routes": [
+      { "route": "/seo/post/{id}", "methods": ["GET"],  "auth": false,  "description": "SEO data for a post (title, description, canonical, og, schema, robots)" },
+      { "route": "/seo/term/{id}", "methods": ["GET"],  "auth": false,  "description": "SEO data for a taxonomy term" },
+      { "route": "/seo/home",      "methods": ["GET"],  "auth": false,  "description": "SEO data for the homepage" }
+    ],
+    "templates": [],
+    "template_parts": [],
+    "db_tables": [],
+    "src_classes": ["Plugin","Admin","Meta","Metabox","Schema","Settings","Sitemap","TermMetabox"],
+    "option_key": "apollo_seo_settings"
+  },
+
+  "apollo-sheets": {
+    "layer": "L11",
+    "status": "IMPLEMENTED",
+    "pages": [],
+    "rest_routes": [
+      { "route": "/sheets",             "methods": ["GET","POST"],      "auth": true,   "description": "List/Create sheets" },
+      { "route": "/sheets/{id}",        "methods": ["GET","PUT","DELETE"],"auth": "owner","description": "CRUD sheet" },
+      { "route": "/sheets/{id}/copy",   "methods": ["POST"],            "auth": true,   "description": "Copy sheet" },
+      { "route": "/sheets/import",      "methods": ["POST"],            "auth": true,   "description": "Import sheet (CSV/JSON)" },
+      { "route": "/sheets/{id}/export", "methods": ["GET"],             "auth": true,   "description": "Export sheet (csv/json/html)", "params": ["format"] },
+      { "route": "/sheets/{id}/preview","methods": ["GET"],             "auth": true,   "description": "Preview rendered HTML" }
+    ],
+    "templates": [],
+    "template_parts": [],
+    "db_tables": [],
+    "cpt": "apollo_sheet",
+    "note": "Data stored as JSON in post_content. Accessed via shortcode, REST, or Admin UI only."
+  },
+
+  "apollo-cult": {
+    "layer": "L7",
+    "status": "PLANNED",
+    "access": "industry-only",
+    "note": "FORBIDDEN: cena-rio, cenario, cena_rio — use 'cult'",
+    "pages": [
+      { "slug": "cult",              "title": "Cult",              "template": "cult.php",           "type": "virtual", "auth": "industry" },
+      { "slug": "cult/calendario",   "title": "Calendário",        "template": "cult-calendar.php",  "type": "virtual", "auth": "industry" },
+      { "slug": "cult/membros",      "title": "Membros",           "template": "cult-members.php",   "type": "virtual", "auth": "industry" }
+    ],
+    "rest_routes": [
+      { "route": "/cult/calendar",          "methods": ["GET"],     "auth": "industry",  "description": "Industry calendar" },
+      { "route": "/cult/calendar/save-date","methods": ["POST"],    "auth": "industry",  "description": "Save the date" },
+      { "route": "/cult/calendar/{id}",     "methods": ["PUT","DELETE"],"auth": "industry","description": "Update/Delete date" },
+      { "route": "/cult/members",           "methods": ["GET"],     "auth": "industry",  "description": "Industry members" },
+      { "route": "/cult/access/request",    "methods": ["POST"],    "auth": true,        "description": "Request access" }
+    ],
+    "templates": [],
+    "template_parts": [],
+    "db_tables": ["apollo_industry_calendar"]
+  },
+
+  "apollo-pwa": {
+    "layer": "L12",
+    "status": "PLANNED",
+    "pages": [
+      { "slug": "offline", "title": "Offline", "template": "offline.php", "type": "virtual", "auth": false }
+    ],
+    "rest_routes": [
+      { "route": "/pwa/manifest", "methods": ["GET"],  "auth": false,  "description": "Web app manifest" },
+      { "route": "/pwa/sw",       "methods": ["GET"],  "auth": false,  "description": "Service worker" }
+    ],
+    "templates": [
+      { "file": "templates/offline.php", "type": "canvas",  "description": "Offline fallback page" }
+    ],
+    "template_parts": [],
+    "db_tables": [],
+    "files": [
+      { "path": "/manifest.json",  "description": "Web App Manifest" },
+      { "path": "/sw.js",          "description": "Service Worker" }
+    ]
+  },
+
+  "apollo-runtime": {
+    "layer": "L12",
+    "status": "IMPLEMENTED",
+    "note": "NEVER register meta keys, CPTs, or taxonomies here. Runtime bootstrap only.",
+    "pages": [],
+    "rest_routes": [],
+    "templates": [],
+    "template_parts": [],
+    "db_tables": [],
+    "config_files": [
+      { "file": "config/constants.php",  "description": "Runtime constant overrides — APOLLO_CDN_URL, APOLLO_CDN_CORE_JS" },
+      { "file": "config/cpts.php",        "description": "CPT overrides — MUST stay empty" },
+      { "file": "config/env.php",         "description": "Environment flags — environment, debug" },
+      { "file": "config/meta.php",        "description": "Meta key overrides — currently empty" },
+      { "file": "config/options.php",     "description": "WP option overrides — currently empty" },
+      { "file": "config/roles.php",       "description": "Role overrides — currently empty" }
+    ]
+  },
+
+  "_summary": {
+    "generated": "2026-02-18",
+    "last_updated": "2026-02-18 (deep file scan — all plugins verified)",
+    "total_plugins": 31,
+    "total_pages": 54,
+    "total_rest_routes": 207,
+    "total_templates": 46,
+    "total_template_parts": 85,
+    "divergences_from_registry": [
+      "apollo-social: /mural and /feed are 301 REDIRECTS to /explore, not separate pages",
+      "apollo-mod: extra route /mod/report (POST, auth=true) — NOT in apollo-registry.json",
+      "apollo-wow: shortcode apollo_wow_chart NOT in registry",
+      "apollo-email: shortcode apollo_email_prefs NOT in registry",
+      "apollo-statistics: 3 extra routes (/stats/health, /stats/trend, /stats/chart) vs 5 in registry",
+      "apollo-coauthor: extra route /coauthors/search NOT in registry",
+      "apollo-sign: 2 extra templates (signature-pad.php, admin-signatures.php) not in registry",
+      "apollo-login: main plugin class at src/Core/Plugin.php (non-standard), not src/Plugin.php",
+      "apollo-groups: 30 template parts (11 directory + 19 single) — registry shows none",
+      "apollo-templates: massive extra structure (auth, home, mural parts, navbar, weather helpers)",
+      "apollo-admin: 40 section template partials — registry listed none",
+      "apollo-dashboard: sub-pages are JS panel switches, not separate template files",
+      "apollo-fav: REST at includes/class-rest-controller.php, no src/Plugin.php",
+      "apollo-statistics: REST at includes/class-rest-controller.php, no src/Plugin.php"
+    ],
+    "templates_pending": ["apollo-adverts (3 templates)", "apollo-membership (8 templates)"],
+    "rest_pending": ["apollo-social: /follow/{user_id}", "apollo-social: /unfollow/{user_id}"],
+    "all_slugs": [
+      "apollo-core","apollo-login","apollo-users","apollo-membership",
+      "apollo-events","apollo-djs","apollo-loc","apollo-adverts","apollo-classifieds","apollo-suppliers",
+      "apollo-social","apollo-groups","apollo-fav","apollo-wow","apollo-comment",
+      "apollo-notif","apollo-email","apollo-chat",
+      "apollo-docs","apollo-sign","apollo-gestor","apollo-journal",
+      "apollo-shortcodes","apollo-templates","apollo-dashboard","apollo-hub",
+      "apollo-admin","apollo-mod","apollo-coauthor","apollo-statistics",
+      "apollo-seo","apollo-sheets","apollo-cult","apollo-pwa","apollo-runtime"
+    ],
+    "forbidden_terms": {
+      "venue/local/location": "→ loc",
+      "interesse/interest/bookmark": "→ fav",
+      "like/heart/reaction": "→ wow",
+      "comment/review": "→ depoimento",
+      "cena-rio/cenario": "→ cult",
+      "/user/": "→ /id/"
+    }
+  }
+}

@@ -1,0 +1,295 @@
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+#chartdiv {
+  width: 100%;
+  max-width:100%;
+  height: 600px;
+},
+</style>
+
+<script src="C:\Users\rafae\Local Sites\apollo\app\public\wp-content\plugins\_library\project-management\GANTT\js\amcharts\lib.5.index.js"></script>
+<script src="C:\Users\rafae\Local Sites\apollo\app\public\wp-content\plugins\_library\project-management\GANTT\js\amcharts\lib.5.xy.js"></script>
+<script src="C:\Users\rafae\Local Sites\apollo\app\public\wp-content\plugins\_library\project-management\GANTT\js\amcharts\lib.5.colorPicker.js"></script>
+<script src="C:\Users\rafae\Local Sites\apollo\app\public\wp-content\plugins\_library\project-management\GANTT\js\amcharts\lib.5.gantt.js"></script>
+<script src="C:\Users\rafae\Local Sites\apollo\app\public\wp-content\plugins\_library\project-management\GANTT\js\amcharts\lib.5.animated.js"></script>
+<div id="chartdiv"></div>
+
+
+<div id="controls" style="margin-bottom:8px;">
+  <label for="paSelect"><strong>Filter Planning Accounts</strong></label>
+  <select id="paSelect" multiple="" size="5" style="min-width:240px;"></select>
+  <button id="applyFilterBtn">Apply Filter</button>
+  <button id="clearFilterBtn">Clear</button>
+</div>
+  
+    <script id="rendered-js">
+// Create root element
+// https://www.amcharts.com/docs/v5/getting-started/#Root_element
+var root = am5.Root.new("chartdiv");
+
+// Set themes
+// https://www.amcharts.com/docs/v5/concepts/themes/
+root.setThemes([
+  am5themes_Animated.new(root)
+]);
+
+
+// Create Gantt chart
+// https://www.amcharts.com/docs/v5/charts/gantt/
+var gantt = root.container.children.push(am5gantt.Gantt.new(root, {}));
+
+function generateGanttData(categoriesCount) {
+  var categories = [];
+  var series = [];
+  var date = new Date();
+  date.setHours(0, 0, 0, 0);
+  var timestamp = date.getTime();
+
+  for (let i = 0; i < categoriesCount; i++) {
+    const categoryId = `gantt_${i}`;
+    categories.push({
+      name: `Planning Account ${i + 1}`,
+      id: categoryId
+    });
+
+    series.push({
+      id: categoryId
+    });
+
+    const subCount = Math.floor(Math.random() * 5) + 2;
+    for (let j = 0; j < subCount; j++) {
+      const subId = `${categoryId}_sub_${j}`;
+      categories.push({
+        name: `Promo Group ${i + 1}.${j + 1}`,
+        id: subId,
+        parentId: categoryId
+      });
+      
+      
+      
+      const duration = 1; /*Math.floor(Math.random() * 5) + 1;*/
+      const progress = 1; /*Math.round(Math.random() * 100) / 100;*/
+      
+   /*    
+      // 🔹 Add multiple tasks on the same Promo Group row
+      const taskCount = Math.floor(Math.random() * 3) + 2; // 2–4 tasks per promo group
+      let rowTimestamp = timestamp; // use a row-local timestamp so tasks for this row are grouped in time
+
+      for (let t = 0; t < taskCount; t++) {
+        duration: duration; // or Math.floor(Math.random() * 3) + 1;
+        progress: progress; // or Math.round(Math.random() * 100) / 100;
+                                          
+      
+     
+       series.push({
+          id: `${subId}_task_${t}`,
+          category: subId,           // IMPORTANT: same category = same row
+          start: timestamp,       // ms since epoch
+          duration: duration,        // in days
+          progress: progress,
+          linkTo: t < taskCount - 1 ? [`${subId}_task_${t + 1}`] : []
+*/
+
+      series.push({
+        start: timestamp,
+        duration,
+        progress,
+        id: subId,
+        linkTo: j < subCount - 1 ? [`${categoryId}_sub_${j + 1}`] : []
+
+      });
+        
+      timestamp += duration * 86400000; // add days
+    }
+  }
+
+  return { categories, series };
+}
+
+var ganttData = generateGanttData(5);
+
+
+gantt.series.events.on("datavalidated", function () {  
+  console.log("datavalidated");
+  setTimeout(function () {    
+    var min = gantt.series.getPrivate("selectionMinX", 0);
+    var max = gantt.series.getPrivate("selectionMaxX", 0);
+    var extraTime = am5.time.getDuration("day", 1);
+    gantt.xAxis.zoomToValues(min - extraTime, max + extraTime * 8);
+  }, 500);
+});
+
+gantt.yAxis.data.setAll(ganttData.categories);
+gantt.series.data.setAll(ganttData.series);
+
+
+/*Add sorting functionality*/
+
+function sortByPlanningAccount(order = "asc") {
+  const categories = gantt.yAxis.data.values.slice();
+
+  // Build children map
+  const childrenMap = {};
+  categories.forEach(cat => {
+    if (cat.parentId) {
+      if (!childrenMap[cat.parentId]) childrenMap[cat.parentId] = [];
+      childrenMap[cat.parentId].push(cat);
+    }
+  });
+
+  // Sort children alphabetically by name
+  Object.keys(childrenMap).forEach(parentId => {
+    childrenMap[parentId].sort((a, b) => {
+      const nameA = a.name.toLowerCase();
+      const nameB = b.name.toLowerCase();
+      if (nameA < nameB) return order === "asc" ? -1 : 1;
+      if (nameA > nameB) return order === "asc" ? 1 : -1;
+      return 0;
+    });
+  });
+
+  // Sort top-level categories (Planning Accounts)
+  const topLevel = categories.filter(cat => !cat.parentId);
+  topLevel.sort((a, b) => {
+    const nameA = a.name.toLowerCase();
+    const nameB = b.name.toLowerCase();
+    if (nameA < nameB) return order === "asc" ? -1 : 1;
+    if (nameA > nameB) return order === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  // Rebuild sorted list preserving hierarchy
+  const sortedCategories = [];
+  function addWithChildren(cat) {
+    sortedCategories.push(cat);
+    if (childrenMap[cat.id]) {
+      childrenMap[cat.id].forEach(child => addWithChildren(child));
+    }
+  }
+  topLevel.forEach(cat => addWithChildren(cat));
+
+  // Update chart
+  gantt.yAxis.data.setAll(sortedCategories);
+}
+
+// Add buttons for sorting
+const sortAscBtn = document.createElement("button");
+sortAscBtn.innerText = "Sort Planning Accounts Asc";
+sortAscBtn.onclick = () => sortByPlanningAccount("asc");
+
+const sortDescBtn = document.createElement("button");
+sortDescBtn.innerText = "Sort Planning Accounts Desc";
+sortDescBtn.onclick = () => sortByPlanningAccount("desc");
+
+document.body.appendChild(sortAscBtn);
+document.body.appendChild(sortDescBtn);
+
+
+/* Add data labels*/
+gantt.series.bullets.push(function(root, series, dataItem) {
+  return am5.Bullet.new(root, {
+    locationX: 0.5, // Center horizontally
+    locationY: 0.5, // Center vertically
+    sprite: am5.Label.new(root, {
+      text: "$55.99", // You can use name, progress, etc.
+      centerX: am5.p50,
+      centerY: am5.p50,
+      populateText: true, // Ensures dynamic text from data
+      fontSize: 12,
+      fill: am5.color(0xffffff) // White text for visibility
+    })
+  });
+});
+
+
+/*Filter logic*/
+// --- Build list of Planning Accounts (top-level categories: no parentId) ---
+const topLevelAccounts = ganttData.categories.filter(c => !c.parentId);
+
+// Populate multi-select with Planning Accounts
+const paSelect = document.getElementById("paSelect");
+topLevelAccounts.forEach(acc => {
+  const opt = document.createElement("option");
+  opt.value = acc.id;            // use id for filtering
+  opt.textContent = acc.name;    // label shown in the UI
+  paSelect.appendChild(opt);
+});
+
+// --- Filtering helper: returns {categories, series} filtered by selected PA ids ---
+function filterByPlanningAccounts(selectedIds) {
+  if (!selectedIds || selectedIds.length === 0) {
+    // No filter: return original
+    return {
+      categories: ganttData.categories.slice(),
+      series: ganttData.series.slice()
+    };
+  }
+
+  // Build set of allowed category IDs: selected PA + all their descendants
+  const allowedIds = new Set();
+
+  // Map children by parentId for fast traversal
+  const childrenMap = {};
+  ganttData.categories.forEach(cat => {
+    if (cat.parentId) {
+      if (!childrenMap[cat.parentId]) childrenMap[cat.parentId] = [];
+      childrenMap[cat.parentId].push(cat);
+    }
+  });
+
+  // DFS to add parent and all descendants
+  function addWithChildren(catId) {
+    allowedIds.add(catId);
+    const kids = childrenMap[catId] || [];
+    kids.forEach(child => addWithChildren(child.id));
+  }
+
+  selectedIds.forEach(id => addWithChildren(id));
+
+  // Filter categories and series
+  const filteredCategories = ganttData.categories.filter(cat => allowedIds.has(cat.id));
+  const filteredSeries = ganttData.series.filter(item => allowedIds.has(item.id) || allowedIds.has(item.category));
+
+  return { categories: filteredCategories, series: filteredSeries };
+}
+
+// --- Apply/Clear buttons ---
+document.getElementById("applyFilterBtn").addEventListener("click", () => {
+  const selectedIds = Array.from(paSelect.selectedOptions).map(opt => opt.value);
+  const filtered = filterByPlanningAccounts(selectedIds);
+
+  gantt.yAxis.data.setAll(filtered.categories);
+  gantt.series.data.setAll(filtered.series);
+
+  // Optional: keep a small padding around current selection on X-axis
+  setTimeout(() => {
+    const min = gantt.series.getPrivate("selectionMinX", 0);
+    const max = gantt.series.getPrivate("selectionMaxX", 0);
+    const extraTime = am5.time.getDuration("day", 1);
+    gantt.xAxis.zoomToValues(min - extraTime, max + extraTime * 4);
+  }, 0);
+});
+
+document.getElementById("clearFilterBtn").addEventListener("click", () => {
+  // Clear selection in the multi-select
+  Array.from(paSelect.options).forEach(opt => (opt.selected = false));
+
+  // Reset chart to original data
+  gantt.yAxis.data.setAll(ganttData.categories);
+  gantt.series.data.setAll(ganttData.series);
+
+  // Optional: re-zoom similar to your existing logic
+  setTimeout(() => {
+    const min = gantt.series.getPrivate("selectionMinX", 0);
+    const max = gantt.series.getPrivate("selectionMaxX", 0);
+    const extraTime = am5.time.getDuration("day", 1);
+    gantt.xAxis.zoomToValues(min - extraTime, max + extraTime * 8);
+  }, 0);
+});
+  </script>
+
+  
+

@@ -1,0 +1,1243 @@
+/* ═══════════════════════════════════════════════════════════════
+   APOLLO UNIVERSAL STYLESHEET — Design System Toolkit
+   ═══════════════════════════════════════════════════════════════
+   All component styles for the Apollo Design System.
+   Base variables & reset are injected by the Apollo CDN:
+   <script src="https://cdn.apollo.rio.br/v1.0.0/core.js">
+   
+   This file contains COMPONENT-LEVEL styles only.
+   ═══════════════════════════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════
+   0. TOOLKIT PAGE LAYOUT
+   ═══════════════════════════════════════════ */
+
+.toolkit-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 24px 120px;
+}
+
+.toolkit-hero {
+  margin-bottom: 64px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid var(--border, #00000027);
+}
+
+.toolkit-hero__label {
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 10px;
+  color: var(--primary, #f45f00);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.toolkit-hero__title {
+  font-family: var(--ff-fun, "Syne", sans-serif);
+  font-size: clamp(2rem, 1.6rem + 2vi, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+  margin-bottom: 16px;
+}
+
+.toolkit-hero__desc {
+  font-size: 15px;
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  max-width: 460px;
+  line-height: 1.6;
+}
+
+/* Section blocks */
+.toolkit-section {
+  margin-bottom: 72px;
+}
+
+.toolkit-section__badge {
+  display: inline-block;
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--primary, #f45f00);
+  border: 1px solid var(--primary, #f45f00);
+  padding: 3px 10px;
+  margin-bottom: 8px;
+}
+
+.toolkit-section__title {
+  font-family: var(--ff-fun, "Syne", sans-serif);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.toolkit-section__desc {
+  font-size: 13px;
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+.toolkit-divider {
+  border: none;
+  border-top: 1px solid var(--border, #00000027);
+  margin: 0 0 72px;
+}
+
+/* Tips/notes callout */
+.toolkit-tip {
+  background: rgba(244, 95, 0, 0.04);
+  border-left: 3px solid var(--primary, #f45f00);
+  padding: 16px 20px;
+  margin-bottom: 32px;
+  border-radius: 0 var(--radius-xs, 6px) var(--radius-xs, 6px) 0;
+}
+
+.toolkit-tip__title {
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--primary, #f45f00);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.toolkit-tip__text {
+  font-size: 13px;
+  color: var(--txt-color, rgba(19, 21, 23, 0.77));
+  line-height: 1.6;
+}
+
+.toolkit-tip__text code {
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 11px;
+  background: rgba(0, 0, 0, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+
+/* ═══════════════════════════════════════════
+   1. NOTIFICATION CARDS
+   ═══════════════════════════════════════════ */
+
+/* Container */
+.ntf-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ntf-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.ntf-list__title {
+  font-family: var(--ff-fun, "Syne", sans-serif);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.ntf-list__clear {
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.ntf-list__clear:hover {
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+}
+
+/* Notification Item */
+.ntf-item {
+  position: relative;
+  margin-bottom: 16px;
+  border-radius: 16px;
+  overflow: hidden;
+  user-select: none;
+  max-height: 200px;
+  opacity: 1;
+  transition:
+    max-height 0.3s var(--ease-default, cubic-bezier(.16, 1, .3, 1)),
+    margin-bottom 0.3s var(--ease-default),
+    opacity 0.3s var(--ease-default),
+    transform 0.3s var(--ease-default);
+}
+
+.ntf-item.deleting {
+  max-height: 0;
+  margin-bottom: 0;
+  opacity: 0;
+  transform: scale(0.96) translateX(-8px);
+  pointer-events: none;
+}
+
+/* Actions — solid red bg, icon positioned via JS --icon-right */
+.ntf-actions {
+  position: absolute;
+  inset: 0;
+  background: #dc2626;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 1;
+}
+
+.ntf-del-btn {
+  position: absolute;
+  right: var(--icon-right, 20px);
+  color: #fff;
+  font-size: 22px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-default, cubic-bezier(.16,1,.3,1)),
+              background 0.2s;
+}
+
+.ntf-del-btn:hover {
+  transform: scale(1.12);
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.ntf-del-btn:active {
+  transform: scale(0.92);
+}
+
+/* Content card (draggable) — OPAQUE bg, nothing bleeds through */
+.ntf-content {
+  position: relative;
+  width: 100%;
+  z-index: 2;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  touch-action: pan-y;
+  cursor: grab;
+  background: var(--surface-opaque, #f5f5f4);
+  border: 1px solid var(--border, #00000027);
+  border-radius: 16px;
+  padding: 20px;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  overflow: hidden;
+  will-change: transform;
+}
+
+/* Orange accent line */
+.ntf-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--primary, #f45f00);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.4s var(--ease-default, cubic-bezier(.16, 1, .3, 1));
+  filter: brightness(1.65);
+}
+
+@media (hover: hover) {
+  .ntf-item:hover .ntf-content {
+    background: var(--white-1, #fff);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+  }
+
+  .ntf-item:hover .ntf-content::before {
+    transform: scaleY(1);
+  }
+}
+
+.ntf-content.dragging {
+  cursor: grabbing;
+  background: var(--white-1, #fff);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: none;
+}
+
+/* Icon */
+.ntf-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--white-1, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+  flex-shrink: 0;
+  border: 1px solid var(--border, #00000027);
+  transition: color 0.3s, border-color 0.3s;
+}
+
+.ntf-item:hover .ntf-icon {
+  color: var(--primary, #f45f00);
+  border-color: rgba(244, 95, 0, 0.2);
+}
+
+/* Text block */
+.ntf-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ntf-title {
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 4px;
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.ntf-desc {
+  font-size: 14px;
+  color: var(--gray-1, rgba(0, 0, 0, 0.4));
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+.ntf-time {
+  font-family: var(--ff-main);
+  font-size: 75%;
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+  font-weight: 200;
+}
+
+.ntf-time i,
+.ntf-time svg {
+  font-size: 80%;
+  color: var(--border, #00000027);
+}
+
+.ntf-item:hover .ntf-time i,
+.ntf-item:hover .ntf-time svg {
+  color: var(--primary, #f45f00);
+}
+
+/* Empty state */
+.ntf-empty {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  color: var(--gray-1, rgba(0, 0, 0, 0.4));
+  animation: ntfFadeIn 0.5s var(--ease-default);
+}
+
+.ntf-empty.visible {
+  display: flex;
+}
+
+.ntf-empty i {
+  font-size: 48px;
+  color: var(--border, #00000027);
+  margin-bottom: 16px;
+}
+
+.ntf-empty p {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+}
+
+.ntf-empty span {
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 12px;
+  margin-top: 4px;
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+}
+
+@keyframes ntfFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ═══════════════════════════════════════════
+   2. FORM BASE — Inline & Modal
+   ═══════════════════════════════════════════ */
+
+/* Shared input group */
+.input-group {
+  position: relative;
+  margin-bottom: 35px;
+}
+
+/* Base input */
+.apollo-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border, #00000027);
+  padding: 12px 0;
+  font-family: var(--ff-main, "Space Grotesk", system-ui, sans-serif);
+  font-size: 16px;
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.4s var(--ease-default, cubic-bezier(.16, 1, .3, 1));
+}
+
+.apollo-input:focus {
+  border-bottom-color: var(--primary, #f45f00);
+}
+
+/* Floating label */
+.apollo-label {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 12px;
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  pointer-events: none;
+  transition: all 0.4s var(--ease-default, cubic-bezier(.16, 1, .3, 1));
+  text-transform: uppercase;
+}
+
+/* Label float on focus / filled */
+.apollo-input:focus ~ .apollo-label,
+.apollo-input:not(:placeholder-shown) ~ .apollo-label {
+  top: -10px;
+  font-size: 10px;
+  color: var(--primary, #f45f00);
+}
+
+/* ── Form Overlay (modal backdrop) ── */
+.form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.6s var(--ease-default);
+  z-index: var(--z-modal, 1000);
+}
+
+.apollo-open .form-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ── The Modal Panel ── */
+.apollo-modal {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  max-width: 480px;
+  height: 100dvh; /* ← dvh not vh */
+  background: var(--white-1, #fff);
+  border-left: 1px solid var(--border, #00000027);
+  padding: 60px 40px;
+  box-sizing: border-box;
+  transform: translateX(100%);
+  transition: transform 0.6s var(--ease-default);
+  z-index: calc(var(--z-modal, 1000) + 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.apollo-open .apollo-modal {
+  transform: translateX(0);
+}
+
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: none;
+  border: none;
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.modal-close:hover {
+  color: var(--primary, #f45f00);
+}
+
+/* Header */
+.modal-header h2 {
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 12px;
+  color: var(--primary, #f45f00);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.modal-header h1 {
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+  margin: 0 0 40px 0;
+  line-height: 1.1;
+}
+
+/* Submit button */
+.submit-btn {
+  margin-top: auto;
+  background: transparent;
+  border: 1px solid var(--border, #00000027);
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+  padding: 20px;
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s;
+}
+
+.submit-btn:hover {
+  background: var(--black-1, #121214);
+  color: var(--white-1, #fff);
+  border-color: var(--black-1, #121214);
+}
+
+/* Success view */
+.success-view {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--white-1, #fff);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px;
+  box-sizing: border-box;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+
+.form-submitted .success-view {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.success-icon {
+  font-size: 4rem;
+  color: var(--primary, #f45f00);
+  margin-bottom: 20px;
+}
+
+.success-view h3 {
+  font-size: 24px;
+  margin: 0;
+  font-weight: 400;
+}
+
+.success-view p {
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+/* Form trigger button */
+.form-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--white-1, #fff);
+  background: var(--black-1, #121214);
+  border: 1px solid var(--black-1, #121214);
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-default);
+}
+
+.form-trigger:hover {
+  background: var(--primary, #f45f00);
+  border-color: var(--primary, #f45f00);
+}
+
+.form-trigger i {
+  font-size: 16px;
+}
+
+
+/* ═══════════════════════════════════════════
+   3. SELECT TYPE MAIN — Travado (Locked)
+   Custom dropdown identical to Padrão BUT
+   trigger is NON-editable (click-only).
+   Reuses .apollo-select-palette__* for
+   dropdown, options, check, stagger, etc.
+   ═══════════════════════════════════════════ */
+
+.apollo-select-travado {
+  position: relative;
+}
+
+/* Non-editable trigger button  */
+.apollo-select-travado__trigger {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border, #00000027);
+  padding: 12px 40px 12px 0;
+  font-family: var(--ff-main, "Space Grotesk", system-ui, sans-serif);
+  font-size: 16px;
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+  border-radius: 0;
+  outline: none;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.4s var(--ease-default);
+}
+
+.apollo-select-travado__trigger:focus,
+.apollo-select-travado.is-open .apollo-select-travado__trigger {
+  border-bottom-color: var(--primary, #f45f00);
+}
+
+/* Value text inside trigger */
+.apollo-select-travado__value {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Placeholder state — muted color */
+.apollo-select-travado__trigger[data-placeholder] .apollo-select-travado__value {
+  color: transparent;
+}
+
+/* Label float — mirrors palette float logic */
+.apollo-select-travado .apollo-label {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  top: 12px;
+  font-size: 12px;
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  transition:
+    top 0.25s var(--ease-default),
+    font-size 0.25s var(--ease-default),
+    color 0.25s var(--ease-default);
+}
+
+.apollo-select-travado.is-open .apollo-label,
+.apollo-select-travado.has-value .apollo-label {
+  top: -10px;
+  font-size: 10px;
+  color: var(--primary, #f45f00);
+}
+
+/* Chevron — reuse palette arrow */
+.apollo-select-travado .apollo-select-palette__arrow {
+  bottom: 12px;
+}
+
+.apollo-select-travado.is-open .apollo-select-palette__arrow {
+  transform: rotate(180deg);
+  color: var(--primary, #f45f00);
+}
+
+/* Dropdown + options — reuse palette classes directly
+   (no extra CSS needed — .apollo-select-palette__dropdown,
+    __option, __check, __opt-name, stagger animation all
+    inherit from Section 4 rules)                        */
+
+/* Open state — mirrored from palette */
+.apollo-select-travado.is-open .apollo-select-palette__dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity 0.25s var(--ease-default),
+    transform 0.3s var(--ease-default),
+    visibility 0s 0s;
+}
+
+/* Stagger for Travado dropdown */
+.apollo-select-travado.is-open .apollo-select-palette__option {
+  animation: palIn 0.25s var(--ease-default) backwards;
+}
+
+.apollo-select-travado.is-open .apollo-select-palette__option:nth-child(1) { animation-delay: 0.02s; }
+.apollo-select-travado.is-open .apollo-select-palette__option:nth-child(2) { animation-delay: 0.05s; }
+.apollo-select-travado.is-open .apollo-select-palette__option:nth-child(3) { animation-delay: 0.08s; }
+.apollo-select-travado.is-open .apollo-select-palette__option:nth-child(4) { animation-delay: 0.11s; }
+.apollo-select-travado.is-open .apollo-select-palette__option:nth-child(5) { animation-delay: 0.14s; }
+.apollo-select-travado.is-open .apollo-select-palette__option:nth-child(6) { animation-delay: 0.17s; }
+
+
+/* ═══════════════════════════════════════════
+   4. SELECT TYPE 2 — Padrão (Standard)
+   Border-bottom, type-to-filter on trigger,
+   dropdown without search bar
+   ═══════════════════════════════════════════ */
+
+.apollo-select-palette {
+  position: relative;
+}
+
+/* Writable input trigger */
+.apollo-select-palette__input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border, #00000027);
+  padding: 12px 40px 12px 0;
+  font-family: var(--ff-main, "Space Grotesk", system-ui, sans-serif);
+  font-size: 16px;
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.4s var(--ease-default);
+  cursor: text;
+}
+
+.apollo-select-palette__input::placeholder {
+  color: transparent;
+}
+
+.apollo-select-palette__input:focus {
+  border-bottom-color: var(--primary, #f45f00);
+}
+
+/* Label float */
+.apollo-select-palette__input:focus ~ .apollo-label,
+.apollo-select-palette__input:not(:placeholder-shown) ~ .apollo-label,
+.apollo-select-palette.has-value .apollo-label {
+  top: -10px;
+  font-size: 10px;
+  color: var(--primary, #f45f00);
+}
+
+/* Active swatch (left of input after selection) */
+.apollo-select-palette__active-swatch {
+  position: absolute;
+  left: 0;
+  bottom: 14px;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: transparent;
+  transition: background 0.3s var(--ease-default);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.apollo-select-palette.has-value .apollo-select-palette__active-swatch {
+  opacity: 1;
+}
+
+.apollo-select-palette.has-value .apollo-select-palette__input {
+  padding-left: 24px;
+}
+
+/* Arrow / chevron */
+.apollo-select-palette__arrow {
+  position: absolute;
+  right: 0;
+  bottom: 12px;
+  pointer-events: none;
+  width: 18px;
+  height: 18px;
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  transition: color 0.3s, transform 0.4s var(--ease-default);
+}
+
+.apollo-select-palette.is-open .apollo-select-palette__arrow {
+  transform: rotate(180deg);
+  color: var(--primary, #f45f00);
+}
+
+/* Dropdown panel */
+.apollo-select-palette__dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--bg, #fff);
+  padding: 4px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.25s var(--ease-default),
+    transform 0.3s var(--ease-default),
+    visibility 0s 0.3s;
+  max-height: 240px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.apollo-select-palette.is-open .apollo-select-palette__dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity 0.25s var(--ease-default),
+    transform 0.3s var(--ease-default),
+    visibility 0s 0s;
+}
+
+/* Option rows */
+.apollo-select-palette__option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 8px;
+  padding: 11px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--txt-color, rgba(19, 21, 23, 0.77));
+  transition: background 0.15s;
+}
+
+.apollo-select-palette__option:hover,
+.apollo-select-palette__option.is-focused {
+  background: var(--white-3, rgba(0, 0, 0, 0.04));
+}
+
+.apollo-select-palette__option.is-selected {
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+}
+
+.apollo-select-palette__option[hidden] {
+  display: none;
+}
+
+/* Swatch dot */
+.apollo-select-palette__swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* Name & desc */
+.apollo-select-palette__opt-name {
+  font-weight: 400;
+  font-size: 91%;
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+}
+
+.apollo-select-palette__opt-desc {
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  font-size: 78%;
+  margin-left: 6px;
+}
+
+/* Check */
+.apollo-select-palette__check {
+  margin-left: auto;
+  width: 14px;
+  height: 14px;
+  color: var(--primary, #f45f00);
+  opacity: 0;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.apollo-select-palette__option.is-selected .apollo-select-palette__check {
+  opacity: 1;
+}
+
+/* Empty state */
+.apollo-select-palette__empty {
+  padding: 16px;
+  text-align: center;
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: none;
+}
+
+.apollo-select-palette__empty.is-visible {
+  display: block;
+}
+
+/* Stagger animation */
+.apollo-select-palette.is-open .apollo-select-palette__option {
+  animation: palIn 0.25s var(--ease-default) backwards;
+}
+
+.apollo-select-palette.is-open .apollo-select-palette__option:nth-child(1) { animation-delay: 0.02s; }
+.apollo-select-palette.is-open .apollo-select-palette__option:nth-child(2) { animation-delay: 0.05s; }
+.apollo-select-palette.is-open .apollo-select-palette__option:nth-child(3) { animation-delay: 0.08s; }
+.apollo-select-palette.is-open .apollo-select-palette__option:nth-child(4) { animation-delay: 0.11s; }
+.apollo-select-palette.is-open .apollo-select-palette__option:nth-child(5) { animation-delay: 0.14s; }
+.apollo-select-palette.is-open .apollo-select-palette__option:nth-child(6) { animation-delay: 0.17s; }
+
+@keyframes palIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Scrollbar */
+.apollo-select-palette__dropdown::-webkit-scrollbar { width: 4px; }
+.apollo-select-palette__dropdown::-webkit-scrollbar-track { background: transparent; }
+.apollo-select-palette__dropdown::-webkit-scrollbar-thumb { background: var(--border, #00000027); border-radius: 2px; }
+
+
+/* ═══════════════════════════════════════════
+   5. SELECT TYPE 3 — Glass Panel
+   Glassmorphism, floating panel, search
+   inside dropdown
+   ═══════════════════════════════════════════ */
+
+.apollo-select-glass {
+  position: relative;
+}
+
+/* Trigger */
+.apollo-select-glass__trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  font-family: var(--ff-main, "Space Grotesk", system-ui, sans-serif);
+  font-size: 14px;
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+  background: rgba(var(--rgb-diff, 0, 0, 0), 0.02);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--border, #00000027);
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    border-color 0.25s var(--ease-default),
+    box-shadow 0.25s var(--ease-default);
+  outline: none;
+  text-align: left;
+  line-height: 1.4;
+}
+
+.apollo-select-glass__trigger:hover {
+  border-color: var(--border-hover, #00000037);
+}
+
+.apollo-select-glass__trigger:focus-visible,
+.apollo-select-glass.is-open .apollo-select-glass__trigger {
+  border-color: var(--primary, #f45f00);
+  box-shadow: 0 0 0 3px rgba(244, 95, 0, 0.08);
+}
+
+/* Swatch in trigger */
+.apollo-select-glass__swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  background: var(--primary, #f45f00);
+  transition: background 0.3s var(--ease-default);
+}
+
+/* Label */
+.apollo-select-glass__label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.apollo-select-glass__label-name {
+  font-weight: 500;
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+}
+
+.apollo-select-glass__label-desc {
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  margin-left: 4px;
+  font-size: 13px;
+}
+
+/* Placeholder */
+.apollo-select-glass__trigger[data-placeholder] .apollo-select-glass__label {
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+}
+
+/* Chevron */
+.apollo-select-glass__chevron {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  transition: transform 0.3s var(--ease-default), color 0.2s;
+}
+
+.apollo-select-glass.is-open .apollo-select-glass__chevron {
+  transform: rotate(180deg);
+  color: var(--primary, #f45f00);
+}
+
+/* Dropdown */
+.apollo-select-glass__dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(var(--rgb-theme, 255, 255, 255), 0.65);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid var(--border, #00000027);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 6px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.98);
+  transition:
+    opacity 0.2s var(--ease-default),
+    transform 0.25s var(--ease-default),
+    visibility 0s 0.25s;
+  max-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.apollo-select-glass.is-open .apollo-select-glass__dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity 0.25s var(--ease-default),
+    transform 0.3s var(--ease-default),
+    visibility 0s 0s;
+}
+
+/* Search inside dropdown */
+.apollo-select-glass__search-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 2px 2px 6px;
+}
+
+.apollo-select-glass__search {
+  width: 100%;
+  padding: 9px 12px 9px 32px;
+  font-family: var(--ff-main, "Space Grotesk", system-ui, sans-serif);
+  font-size: 13px;
+  color: var(--txt-color, rgba(19, 21, 23, 0.77));
+  background: rgba(var(--rgb-diff, 0, 0, 0), 0.04);
+  border: 1px solid var(--border, #00000027);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s var(--ease-default);
+}
+
+.apollo-select-glass__search::placeholder {
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+}
+
+.apollo-select-glass__search:focus {
+  border-color: var(--primary, #f45f00);
+}
+
+.apollo-select-glass__search-icon {
+  position: absolute;
+  left: 14px;
+  top: 13px;
+  width: 14px;
+  height: 14px;
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  pointer-events: none;
+}
+
+/* Options */
+.apollo-select-glass__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s var(--ease-default);
+  color: var(--txt-color, rgba(19, 21, 23, 0.77));
+  background: transparent;
+  font-size: 14px;
+}
+
+.apollo-select-glass__option:hover,
+.apollo-select-glass__option.is-focused {
+  background: rgba(var(--rgb-diff, 0, 0, 0), 0.04);
+}
+
+.apollo-select-glass__option.is-selected {
+  background: rgba(244, 95, 0, 0.06);
+  color: var(--txt-color-heading, rgba(19, 21, 23, 0.9));
+}
+
+.apollo-select-glass__option[hidden] {
+  display: none;
+}
+
+.apollo-select-glass__opt-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.apollo-select-glass__opt-name {
+  font-weight: 500;
+  color: var(--txt-color, rgba(19, 21, 23, 0.77));
+}
+
+.apollo-select-glass__opt-desc {
+  color: var(--txt-color, rgba(19, 21, 23, 0.77));
+  font-size: 13px;
+  margin-left: 4px;
+  opacity: 0.6;
+}
+
+.apollo-select-glass__opt-check {
+  margin-left: auto;
+  width: 16px;
+  height: 16px;
+  color: var(--primary, #f45f00);
+  opacity: 0;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.apollo-select-glass__option.is-selected .apollo-select-glass__opt-check {
+  opacity: 1;
+}
+
+.apollo-select-glass__empty {
+  padding: 20px 12px;
+  text-align: center;
+  color: var(--muted, rgba(19, 21, 23, 0.31));
+  font-size: 12px;
+  font-family: var(--ff-mono, "Space Mono", monospace);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: none;
+}
+
+.apollo-select-glass__empty.is-visible {
+  display: block;
+}
+
+/* Stagger */
+.apollo-select-glass.is-open .apollo-select-glass__option {
+  animation: glassIn 0.3s var(--ease-default) backwards;
+}
+
+.apollo-select-glass.is-open .apollo-select-glass__option:nth-child(1) { animation-delay: 0.03s; }
+.apollo-select-glass.is-open .apollo-select-glass__option:nth-child(2) { animation-delay: 0.06s; }
+.apollo-select-glass.is-open .apollo-select-glass__option:nth-child(3) { animation-delay: 0.09s; }
+.apollo-select-glass.is-open .apollo-select-glass__option:nth-child(4) { animation-delay: 0.12s; }
+.apollo-select-glass.is-open .apollo-select-glass__option:nth-child(5) { animation-delay: 0.15s; }
+
+@keyframes glassIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Scrollbar */
+.apollo-select-glass__dropdown::-webkit-scrollbar { width: 5px; }
+.apollo-select-glass__dropdown::-webkit-scrollbar-track { background: transparent; }
+.apollo-select-glass__dropdown::-webkit-scrollbar-thumb { background: var(--border, #00000027); border-radius: 3px; }
+
+
+/* ═══════════════════════════════════════════
+   6. RESPONSIVE (Touch / Coarse)
+   ═══════════════════════════════════════════ */
+
+@media (pointer: coarse) {
+  .apollo-select-palette__option {
+    min-height: 44px;
+  }
+
+  .apollo-select-glass__option {
+    min-height: 44px;
+    padding: 12px;
+  }
+
+  .apollo-select-glass__trigger {
+    padding: 14px 16px;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   7. ICON HELPERS
+   ═══════════════════════════════════════════ */
+
+i[class^="ri-"],
+i[class^="i-"],
+svg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* Fallback for apollo custom icon */
+.i-apollo-s::before {
+  content: "\EB1E";
+  font-family: 'remixicon';
+}

@@ -1,0 +1,100 @@
+name: Notify Iteration Start
+
+on:
+  workflow_call:
+    inputs:
+      notify_type:
+        required: true
+        type: string
+      slack_webhook:
+        required: false
+        type: string
+      discord_webhook:
+        required: false
+        type: string
+      notify_email:
+        required: false
+        type: string
+      custom_message:
+        required: false
+        type: string
+      custom_title:
+        required: false
+        type: string
+      assignee_name:
+        required: false
+        type: string
+      project_url:
+        required: false
+        type: string
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Today Date
+        id: date
+        run: echo "today=$(date -I)" >> $GITHUB_OUTPUT
+
+      - name: Set Defaults
+        id: defaults
+        run: |
+          echo "msg_title=${{ inputs.custom_title != '' && inputs.custom_title || '🚀 New Iteration Started' }}" >> $GITHUB_OUTPUT
+          echo "msg_body=${{ inputs.custom_message != '' && inputs.custom_message || format('Hi {0},\nPlease check the project board: {1}', inputs.assignee_name != '' && inputs.assignee_name || 'team', inputs.project_url != '' && inputs.project_url || 'https://github.com/orgs/YOUR_ORG/projects') }}" >> $GITHUB_OUTPUT
+
+      - name: Prepare Project URL
+        run: |
+          echo "PROJECT_URL=${{ inputs.project_url != '' && inputs.project_url || 'https://github.com/wpeventmanager/wp-event-manager' }}" >> $GITHUB_ENV
+
+      - name: Set Slack Webhook
+        run: |
+          if [ -n "${{ inputs.slack_webhook }}" ]; then
+            echo "SLACK_WEBHOOK=${{ inputs.slack_webhook }}" >> $GITHUB_ENV
+          elif [ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+            echo "SLACK_WEBHOOK=${{ secrets.SLACK_WEBHOOK_URL }}" >> $GITHUB_ENV
+          else
+            echo "❌ SLACK_WEBHOOK is not defined!"
+            exit 1
+          fi
+
+      - name: Notify via GitHub Issue
+        if: inputs.notify_type == 'github'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const assignee = '${{ inputs.assignee_name != '' && inputs.assignee_name || 'team' }}';
+            const projectUrl = '${{ inputs.project_url != '' && inputs.project_url || 'https://github.com/orgs/YOUR_ORG/projects' }}';
+            const body = `${{ inputs.custom_message || '' }}\n\n👤 *Assigned to:* ${assignee}\n📎 ${projectUrl}\n📅 Date: ${new Date().toDateString()}`;
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `${{ inputs.custom_title || '🚀 New Iteration Started' }}`,
+              body,
+              labels: ['iteration']
+            });
+
+      - name: Notify via Slack
+        if: inputs.notify_type == 'slack'
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data "{\n            \"blocks\": [\n              {\n                \"type\": \"header\",\n                \"text\": {\n                  \"type\": \"plain_text\",\n                  \"text\": \"${{ inputs.custom_title || '🚀 New Iteration Started' }}\",\n                  \"emoji\": true\n                }\n              },\n              {\n                \"type\": \"section\",\n                \"text\": {\n                  \"type\": \"mrkdwn\",\n                  \"text\": \"👤 *Assigned to:* ${{ inputs.assignee_name != '' && inputs.assignee_name || 'team' }}\\n📎 <${PROJECT_URL}>\\n📅 *Date:* $(date -I)\\n\\n${{ inputs.custom_message != '' && inputs.custom_message || 'Please check the project board for updated tasks.' }}\"\n                }\n              },\n              {\n                \"type\": \"context\",\n                \"elements\": [\n                  {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"Stay focused and ship something awesome! 🔥\"\n                  }\n                ]\n              }\n            ]\n          }" \
+          "$SLACK_WEBHOOK"
+
+      - name: Notify via Discord
+        if: inputs.notify_type == 'discord'
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST -d "{\"content\": \"${{ inputs.custom_title || '🚀 New Iteration Started' }}\\n👤 Assigned to: ${{ inputs.assignee_name != '' && inputs.assignee_name || 'team' }}\\n📎 ${PROJECT_URL}\\n📅 Date: $(date -I)\\n${{ inputs.custom_message != '' && inputs.custom_message || 'Please check the project board for updated tasks.' }}\"}" \
+          "${{ inputs.discord_webhook }}"
+
+      - name: Notify via Email (Mailgun Example)
+        if: inputs.notify_type == 'email'
+        run: |
+          curl -s --user "api:${{ secrets.MAILGUN_API_KEY }}" \
+          https://api.mailgun.net/v3/YOUR_DOMAIN/messages \
+          -F from='Notifier <notifier@YOUR_DOMAIN>' \
+          -F to=${{ inputs.notify_email }} \
+          -F subject="${{ inputs.custom_title || '🚀 New Iteration Started' }}" \
+          -F text="👤 Assigned to: ${{ inputs.assignee_name != '' && inputs.assignee_name || 'team' }}\n📎 ${PROJECT_URL}\n📅 Date: $(date -I)\n${{ inputs.custom_message != '' && inputs.custom_message || 'Please check the GitHub Project board. New sprint begins today.' }}"

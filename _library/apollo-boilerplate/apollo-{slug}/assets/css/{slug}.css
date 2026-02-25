@@ -1,0 +1,9 @@
+/* Apollo {Name} - Main Styles */
+
+/* Variables (inherit from apollo-core) */
+:root {
+    --apollo-{slug}-primary: var(--apollo-primary, #22c55e);
+    --apollo-{slug}-secondary: var(--apollo-secondary, #94a3b8);
+}
+
+/* Component styles below */
