@@ -84,7 +84,7 @@ class Profile_Integration {
 	public function register_tab( array $tabs ): array {
 		$tabs['favoritos'] = array(
 			'title'    => __( 'Favoritos', 'apollo-fav' ),
-			'icon'     => 'ri-heart-line',
+			'icon'     => 'ri-fire-line',
 			'priority' => 40,
 			'public'   => true, // Visível para visitantes
 			'callback' => array( $this, 'render_tab_content' ),
@@ -294,7 +294,7 @@ class Profile_Integration {
 		$stats['favs'] = array(
 			'label' => __( 'Favoritos', 'apollo-fav' ),
 			'count' => apollo_get_user_fav_total( $user_id ),
-			'icon'  => 'ri-heart-line',
+			'icon'  => 'ri-fire-line',
 		);
 
 		return $stats;
@@ -326,7 +326,7 @@ class Profile_Integration {
 		?>
 		<div class="apollo-sidebar-widget apollo-sidebar-widget--favs">
 			<h4 class="apollo-sidebar-widget__title">
-				<i class="ri-heart-line"></i>
+				<i class="ri-fire-line"></i>
 				<?php esc_html_e( 'Favoritos Recentes', 'apollo-fav' ); ?>
 			</h4>
 			<ul class="apollo-sidebar-widget__list">

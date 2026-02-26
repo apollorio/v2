@@ -7,7 +7,7 @@
  * Apollo Platform About/Sobre Page Template
  * Institutional copy — original home page preserved as /sobre
  *
- * @package Apollo_Core
+ * @package Apollo\Templates
  * @since 3.0.0
  */
 

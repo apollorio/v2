@@ -867,9 +867,9 @@
       "cpts": [
         {
           "slug": "local",
-          "rewrite": "gps",
-          "archive": "gps",
-          "rest_base": "locals",
+          "rewrite": "local",
+          "archive": "local",
+          "rest_base": "local",
           "public": true,
           "supports": ["title", "editor", "thumbnail"],
           "labels": { "singular": "Local", "plural": "Locais" }
@@ -898,13 +898,13 @@
         }
       },
       "rest": [
-        { "endpoint": "/locals", "methods": ["GET", "POST"], "description": "List/Create locations" },
-        { "endpoint": "/locals/{id}", "methods": ["GET", "PUT", "DELETE"], "description": "CRUD location" },
-        { "endpoint": "/locals/nearby", "methods": ["GET"], "description": "Locations near coords", "params": ["lat", "lng", "radius", "per_page"] }
+        { "endpoint": "/local", "methods": ["GET", "POST"], "description": "List/Create locations" },
+        { "endpoint": "/local/{id}", "methods": ["GET", "PUT", "DELETE"], "description": "CRUD location" },
+        { "endpoint": "/local/nearby", "methods": ["GET"], "description": "Locations near coords", "params": ["lat", "lng", "radius", "per_page"] }
       ],
       "pages": [
-        { "slug": "gps", "title": "GPS", "template": "styles/base/archive-local.php", "type": "archive" },
-        { "slug": "gps/{slug}", "title": "Local", "template": "styles/base/single-local.php", "type": "single" },
+        { "slug": "local", "title": "Locais", "template": "styles/base/archive-local.php", "type": "archive" },
+        { "slug": "local/{slug}", "title": "Local", "template": "styles/base/single-local.php", "type": "single" },
         { "slug": "mapa", "title": "Mapa", "template": "shortcode:[apollo_map]", "type": "virtual", "description": "Created on activation; renders [apollo_map]" }
       ],
       "shortcodes": [
@@ -2328,7 +2328,7 @@
       "/membership/*": "apollo-membership",
       "/events/*": "apollo-events",
       "/djs/*": "apollo-djs",
-      "/locals/*": "apollo-loc",
+      "/local/*": "apollo-loc",
       "/classifieds/*": "apollo-adverts",
       "/feed/*": "apollo-social",
       "/activity/*": "apollo-social",

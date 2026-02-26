@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apollo Select — 3 Types</title>
+
+<!--
+  APOLLO FORMS SYSTEM
+  ════════════════════════════════════════════════
+  CSS + Google Fonts are injected automatically by forms.js.
+  No <style> or <link> needed.
+
+  Base inputs:
+    <div class="input-group">
+      <input class="apollo-input" placeholder=" " required>
+      <label class="apollo-label">Label</label>
+    </div>
+    ↑ placeholder=" " (space) is required for the floating-label CSS trick.
+
+  JS-managed state classes — never set these manually except .is-placeholder:
+    .is-open       → root    — dropdown is visible
+    .has-value     → root    — a value has been selected
+    .is-selected   → option  — currently chosen option
+    .is-focused    → option  — keyboard-highlighted option
+    .is-placeholder → trigger — no value selected yet (set in HTML initially)
+  ════════════════════════════════════════════════
+-->
+<script src="forms.js"></script>
+
+<style>
+/* ══════════════════════════════════════
+   TOKENS
+   ══════════════════════════════════════ */
+:root {
+  --ff-main: "Space Grotesk", system-ui, sans-serif;
+  --ff-mono: "Space Mono", monospace;
+  --primary: #f45f00;
+  --black-1: #121214;
+  --white-1: #ffffff;
+  --border: rgba(0,0,0,0.15);
+  --muted: rgba(19,21,23,0.31);
+  --txt: rgba(19,21,23,0.77);
+  --txt-head: rgba(19,21,23,0.9);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --radius: 18px;
+}
+
+/* ══════════════════════════════════════
+   RESET
+   ══════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--ff-main);
+  font-size: 15px;
+  color: var(--txt);
+  background: var(--white-1);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ══════════════════════════════════════
+   DEMO PAGE
+   ══════════════════════════════════════ */
+.demo-page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 60px 40px 100px;
+}
+.demo-label {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--primary);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.demo-title {
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--black-1);
+  margin: 0 0 50px;
+  line-height: 1.1;
+}
+.demo-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 50px 0;
+}
+.type-badge {
+  display: inline-block;
+  font-family: var(--ff-mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  padding: 3px 8px;
+  margin-bottom: 24px;
+}
+
+/* ══════════════════════════════════════
+   SHARED: .input-group + .apollo-input
+   (Your existing form base)
+   ══════════════════════════════════════ */
+.input-group {
+  position: relative;
+  margin-bottom: 35px;
+}
+.apollo-label {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  color: var(--muted);
+  pointer-events: none;
+  transition: all 0.4s var(--ease);
+  text-transform: uppercase;
+}
+.apollo-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+  font-family: var(--ff-main);
+  font-size: 16px;
+  color: var(--black-1);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.4s var(--ease);
+}
+.apollo-input:focus {
+  border-bottom-color: var(--primary);
+}
+.apollo-input:focus ~ .apollo-label,
+.apollo-input:not(:placeholder-shown) ~ .apollo-label {
+  top: -10px;
+  font-size: 10px;
+  color: var(--primary);
+}
+
+
+/* ══════════════════════════════════════════════════
+   TYPE 1 — FORM INLINE
+   Custom dropdown, border-bottom, icon badges,
+   two-line options, animated underline, stagger
+   ══════════════════════════════════════════════════ */
+.as1 { position: relative; }
+
+/* Trigger */
+.as1-trigger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 28px 12px 0;
+  font-family: var(--ff-main);
+  font-size: 16px;
+  color: var(--black-1);
+  cursor: pointer;
+  outline: none;
+  text-align: left;
+  position: relative;
+}
+
+/* Animated underline from center */
+.as1-trigger::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: width 0.4s var(--ease), left 0.4s var(--ease);
+}
+.as1.is-open .as1-trigger::after {
+  left: 0;
+  width: 100%;
+}
+
+/* Placeholder state */
+.as1-trigger.is-placeholder { color: transparent; }
+.as1-trigger.is-placeholder ~ .apollo-label {
+  top: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Label float when open or has value */
+.as1.is-open .apollo-label,
+.as1.has-value .apollo-label {
+  top: -10px;
+  font-size: 10px;
+  color: var(--primary);
+}
+
+/* Value display inside trigger */
+.as1-val { flex: 1; display: flex; align-items: center; gap: 10px; }
+
+.as1-val-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s var(--ease);
+  overflow: hidden;
+}
+.as1-val-icon svg { width: 12px; height: 12px; color: #fff; }
+.as1-trigger.is-placeholder .as1-val-icon { width: 0; opacity: 0; }
+
+.as1-val-text { font-weight: 400; }
+
+/* Chevron */
+.as1-arrow {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  transition: transform 0.4s var(--ease), color 0.3s;
+  pointer-events: none;
+}
+.as1.is-open .as1-arrow {
+  transform: translateY(-50%) rotate(180deg);
+  color: var(--primary);
+}
+
+/* Dropdown */
+.as1-drop {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: -16px;
+  right: -16px;
+  z-index: 100;
+  
+  border-top: none;
+
+  padding: 8px 0;
+  max-height: 300px;
+  overflow-y: auto;
+  /* Hidden by default */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.25s var(--ease), transform 0.3s var(--ease), visibility 0s 0.3s;
+}
+.as1.is-open .as1-drop {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity 0.25s var(--ease), transform 0.3s var(--ease), visibility 0s 0s;
+}
+
+/* Options — expand from height 0 */
+.as1-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  cursor: pointer;
+  transition: height 0.35s var(--ease), opacity 0.3s, background 0.15s;
+}
+.as1.is-open .as1-opt {
+  padding: 1px 8px;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(5px) saturate(200%);
+  -webkit-backdrop-filter: blur(5px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  border-radius: var(--radius);
+  corner-shape: squircle;
+  height: 52px;
+  opacity: 1;
+}
+.as1.is-open .as1-opt:nth-child(1) { transition-delay: 0.02s; }
+.as1.is-open .as1-opt:nth-child(2) { transition-delay: 0.06s; }
+.as1.is-open .as1-opt:nth-child(3) { transition-delay: 0.10s; }
+.as1.is-open .as1-opt:nth-child(4) { transition-delay: 0.14s; }
+
+.as1.is-open .as1-opt:hover { background: rgba(244,95,0,0.04); }
+  
+.as1.is-open .as1-opt.is-selected { background: rgba(244,95,0,0.099); }
+  
+.as1-opt.is-selected .as1-opt-check { opacity: 1; transform: scale(1); }
+
+/* Icon badge */
+.as1-opt-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s;
+}
+.as1-opt:hover .as1-opt-icon {
+  transform: scale(1.1);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+}
+.as1-opt-icon svg { width: 14px; height: 14px; color: #fff; }
+
+/* Text */
+.as1-opt-text { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+.as1-opt-name { font-weight: 500; font-size: 14px; color: var(--black-1); line-height: 1.2; }
+.as1-opt-hint { font-size: 11px; font-family: var(--ff-mono); color: var(--muted); line-height: 1.2; }
+
+/* Checkmark */
+.as1-opt-check {
+  width: 16px;
+  height: 16px;
+  color: var(--primary);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.25s, transform 0.3s var(--ease);
+  flex-shrink: 0;
+}
+
+
+/* ══════════════════════════════════════════════════
+   TYPE 2 — PALETTE WRITABLE
+   Border-bottom, type-to-filter on trigger,
+   color swatches, no search inside dropdown
+   ══════════════════════════════════════════════════ */
+.as2 { position: relative; }
+
+.as2-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 40px 12px 0;
+  font-family: var(--ff-main);
+  font-size: 16px;
+  color: var(--black-1);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.4s var(--ease);
+}
+.as2-input::placeholder { color: transparent; }
+
+/* Animated underline */
+.as2-line {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: width 0.4s var(--ease), left 0.4s var(--ease);
+  pointer-events: none;
+}
+.as2-input:focus ~ .as2-line,
+.as2.is-open .as2-line {
+  left: 0;
+  width: 100%;
+}
+.as2-input:focus,
+.as2.is-open .as2-input {
+  border-bottom-color: transparent;
+}
+
+/* Label float */
+.as2-input:focus ~ .apollo-label,
+.as2-input:not(:placeholder-shown) ~ .apollo-label,
+.as2.has-value .apollo-label {
+  top: -10px;
+  font-size: 10px;
+  color: var(--primary);
+}
+
+/* Active swatch (pops in after selection) */
+.as2-swatch {
+  position: absolute;
+  left: 0;
+  bottom: 14px;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.4) rotate(-10deg);
+  transition: all 0.35s var(--ease);
+}
+.as2.has-value .as2-swatch {
+  opacity: 1;
+  transform: scale(1) rotate(0);
+}
+.as2.has-value .as2-input { padding-left: 28px; }
+
+/* Arrow */
+.as2-arrow {
+  position: absolute;
+  right: 0;
+  bottom: 12px;
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  pointer-events: none;
+  transition: color 0.3s, transform 0.4s var(--ease);
+}
+.as2.is-open .as2-arrow {
+  transform: rotate(180deg);
+  color: var(--primary);
+}
+
+/* Dropdown */
+.as2-drop {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: -12px;
+  right: -12px;
+  z-index: 100;
+  max-height: 240px;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.25s var(--ease), transform 0.3s var(--ease), visibility 0s 0.3s;
+}
+.as2.is-open .as2-drop {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity 0.25s var(--ease), transform 0.3s var(--ease), visibility 0s 0s;
+}
+
+/* Options */
+.as2-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--txt);
+  transition: background 0.15s, transform 0.2s var(--ease);
+  padding: 8px 8px;
+  background-color: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(5px) saturate(200%);
+  -webkit-backdrop-filter: blur(5px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+  border-radius: var(--radius);
+  corner-shape: squircle;
+}
+.as2-opt:hover { background: rgba(244,95,0,0.04) }
+.as2-opt:active { transform: scale(0.985); }
+.as2-opt.is-selected { background: rgba(244,95,0,0.099); }
+.as2-opt[hidden] { display: none; }
+
+.as2-opt-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1), inset 0 0 0 1px rgba(255,255,255,0.15);
+  transition: transform 0.25s var(--ease);
+}
+.as2-opt:hover .as2-opt-swatch { transform: scale(1.18); }
+
+.as2-opt-name { font-weight: 500; color: var(--black-1); }
+.as2-opt-desc { color: var(--muted); font-size: 12px; margin-left: 6px; }
+
+.as2-opt-check {
+  margin-left: auto;
+  width: 14px;
+  height: 14px;
+  color: var(--primary);
+  opacity: 0;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+.as2-opt.is-selected .as2-opt-check { opacity: 1; }
+
+.as2-empty {
+  padding: 16px;
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: none;
+}
+.as2-empty.is-visible { display: block; }
+
+/* Stagger */
+.as2.is-open .as2-opt {
+  animation: slideL 0.25s var(--ease) backwards;
+}
+.as2.is-open .as2-opt:nth-child(1) { animation-delay: 0.02s; }
+.as2.is-open .as2-opt:nth-child(2) { animation-delay: 0.05s; }
+.as2.is-open .as2-opt:nth-child(3) { animation-delay: 0.08s; }
+.as2.is-open .as2-opt:nth-child(4) { animation-delay: 0.11s; }
+.as2.is-open .as2-opt:nth-child(5) { animation-delay: 0.14s; }
+@keyframes slideL {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+
+/* ══════════════════════════════════════════════════
+   TYPE 3 — GLASS PANEL
+   Rounded, frosted blur, search inside dropdown
+   ══════════════════════════════════════════════════ */
+.as3 { position: relative; }
+
+.as3-trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 16px;
+  font-family: var(--ff-main);
+  font-size: 14px;
+  color: var(--black-1);
+  background: rgba(0,0,0,0.02);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  outline: none;
+  text-align: left;
+  line-height: 1.4;
+  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.as3-trigger:hover { border-color: rgba(0,0,0,0.22); }
+.as3.is-open .as3-trigger {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(244,95,0,0.10);
+}
+
+.as3-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  background: var(--primary);
+  transition: background 0.3s var(--ease);
+}
+
+.as3-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.as3-trigger.is-placeholder .as3-label { color: var(--muted); }
+.as3-lbl-name { font-weight: 500; color: var(--black-1); }
+.as3-lbl-desc { color: var(--muted); margin-left: 4px; font-size: 13px; }
+
+.as3-chevron {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--muted);
+  transition: transform 0.3s var(--ease), color 0.2s;
+}
+.as3.is-open .as3-chevron {
+  transform: rotate(180deg);
+  color: var(--primary);
+}
+
+/* Dropdown */
+.as3-drop {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  padding: 6px;
+  max-height: 280px;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.98);
+  transition: opacity 0.2s var(--ease), transform 0.25s var(--ease), visibility 0s 0.25s;
+}
+.as3.is-open .as3-drop {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.25s var(--ease), transform 0.3s var(--ease), visibility 0s 0s;
+}
+
+/* Search */
+.as3-search-wrap { position: sticky; top: 0; z-index: 2; padding: 2px 2px 6px; }
+.as3-search {
+  width: 100%;
+  padding: 9px 12px 9px 32px;
+  font-family: var(--ff-main);
+  font-size: 13px;
+  color: var(--txt);
+  background: rgba(0,0,0,0.04);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s var(--ease);
+}
+.as3-search::placeholder { color: var(--muted); }
+.as3-search:focus { border-color: var(--primary); }
+.as3-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 13px;
+  width: 14px;
+  height: 14px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+/* Options */
+.as3-opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--txt);
+  font-size: 14px;
+  transition: background 0.15s var(--ease);
+}
+.as3-opt:hover, .as3-opt.is-focused { background: rgba(0,0,0,0.04); }
+.as3-opt.is-selected { background: rgba(244,95,0,0.06); color: var(--black-1); }
+.as3-opt[hidden] { display: none; }
+
+.as3-opt-sw { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; }
+.as3-opt-name { font-weight: 500; color: var(--black-1); }
+.as3-opt-desc { color: var(--muted); font-size: 13px; margin-left: 4px; }
+
+.as3-opt-check {
+  margin-left: auto;
+  width: 16px;
+  height: 16px;
+  color: var(--primary);
+  opacity: 0;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+.as3-opt.is-selected .as3-opt-check { opacity: 1; }
+
+.as3-empty {
+  padding: 20px 12px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  font-family: var(--ff-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: none;
+}
+.as3-empty.is-visible { display: block; }
+
+/* Stagger */
+.as3.is-open .as3-opt { animation: fadeUp 0.3s var(--ease) backwards; }
+.as3.is-open .as3-opt:nth-child(1) { animation-delay: 0.03s; }
+.as3.is-open .as3-opt:nth-child(2) { animation-delay: 0.06s; }
+.as3.is-open .as3-opt:nth-child(3) { animation-delay: 0.09s; }
+.as3.is-open .as3-opt:nth-child(4) { animation-delay: 0.12s; }
+.as3.is-open .as3-opt:nth-child(5) { animation-delay: 0.15s; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════ */
+@media (pointer: coarse) {
+  .as1.is-open .as1-opt { height: 56px; }
+  .as2-opt { min-height: 44px; }
+  .as3-opt { min-height: 44px; padding: 12px; }
+  .as3-trigger { padding: 14px 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="demo-page">
+  <div class="demo-label">Apollo Select</div>
+  <div class="demo-title">Three Types,<br>One System.</div>
+
+  <!-- ═══════════════════════════════════════
+       TYPE 1 — Form Inline  (.as1)
+       Button trigger, icon badges, stagger expand.
+
+       Root:   <div class="input-group as1">
+       Trigger: <button class="as1-trigger is-placeholder">
+                  .as1-val-icon  → colored square badge (set bg via style)
+                  .as1-val-text  → filled by JS on select
+                </button>
+               .as1-drop → absolute list of .as1-opt
+
+       Each option:
+         <div class="as1-opt"
+              data-value="1"           → value submitted / used by app
+              data-name="Label"        → text shown in trigger after select
+              data-icon-bg="#hex">     → badge color copied to trigger icon
+           <span class="as1-opt-icon" style="background:#hex">
+             <svg>…</svg>             → 14×14 white SVG icon
+           </span>
+           <span class="as1-opt-text">
+             <span class="as1-opt-name">Primary label</span>
+             <span class="as1-opt-hint">Secondary hint</span>
+           </span>
+           <svg class="as1-opt-check">…</svg>  ← JS toggles opacity
+         </div>
+       ═══════════════════════════════════════ -->
+  <div class="type-badge">Type 1 — Form Inline</div>
+
+  <form autocomplete="off" onsubmit="return false">
+    <div class="input-group">
+      <input type="text" class="apollo-input" placeholder=" " required>
+      <label class="apollo-label">Nome Completo</label>
+    </div>
+
+    <div class="input-group">
+      <input type="email" class="apollo-input" placeholder=" " required>
+      <label class="apollo-label">E-mail</label>
+    </div>
+
+    <!-- SELECT TYPE 1 — add .as1 to .input-group -->
+    <div class="input-group as1" id="select1">
+      <button type="button" class="as1-trigger is-placeholder">
+        <span class="as1-val">
+          <span class="as1-val-icon" style="background:var(--primary)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+          </span>
+          <span class="as1-val-text"></span>
+        </span>
+        <svg class="as1-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <label class="apollo-label">Assunto</label>
+
+      <div class="as1-drop">
+        <div class="as1-opt" data-value="1" data-name="Sobre Parceria" data-icon-bg="#1a73e8">
+          <span class="as1-opt-icon" style="background:#1a73e8">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/></svg>
+          </span>
+          <span class="as1-opt-text">
+            <span class="as1-opt-name">Sobre Parceria</span>
+            <span class="as1-opt-hint">Colaborações &amp; projetos</span>
+          </span>
+          <svg class="as1-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+
+        <div class="as1-opt" data-value="2" data-name="Problema ou Denúncia" data-icon-bg="#e53935">
+          <span class="as1-opt-icon" style="background:#e53935">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </span>
+          <span class="as1-opt-text">
+            <span class="as1-opt-name">Problema ou Denúncia</span>
+            <span class="as1-opt-hint">Relatar incidentes</span>
+          </span>
+          <svg class="as1-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+
+        <div class="as1-opt" data-value="3" data-name="Suporte Técnico" data-icon-bg="#f45f00">
+          <span class="as1-opt-icon" style="background:#f45f00">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09c-.658.003-1.25.396-1.51 1z"/></svg>
+          </span>
+          <span class="as1-opt-text">
+            <span class="as1-opt-name">Suporte Técnico</span>
+            <span class="as1-opt-hint">Ajuda com a plataforma</span>
+          </span>
+          <svg class="as1-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+
+        <div class="as1-opt" data-value="4" data-name="Elogio ou Crítica" data-icon-bg="#651FFF">
+          <span class="as1-opt-icon" style="background:#651FFF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </span>
+          <span class="as1-opt-text">
+            <span class="as1-opt-name">Elogio ou Crítica</span>
+            <span class="as1-opt-hint">Feedback &amp; sugestões</span>
+          </span>
+          <svg class="as1-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <input type="text" class="apollo-input" placeholder=" " required>
+      <label class="apollo-label">Mensagem</label>
+    </div>
+  </form>
+
+
+  <hr class="demo-divider">
+
+
+  <!-- ═══════════════════════════════════════
+       TYPE 2 — Palette Writable  (.as2)
+       Input trigger — type to filter, click to select.
+       Shows a color swatch in the trigger after selection.
+
+       Root:  <div class="input-group as2">
+              .as2-input  → the visible text input (typing filters options)
+              .as2-swatch → colored square injected left of input by JS
+              .as2-line   → animated underline (cosmetic <span>)
+              .as2-drop   → absolute list of .as2-opt
+
+       Each option:
+         <div class="as2-opt"
+              data-value="#hex"        → swatch color + value returned
+              data-name="Name"         → label (filtering searches here)
+              data-desc="extra text">  → secondary text (optional, also filtered)
+           <span class="as2-opt-swatch" style="background:#hex"></span>
+           <span>
+             <span class="as2-opt-name">Name</span>
+             <span class="as2-opt-desc">extra text</span>
+           </span>
+           <svg class="as2-opt-check">…</svg>  ← JS toggles opacity
+         </div>
+
+       Add <div class="as2-empty"> inside .as2-drop for zero-results message.
+       ═══════════════════════════════════════ -->
+  <div class="type-badge">Type 2 — Palette Writable</div>
+
+  <div class="input-group as2" id="select2">
+    <span class="as2-swatch"></span>
+    <input type="text" class="as2-input" placeholder=" " autocomplete="off">
+    <label class="apollo-label">Choose a color</label>
+    <span class="as2-line"></span>
+    <svg class="as2-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+
+    <div class="as2-drop">
+      <div class="as2-opt" data-value="#5790E6" data-name="eyes" data-desc="by kersheys">
+        <span class="as2-opt-swatch" style="background:#5790E6"></span>
+        <span><span class="as2-opt-name">eyes</span><span class="as2-opt-desc">by kersheys</span></span>
+        <svg class="as2-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="as2-opt" data-value="#8773EB" data-name="status" data-desc="by grandiloquent">
+        <span class="as2-opt-swatch" style="background:#8773EB"></span>
+        <span><span class="as2-opt-name">status</span><span class="as2-opt-desc">by grandiloquent</span></span>
+        <svg class="as2-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="as2-opt" data-value="#B27CD9" data-name="costume party" data-desc="by lemonpaste">
+        <span class="as2-opt-swatch" style="background:#B27CD9"></span>
+        <span><span class="as2-opt-name">costume party</span><span class="as2-opt-desc">by lemonpaste</span></span>
+        <svg class="as2-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="as2-opt" data-value="#E884B0" data-name="musk stix" data-desc="by the rusty wench">
+        <span class="as2-opt-swatch" style="background:#E884B0"></span>
+        <span><span class="as2-opt-name">musk stix</span><span class="as2-opt-desc">by the rusty wench</span></span>
+        <svg class="as2-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="as2-opt" data-value="#EDA180" data-name="cymbalic" data-desc="by clairyfairy">
+        <span class="as2-opt-swatch" style="background:#EDA180"></span>
+        <span><span class="as2-opt-name">cymbalic</span><span class="as2-opt-desc">by clairyfairy</span></span>
+        <svg class="as2-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="as2-empty">Nenhum resultado</div>
+    </div>
+  </div>
+
+
+  <hr class="demo-divider">
+
+
+  <!-- ═══════════════════════════════════════
+       TYPE 3 — Glass Panel  (.as3)
+       Button trigger, frosted-glass dropdown, internal search bar.
+       Does NOT need .input-group — it has its own border-box trigger.
+
+       Root:  <div class="as3">   (standalone, no .input-group)
+              .as3-trigger  → the visible pill button
+                .as3-swatch → colored square (JS copies from selected option)
+                .as3-label  → placeholder text; JS replaces with selected name
+              .as3-drop     → glass dropdown panel
+                .as3-search-wrap → sticky search area
+                  .as3-search-icon → magnifier SVG (cosmetic)
+                  input.as3-search → live-filters options
+                .as3-opts   → wrapper for all .as3-opt
+
+       Each option:
+         <div class="as3-opt"
+              data-value="#hex"        → value returned on select
+              data-name="Name"         → label shown in trigger + searched
+              data-desc="sub text">    → sub-label in trigger + searched (opt)
+           <span class="as3-opt-sw" style="background:#hex"></span>
+           ↑ JS reads this inline style to paint the trigger swatch.
+           <span>
+             <span class="as3-opt-name">Name</span>
+             <span class="as3-opt-desc">sub text</span>
+           </span>
+           <svg class="as3-opt-check">…</svg>  ← JS toggles opacity
+         </div>
+
+       Add <div class="as3-empty"> inside .as3-drop for zero-results message.
+       ═══════════════════════════════════════ -->
+  <div class="type-badge">Type 3 — Glass Panel</div>
+
+  <div class="as3" id="select3">
+    <button type="button" class="as3-trigger is-placeholder">
+      <span class="as3-swatch"></span>
+      <span class="as3-label">Choose a color</span>
+      <svg class="as3-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+
+    <div class="as3-drop">
+      <div class="as3-search-wrap">
+        <svg class="as3-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="as3-search" type="text" placeholder="Buscar…" autocomplete="off">
+      </div>
+      <div class="as3-opts">
+        <div class="as3-opt" data-value="#5790E6" data-name="eyes" data-desc="by kersheys">
+          <span class="as3-opt-sw" style="background:#5790E6"></span>
+          <span><span class="as3-opt-name">eyes</span><span class="as3-opt-desc">by kersheys</span></span>
+          <svg class="as3-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="as3-opt" data-value="#8773EB" data-name="status" data-desc="by grandiloquent">
+          <span class="as3-opt-sw" style="background:#8773EB"></span>
+          <span><span class="as3-opt-name">status</span><span class="as3-opt-desc">by grandiloquent</span></span>
+          <svg class="as3-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="as3-opt" data-value="#B27CD9" data-name="costume party" data-desc="by lemonpaste">
+          <span class="as3-opt-sw" style="background:#B27CD9"></span>
+          <span><span class="as3-opt-name">costume party</span><span class="as3-opt-desc">by lemonpaste</span></span>
+          <svg class="as3-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="as3-opt" data-value="#E884B0" data-name="musk stix" data-desc="by the rusty wench">
+          <span class="as3-opt-sw" style="background:#E884B0"></span>
+          <span><span class="as3-opt-name">musk stix</span><span class="as3-opt-desc">by the rusty wench</span></span>
+          <svg class="as3-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="as3-opt" data-value="#EDA180" data-name="cymbalic" data-desc="by clairyfairy">
+          <span class="as3-opt-sw" style="background:#EDA180"></span>
+          <span><span class="as3-opt-name">cymbalic</span><span class="as3-opt-desc">by clairyfairy</span></span>
+          <svg class="as3-opt-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      </div>
+      <div class="as3-empty">Nenhum resultado</div>
+    </div>
+  </div>
+
+</div>
+
+
+</body>
+</html>

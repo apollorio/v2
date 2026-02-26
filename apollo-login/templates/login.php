@@ -4,7 +4,7 @@
  * Apollo Login Template (Standalone)
  * Self-contained /acesso page - NO apollo-templates dependency
  *
- * @package Apollo_Login
+ * @package Apollo\Login
  * @since 2.0.0
  */
 

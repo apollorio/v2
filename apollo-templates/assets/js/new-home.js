@@ -179,7 +179,7 @@
       
     } catch (e) {
       console.error('[Apollo Radio] Init failed:', e);
-      updateUI('Offline', '—');
+      updateUI('Rádio apollo', 'em breve');
       return;
     }
 
@@ -441,23 +441,8 @@
       });
     }
 
-    /* Hero .ai entrance — force visible immediately then animate.
-       Set opacity:1 first as safety, then animate in. */
-    var heroEl = document.getElementById('nhHero');
-    if (heroEl) {
-      var heroAiItems = heroEl.querySelectorAll('.ai');
-      if (heroAiItems.length) {
-        /* Safety: make sure they're visible even if gsap animation hiccups */
-        heroAiItems.forEach(function(el) { el.style.opacity = '1'; el.style.transform = 'none'; });
-        gsap.fromTo(heroAiItems,
-          { y: 18, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.12, delay: 0.3, overwrite: 'auto' }
-        );
-      }
-    }
-
     /* Hero video parallax — scroller is the panel, not window */
-    var heroVid = document.getElementById('nhHeroVid');
+    var heroVid = document.querySelector('.nh-hero-vid');
     if (heroVid && homePanel && typeof ScrollTrigger !== 'undefined') {
       gsap.registerPlugin(ScrollTrigger);
 

@@ -14,33 +14,12 @@ if (! defined('ABSPATH')) {
 }
 
 /**
- * Create /classificados page on activation
+ * Create pages on activation.
+ * Classificados page creation moved to apollo-classifieds.
  */
 function apollo_templates_create_pages(): void
 {
-
-    // Classificados page
-    $classificados_page = get_page_by_path('classificados');
-
-    if (! $classificados_page) {
-        $page_id = wp_insert_post(
-            array(
-                'post_title'     => 'Classificados',
-                'post_name'      => 'classificados',
-                'post_content'   => '',
-                'post_status'    => 'publish',
-                'post_type'      => 'page',
-                'post_author'    => 1,
-                'comment_status' => 'closed',
-                'ping_status'    => 'closed',
-            )
-        );
-
-        if ($page_id && ! is_wp_error($page_id)) {
-            // Set page template
-            update_post_meta($page_id, '_wp_page_template', 'page-classificados.php');
-        }
-    }
+    // No pages to create — classificados moved to apollo-classifieds.
 }
 
 /**
@@ -48,11 +27,7 @@ function apollo_templates_create_pages(): void
  */
 function apollo_templates_add_rewrite_rules(): void
 {
-    // /classificados → page-classificados.php
-    add_rewrite_rule('^classificados/?$', 'index.php?pagename=classificados', 'top');
-
-    // /classificados/novo → creation form (future)
-    add_rewrite_rule('^classificados/novo/?$', 'index.php?pagename=classificados&action=new', 'top');
+    // Classificados rewrite rules moved to apollo-classifieds.
 
     // /home → page-home.php (guest) | page-mural.php (logged-in)
     add_rewrite_rule('^home/?$', 'index.php?apollo_home_page=1', 'top');
@@ -85,7 +60,8 @@ add_filter(
  */
 function apollo_templates_parse_request(\WP $wp): void
 {
-    $path = trim(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH), '/');
+    $raw_uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '';
+    $path    = trim((string) parse_url($raw_uri, PHP_URL_PATH), '/');
 
     if ($path === 'home') {
         $wp->query_vars['apollo_home_page'] = '1';
@@ -164,13 +140,7 @@ function apollo_templates_load_template($template): string
     if (is_page()) {
         $page_template = get_page_template_slug();
 
-        // Classificados
-        if ($page_template === 'page-classificados.php' || is_page('classificados')) {
-            $custom_template = APOLLO_TEMPLATES_DIR . 'templates/page-classificados.php';
-            if (file_exists($custom_template)) {
-                return $custom_template;
-            }
-        }
+        // Classificados — handled by apollo-classifieds plugin.
     }
 
     return $template;

@@ -21,7 +21,7 @@
  *   - wp_enqueue_script kept for WP script dependency graph only
  *   - No admin injection
  *
- * @package Apollo_Core
+ * @package Apollo\Core
  * @since   6.0.0
  * @since   6.2.0  Direct wp_head echo — guaranteed injection on all pages
  */

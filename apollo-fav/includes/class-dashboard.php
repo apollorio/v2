@@ -147,7 +147,7 @@ class Dashboard {
 			<div class="apollo-favs-filters">
 				<button class="apollo-favs-filter <?php echo ! $post_type ? 'active' : ''; ?>"
 					data-type="">
-					<i class="ri-heart-line"></i>
+					<i class="ri-fire-line"></i>
 					<?php esc_html_e( 'Todos', 'apollo-fav' ); ?>
 					<span class="apollo-favs-count"><?php echo esc_html( (string) apollo_get_user_fav_total( $user_id ) ); ?></span>
 				</button>
@@ -267,7 +267,7 @@ class Dashboard {
 				<!-- Footer: favoritos + tempo -->
 				<div class="apollo-fav-card__footer">
 					<span class="apollo-fav-card__favcount">
-						<i class="ri-heart-fill"></i>
+						<i class="ri-fire-fill"></i>
 						<?php echo esc_html( (string) $fav_count ); ?>
 					</span>
 					<span class="apollo-fav-card__time">
@@ -409,7 +409,7 @@ class Dashboard {
 
 		$widgets['apollo_favs'] = array(
 			'title'    => __( 'Meus Favoritos', 'apollo-fav' ),
-			'icon'     => 'ri-heart-line',
+			'icon'     => 'ri-fire-line',
 			'count'    => $total,
 			'link'     => home_url( '/painel/favoritos' ),
 			'priority' => 30,

@@ -552,7 +552,7 @@ class Statistics_Merge {
 			array(
 				'title' => 'Total de Favoritos',
 				'value' => $fav_stats['total_favs'] ?? 0,
-				'icon'  => 'ri-heart-line',
+				'icon'  => 'ri-fire-line',
 				'color' => '#ff6b6b',
 			),
 			array(

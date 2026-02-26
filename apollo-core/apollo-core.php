@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Apollo Core
  *
@@ -9,7 +10,7 @@
  * @license GPL-2.0-or-later
  * Copyright (c) 2026 Apollo
  *
- * @package Apollo_Core
+ * @package Apollo\Core
  *
  * Plugin Name: Apollo Core
  * Plugin URI: https://apollo.rio.br
@@ -29,46 +30,46 @@
 declare(strict_types=1);
 
 // If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-	die;
+if (! defined('WPINC')) {
+    die;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CONSTANTS
 // ═══════════════════════════════════════════════════════════════════════════
 
-define( 'APOLLO_CORE_VERSION', '6.0.0' );
-define( 'APOLLO_CORE_PATH', plugin_dir_path( __FILE__ ) );
-define( 'APOLLO_CORE_URL', plugin_dir_url( __FILE__ ) );
-define( 'APOLLO_CORE_FILE', __FILE__ );
+define('APOLLO_CORE_VERSION', '6.0.0');
+define('APOLLO_CORE_PATH', plugin_dir_path(__FILE__));
+define('APOLLO_CORE_URL', plugin_dir_url(__FILE__));
+define('APOLLO_CORE_FILE', __FILE__);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // AUTOLOADER (must load BEFORE constants — ConfigLoader needs it)
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Composer autoloader (includes PSR-4 for Apollo\Core namespace)
-if ( file_exists( APOLLO_CORE_PATH . 'vendor/autoload.php' ) ) {
-	require_once APOLLO_CORE_PATH . 'vendor/autoload.php';
+if (file_exists(APOLLO_CORE_PATH . 'vendor/autoload.php')) {
+    require_once APOLLO_CORE_PATH . 'vendor/autoload.php';
 }
 
 // Manual autoloader fallback for src/ classes
 spl_autoload_register(
-	function ( string $class ) {
-		$prefix   = 'Apollo\\Core\\';
-		$base_dir = APOLLO_CORE_PATH . 'src/';
+    function (string $class) {
+        $prefix   = 'Apollo\\Core\\';
+        $base_dir = APOLLO_CORE_PATH . 'src/';
 
-		$len = strlen( $prefix );
-		if ( strncmp( $prefix, $class, $len ) !== 0 ) {
-			return;
-		}
+        $len = strlen($prefix);
+        if (strncmp($prefix, $class, $len) !== 0) {
+            return;
+        }
 
-		$relative_class = substr( $class, $len );
-		$file           = $base_dir . str_replace( '\\', '/', $relative_class ) . '.php';
+        $relative_class = substr($class, $len);
+        $file           = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
 
-		if ( file_exists( $file ) ) {
-			require $file;
-		}
-	}
+        if (file_exists($file)) {
+            require $file;
+        }
+    }
 );
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -100,10 +101,10 @@ require_once APOLLO_CORE_PATH . 'includes/report-modal.php';
  * Pattern: CHECK IF EXISTS → BUILD IF NOT
  */
 register_activation_hook(
-	__FILE__,
-	function () {
-		\Apollo\Core\ActivationHandler::activate();
-	}
+    __FILE__,
+    function () {
+        \Apollo\Core\ActivationHandler::activate();
+    }
 );
 
 /**
@@ -111,16 +112,16 @@ register_activation_hook(
  * Keeps all data by default (soft deactivation)
  */
 register_deactivation_hook(
-	__FILE__,
-	function () {
-		\Apollo\Core\UninstallHandler::deactivate();
-	}
+    __FILE__,
+    function () {
+        \Apollo\Core\UninstallHandler::deactivate();
+    }
 );
 
 /**
  * Add custom cron schedules
  */
-add_filter( 'cron_schedules', array( \Apollo\Core\ActivationHandler::class, 'add_cron_schedules' ) );
+add_filter('cron_schedules', array(\Apollo\Core\ActivationHandler::class, 'add_cron_schedules'));
 
 // ═══════════════════════════════════════════════════════════════════════════
 // BOOTSTRAP
@@ -131,72 +132,77 @@ add_filter( 'cron_schedules', array( \Apollo\Core\ActivationHandler::class, 'add
  *
  * This function is called by plugins_loaded hook
  */
-function apollo_core_bootstrap() {
-	// Check for database upgrade
-	\Apollo\Core\ActivationHandler::upgrade();
+function apollo_core_bootstrap()
+{
+    // Check for database upgrade
+    \Apollo\Core\ActivationHandler::upgrade();
 
-	// ─────────────────────────────────────────────────────────────────────
-	// CRITICAL: Initialize CPT, Taxonomy, Meta Registries
-	// These MUST load early to provide fallback for missing plugins
-	// ─────────────────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────
+    // CRITICAL: Initialize CPT, Taxonomy, Meta Registries
+    // These MUST load early to provide fallback for missing plugins
+    // ─────────────────────────────────────────────────────────────────────
 
-	// Taxonomy Registry (priority 4 - before CPTs)
-	\Apollo\Core\TaxonomyRegistry::init();
+    // Taxonomy Registry (priority 4 - before CPTs)
+    \Apollo\Core\TaxonomyRegistry::init();
 
-	// CPT Registry (priority 5)
-	\Apollo\Core\CPTRegistry::init();
+    // CPT Registry (priority 5)
+    \Apollo\Core\CPTRegistry::init();
 
-	// Meta Registry (priority 9 - after CPTs)
-	\Apollo\Core\MetaRegistry::init();
+    // Meta Registry (priority 9 - after CPTs)
+    \Apollo\Core\MetaRegistry::init();
 
-	// ─────────────────────────────────────────────────────────────────────
-	// Initialize other core components
-	// ─────────────────────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────
+    // Initialize other core components
+    // ─────────────────────────────────────────────────────────────────────
 
-	// Initialize CDN helper
-	if ( class_exists( '\Apollo\Core\CDN' ) ) {
-		\Apollo\Core\CDN::init();
-	}
+    // Initialize CDN helper
+    if (class_exists('\Apollo\Core\CDN')) {
+        \Apollo\Core\CDN::init();
+    }
 
-	// Initialize REST API controllers
-	add_action(
-		'rest_api_init',
-		function () {
-			if ( class_exists( '\Apollo\Core\API\HealthController' ) ) {
-				new \Apollo\Core\API\HealthController();
-			}
-			if ( class_exists( '\Apollo\Core\API\RegistryController' ) ) {
-				new \Apollo\Core\API\RegistryController();
-			}
-			if ( class_exists( '\Apollo\Core\API\SoundController' ) ) {
-				new \Apollo\Core\API\SoundController();
-			}
-		}
-	);
+    // Initialize REST API controllers
+    add_action(
+        'rest_api_init',
+        function () {
+            if (class_exists('\Apollo\Core\API\HealthController')) {
+                new \Apollo\Core\API\HealthController();
+            }
+            if (class_exists('\Apollo\Core\API\RegistryController')) {
+                new \Apollo\Core\API\RegistryController();
+            }
+            if (class_exists('\Apollo\Core\API\SoundController')) {
+                new \Apollo\Core\API\SoundController();
+            }
+            if (class_exists('\Apollo\Core\API\SearchController')) {
+                $search = new \Apollo\Core\API\SearchController();
+                $search->register_routes();
+            }
+        }
+    );
 
-	// ─────────────────────────────────────────────────────────────────────
-	// Initialize Admin Pages
-	// ─────────────────────────────────────────────────────────────────────
-	if ( is_admin() ) {
-		require_once APOLLO_CORE_PATH . 'admin/SettingsPage.php';
-	}
+    // ─────────────────────────────────────────────────────────────────────
+    // Initialize Admin Pages
+    // ─────────────────────────────────────────────────────────────────────
+    if (is_admin()) {
+        require_once APOLLO_CORE_PATH . 'admin/SettingsPage.php';
+    }
 
-	// ─────────────────────────────────────────────────────────────────────
-	// Fire initialized hook
-	// ─────────────────────────────────────────────────────────────────────
-	do_action(
-		\Apollo\Core\Config\ApolloHook::CORE_INITIALIZED,
-		array(
-			'version'   => APOLLO_CORE_VERSION,
-			'cpt_count' => count( \Apollo\Core\CPTRegistry::get_instance()->get_definitions() ),
-			'tax_count' => count( \Apollo\Core\TaxonomyRegistry::get_instance()->get_definitions() ),
-		)
-	);
+    // ─────────────────────────────────────────────────────────────────────
+    // Fire initialized hook
+    // ─────────────────────────────────────────────────────────────────────
+    do_action(
+        \Apollo\Core\Config\ApolloHook::CORE_INITIALIZED,
+        array(
+            'version'   => APOLLO_CORE_VERSION,
+            'cpt_count' => count(\Apollo\Core\CPTRegistry::get_instance()->get_definitions()),
+            'tax_count' => count(\Apollo\Core\TaxonomyRegistry::get_instance()->get_definitions()),
+        )
+    );
 
-	// Define bootstrap constant
-	if ( ! defined( 'APOLLO_CORE_BOOTSTRAPPED' ) ) {
-		define( 'APOLLO_CORE_BOOTSTRAPPED', true );
-	}
+    // Define bootstrap constant
+    if (! defined('APOLLO_CORE_BOOTSTRAPPED')) {
+        define('APOLLO_CORE_BOOTSTRAPPED', true);
+    }
 }
 
 /**
@@ -204,39 +210,39 @@ function apollo_core_bootstrap() {
  *
  * Priority: plugins_loaded with priority 1 (load first)
  */
-add_action( 'plugins_loaded', 'apollo_core_bootstrap', 1 );
+add_action('plugins_loaded', 'apollo_core_bootstrap', 1);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // ADMIN NOTICES
 // ═══════════════════════════════════════════════════════════════════════════
 
 add_action(
-	'admin_notices',
-	function () {
-		// Show activation results
-		$results = get_transient( 'apollo_activation_results' );
+    'admin_notices',
+    function () {
+        // Show activation results
+        $results = get_transient('apollo_activation_results');
 
-		if ( $results ) {
-			delete_transient( 'apollo_activation_results' );
+        if ($results) {
+            delete_transient('apollo_activation_results');
 
-			$created_count = count( $results['created'] ?? array() );
-			$error_count   = count( $results['errors'] ?? array() );
+            $created_count = count($results['created'] ?? array());
+            $error_count   = count($results['errors'] ?? array());
 
-			if ( $created_count > 0 && $error_count === 0 ) {
-				echo '<div class="notice notice-success is-dismissible">';
-				echo '<p><strong>Apollo Core:</strong> ' . sprintf(
-					__( '%d tabelas criadas com sucesso.', 'apollo-core' ),
-					$created_count
-				) . '</p>';
-				echo '</div>';
-			} elseif ( $error_count > 0 ) {
-				echo '<div class="notice notice-error">';
-				echo '<p><strong>Apollo Core:</strong> ' . sprintf(
-					__( 'Erro ao criar %d tabelas. Verifique o log.', 'apollo-core' ),
-					$error_count
-				) . '</p>';
-				echo '</div>';
-			}
-		}
-	}
+            if ($created_count > 0 && $error_count === 0) {
+                echo '<div class="notice notice-success is-dismissible">';
+                echo '<p><strong>Apollo Core:</strong> ' . sprintf(
+                    __('%d tabelas criadas com sucesso.', 'apollo-core'),
+                    $created_count
+                ) . '</p>';
+                echo '</div>';
+            } elseif ($error_count > 0) {
+                echo '<div class="notice notice-error">';
+                echo '<p><strong>Apollo Core:</strong> ' . sprintf(
+                    __('Erro ao criar %d tabelas. Verifique o log.', 'apollo-core'),
+                    $error_count
+                ) . '</p>';
+                echo '</div>';
+            }
+        }
+    }
 );

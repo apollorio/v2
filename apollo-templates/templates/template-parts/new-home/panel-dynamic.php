@@ -35,7 +35,7 @@ $user_id  = get_current_user_id();
 		<h2 class="pnl-head__title" id="dynTitle"></h2>
 		<div class="pnl-head__actions" id="dynActions">
 			<button class="pnl-btn pnl-btn--icon" data-dyn-action="fav" aria-label="Favoritar" style="display:none">
-				<i class="ri-heart-line"></i>
+				<i class="ri-fire-line"></i>
 			</button>
 			<button class="pnl-btn pnl-btn--icon" data-dyn-action="share" aria-label="Compartilhar">
 				<i class="ri-share-forward-line"></i>
@@ -184,8 +184,8 @@ $user_id  = get_current_user_id();
 		favBtn.addEventListener('click', function(){
 			if (!currentType || !currentId) return;
 			var icon = favBtn.querySelector('i');
-			var isFav = icon.classList.contains('ri-heart-fill');
-			icon.className = isFav ? 'ri-heart-line' : 'ri-heart-fill';
+			var isFav = icon.classList.contains('ri-fire-fill');
+			icon.className = isFav ? 'ri-fire-line' : 'ri-fire-fill';
 			if (!isFav) icon.style.color = 'var(--primary)';
 			else icon.style.color = '';
 

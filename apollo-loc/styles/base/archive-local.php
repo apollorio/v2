@@ -3,7 +3,7 @@
 /**
  * Archive Local — Apollo Blank Canvas
  *
- * Radar-style location directory at /gps with type/area filter pills,
+ * Radar-style location directory at /local with type/area filter pills,
  * search, and GSAP animations. Template-parts architecture.
  *
  * @package Apollo\Local

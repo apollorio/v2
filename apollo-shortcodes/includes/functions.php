@@ -1,17 +1,18 @@
 <?php
+
 /**
  * Helper Functions
  *
- * @package Apollo\Shortcode
+ * @package Apollo\Shortcodes
  */
 
 declare(strict_types=1);
 
-namespace Apollo\Shortcode;
+namespace Apollo\Shortcodes;
 
 // Prevent direct access.
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+if (! defined('ABSPATH')) {
+    exit;
 }
 
 /**
@@ -19,17 +20,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @return array
  */
-function get_apollo_shortcodes(): array {
-	global $shortcode_tags;
+function get_apollo_shortcodes(): array
+{
+    global $shortcode_tags;
 
-	$apollo_shortcodes = array();
-	foreach ( $shortcode_tags as $tag => $callback ) {
-		if ( strpos( $tag, 'apollo_' ) === 0 ) {
-			$apollo_shortcodes[ $tag ] = $callback;
-		}
-	}
+    $apollo_shortcodes = array();
+    foreach ($shortcode_tags as $tag => $callback) {
+        if (strpos($tag, 'apollo_') === 0) {
+            $apollo_shortcodes[$tag] = $callback;
+        }
+    }
 
-	return $apollo_shortcodes;
+    return $apollo_shortcodes;
 }
 
 /**
@@ -38,7 +40,8 @@ function get_apollo_shortcodes(): array {
  * @param string $tag Shortcode tag.
  * @return bool
  */
-function shortcode_exists( string $tag ): bool {
-	global $shortcode_tags;
-	return isset( $shortcode_tags[ $tag ] );
+function shortcode_exists(string $tag): bool
+{
+    global $shortcode_tags;
+    return isset($shortcode_tags[$tag]);
 }

@@ -160,11 +160,11 @@ h3 { font-size: 1.25rem; font-weight: 600; }
   max-width: 540px;
   max-height: fit-content;
   padding: 1px 2px;         /* absolute minimum â€” just clips the pill border */
-  background: rgba(255,255,255,0.04) !important;
-  backdrop-filter: blur(10px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(200%) !important;
-  border: 1px solid rgba(255,255,255,0.10) !important;
-  border-radius: var(--radius-pill) !important;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: var(--radius-pill);
   corner-shape: round;
   display: flex;
   justify-content: space-between;
@@ -175,6 +175,8 @@ h3 { font-size: 1.25rem; font-weight: 600; }
 .nh-navbar.scrolled {
   background: rgba(255,255,255,0.45) !important;
   border-color: var(--border-light) !important;
+  backdrop-filter: blur(10px) brightness(1.2) saturate(2);
+  -webkit-backdrop-filter: blur(10px)  brightness(1.2) saturate(2);
 }
 /* Logo = apollo icon only, no text */
 .nh-nav-logo {
@@ -647,7 +649,7 @@ h3 { font-size: 1.25rem; font-weight: 600; }
   flex-direction: row;
   gap: 10px;
   overflow-x: auto;
-  overflow-y: clip;
+  overflow-y: visible;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   padding-bottom: 14px;

@@ -224,7 +224,6 @@ function apollo_templates_register_page_templates(array $templates): array
         'templates/page-home.php'          => __('Apollo Home', 'apollo-templates'),
         'templates/page-sobre.php'         => __('Apollo Sobre', 'apollo-templates'),
         'templates/page-mural.php'         => __('Apollo Mural', 'apollo-templates'),
-        'templates/page-classificados.php' => __('Classificados (Marketplace)', 'apollo-templates'),
         'templates/page-mapa.php'          => __('Apollo Mapa', 'apollo-templates'),
     );
 
@@ -256,7 +255,6 @@ function apollo_templates_resolve_page_template(string $template): string
         'templates/page-home.php',
         'templates/page-sobre.php',
         'templates/page-mural.php',
-        'templates/page-classificados.php',
         'templates/page-mapa.php',
     );
 
@@ -343,9 +341,9 @@ function apollo_navbar_login(): void
         wp_send_json_error(array('message' => 'Nonce inválido'), 403);
     }
 
-    $username = sanitize_text_field($_POST['user'] ?? '');
-    $password = $_POST['pass'] ?? '';
-    $remember = isset($_POST['remember']) && $_POST['remember'] === '1';
+    $username = sanitize_text_field(wp_unslash($_POST['user'] ?? ''));
+    $password = sanitize_text_field(wp_unslash($_POST['pass'] ?? ''));
+    $remember = isset($_POST['remember']) && sanitize_text_field(wp_unslash($_POST['remember'])) === '1';
 
     if (empty($username) || empty($password)) {
         wp_send_json_error(array('message' => 'Preencha todos os campos'));

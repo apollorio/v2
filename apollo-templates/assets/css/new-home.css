@@ -180,9 +180,9 @@ h3 { font-size: 1.25rem; font-weight: 600; }
   background: rgba(255,255,255,0.04) !important;
   backdrop-filter: blur(10px) saturate(200%) !important;
   -webkit-backdrop-filter: blur(10px) saturate(200%) !important;
-  border: 1px solid rgba(255,255,255,0.10) !important;
-  border-radius: var(--radius-pill) !important;
-  corner-shape: round;
+  border: .5px solid rgba(255,255,255,0.10) !important;
+  border-radius: 41px !important;
+  corner-shape: squircle;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -190,21 +190,21 @@ h3 { font-size: 1.25rem; font-weight: 600; }
   will-change: background, border-color;
 }
 .nh-navbar.scrolled {
-  background: rgba(255,255,255,0.45) !important;
-  border-color: var(--border-light) !important;
+  background: rgba(255,255,255,0.25) !important;
+  border-color: rgba(255,255,255,0.499) !important;
 }
 /* Logo = apollo icon only, no text */
 .nh-nav-logo {
   max-height: fit-content;
   display: flex;
   align-items: center;
-  color: rgba(255,255,255,0.9);
+  color: rgba(255,255,255,0.871);
   transition: color .4s;
   user-select: none;
   margin: 0 !important;
-  padding: 0 0 2px 15px!important;
+  padding: 0 0 2.5px 15px!important;
   & > i {
-    font-size: 27px !important;
+    font-size: 28px !important;
     line-height: 1;
     padding: 7px;
     margin: -2px 3px 4px 10px;   /* left 10px = breathing room from pill left edge */
@@ -213,7 +213,7 @@ h3 { font-size: 1.25rem; font-weight: 600; }
     justify-content: center;
   }
 }
-.nh-navbar.scrolled .nh-nav-logo { color: var(--white-9); text-shadow: inset 10px 10px 30px rgba(0, 0, 0, 0.8); }
+.nh-navbar.scrolled .nh-nav-logo { color: var(--gray-5); text-shadow: inset 10px 10px 30px rgba(0, 0, 0, 0.9); }
 .nh-nav-actions { display: flex; gap: 0; align-items: center; }
 .nh-nav-btn {
   /*
@@ -1098,7 +1098,8 @@ video::-webkit-media-controls { display: none !important; opacity: 0 !important;
   color: #fff !important;
   display: flex !important;
   align-items: center; justify-content: center;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: clip;
   position: relative;
   text-decoration: none;
   cursor: pointer;
@@ -1843,8 +1844,6 @@ section[data-panel].is-active {
   justify-content: center;
   gap: 8px;
   padding: 48px 24px;
-  border: 1px dashed rgba(var(--txt-rgb), 0.12);
-  border-radius: var(--radius-card, 14px);
   text-align: center;
 }
 .nh-empty-state i {

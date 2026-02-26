@@ -4,7 +4,7 @@
  *
  * Base class for all Apollo REST controllers
  *
- * @package Apollo_Core
+ * @package Apollo\Core\API
  * @since 6.0.0
  */
 

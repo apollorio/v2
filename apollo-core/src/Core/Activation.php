@@ -4,7 +4,7 @@
  *
  * Handles plugin activation tasks including table creation
  *
- * @package Apollo_Core
+ * @package Apollo\Core
  * @since 6.0.0
  */
 

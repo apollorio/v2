@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 
 /**
- * Notifications Page — /notificacoes
+ * Notifications Page � /notificacoes
  * Blank Canvas Template - No Theme Interference
  *
  * Features: severity colors, icon per notif, CTA action buttons,
@@ -32,7 +32,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 	<meta name="theme-color" content="#ffffff">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="default">
-	<title><?php esc_html_e( 'Notificações - Apollo::Rio', 'apollo-notif' ); ?></title>
+	<title><?php esc_html_e( 'Notifica��es - Apollo::Rio', 'apollo-notif' ); ?></title>
 
 	<!-- Apollo CDN - Mandatory for all pages -->
 	<script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
@@ -58,14 +58,14 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 			min-height: 100vh;
 		}
 
-		/* ── Layout ── */
+		/* -- Layout -- */
 		.apollo-page-wrap {
 			max-width: 700px;
 			margin: 0 auto;
 			padding: 2rem 1rem 4rem;
 		}
 
-		/* ── Toolbar ── */
+		/* -- Toolbar -- */
 		.notif-toolbar {
 			display: flex;
 			justify-content: space-between;
@@ -86,7 +86,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 			flex-wrap: wrap;
 		}
 
-		/* ── Buttons ── */
+		/* -- Buttons -- */
 		.apollo-btn {
 			background: #0f172a;
 			color: #fff;
@@ -118,7 +118,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 			background: #f1f5f9;
 		}
 
-		/* ── Filters ── */
+		/* -- Filters -- */
 		.notif-filters-row {
 			display: flex;
 			gap: .5rem;
@@ -159,7 +159,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 			outline: none;
 		}
 
-		/* ── Notification item ── */
+		/* -- Notification item -- */
 		.notif-item {
 			display: flex;
 			gap: 12px;
@@ -402,7 +402,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 
 		<!-- Toolbar -->
 		<div class="notif-toolbar">
-			<h1><?php esc_html_e( 'Notificações', 'apollo-notif' ); ?></h1>
+			<h1><?php esc_html_e( 'Notifica��es', 'apollo-notif' ); ?></h1>
 			<div class="notif-actions">
 				<button id="mark-all-read" class="apollo-btn-ghost">
 					<i class="ri-check-double-line"></i> Todas lidas
@@ -416,22 +416,22 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 		<!-- Filters -->
 		<div class="notif-filters-row">
 			<button class="notif-pill active" data-filter="all">Todas</button>
-			<button class="notif-pill" data-filter="unread">Não lidas</button>
+			<button class="notif-pill" data-filter="unread">N�o lidas</button>
 			<button class="notif-pill" data-filter="read">Lidas</button>
 			<select id="type-filter" class="notif-type-filter">
 				<option value="">Todos os tipos</option>
-				<option value="chat">💬 Chat</option>
-				<option value="follow">👤 Follow</option>
-				<option value="wow">🤩 Wow</option>
-				<option value="group_join">👥 Comuna</option>
-				<option value="mention">@ Menção</option>
-				<option value="new_event">📅 Evento</option>
-				<option value="fav_saved">❤️ Fav</option>
-				<option value="depoimento">✍️ Depoimento</option>
-				<option value="membership_upgrade">👑 Membership</option>
-				<option value="coauthor_invite">🤝 Coautoria</option>
-				<option value="profile_visit">👁️ Visita</option>
-				<option value="new_user">👋 Novo usuário</option>
+				<option value="chat">?? Chat</option>
+				<option value="follow">?? Follow</option>
+				<option value="wow">?? Wow</option>
+				<option value="group_join">?? Comuna</option>
+				<option value="mention">@ Men��o</option>
+				<option value="new_event">?? Evento</option>
+				<option value="fav_saved">?? Fav</option>
+				<option value="depoimento">?? Depoimento</option>
+				<option value="membership_upgrade">?? Membership</option>
+				<option value="coauthor_invite">?? Coautoria</option>
+				<option value="profile_visit">??? Visita</option>
+				<option value="new_user">?? Novo usu�rio</option>
 			</select>
 		</div>
 
@@ -481,7 +481,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 				return d.innerHTML;
 			}
 
-			/** Apollo standard time-ago HTML block. Input: '53min' → icon+spans. */
+			/** Apollo standard time-ago HTML block. Input: '53min' ? icon+spans. */
 			function tempoHTML(str) {
 				if (!str) return '';
 				var m = String(str).match(/^(\d+)([a-z]+)$/i);
@@ -502,7 +502,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 				group_join: 'ri-team-line',
 				mention: 'ri-at-line',
 				new_event: 'ri-calendar-event-line',
-				fav_saved: 'ri-heart-line',
+				fav_saved: 'ri-fire-line',
 				depoimento: 'ri-quill-pen-line',
 				membership_upgrade: 'ri-vip-crown-line',
 				coauthor_invite: 'ri-user-shared-line',
@@ -574,7 +574,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 					if (!append) container.innerHTML = '';
 
 					if (!data.length && page === 1) {
-						container.innerHTML = '<div class="notif-empty"><i class="ri-notification-off-line"></i>Sem notificações</div>';
+						container.innerHTML = '<div class="notif-empty"><i class="ri-notification-off-line"></i>Sem notifica��es</div>';
 						loadMoreEl.style.display = 'none';
 						return;
 					}
@@ -672,7 +672,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 			};
 
 			document.getElementById('delete-read-btn').onclick = async () => {
-				if (!confirm('Remover todas as notificações lidas?')) return;
+				if (!confirm('Remover todas as notifica��es lidas?')) return;
 				await fetch(REST + '/read', {
 					method: 'DELETE',
 					headers: hdrs(),
@@ -680,7 +680,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 				});
 				document.querySelectorAll('.notif-item.read').forEach(el => el.remove());
 				if (!container.querySelector('.notif-item'))
-					container.innerHTML = '<div class="notif-empty"><i class="ri-notification-off-line"></i>Sem notificações</div>';
+					container.innerHTML = '<div class="notif-empty"><i class="ri-notification-off-line"></i>Sem notifica��es</div>';
 			};
 
 			document.querySelectorAll('.notif-pill').forEach(btn => {
@@ -704,7 +704,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 				loadNotifs(currentPage, true);
 			};
 
-			// Polling — every 60s fetch notifs created since last poll
+			// Polling � every 60s fetch notifs created since last poll
 			let lastPoll = new Date().toISOString().replace('T', ' ').slice(0, 19);
 			setInterval(async () => {
 				try {

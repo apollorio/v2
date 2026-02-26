@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 
 /**
- * Template: Single Local — Vibrant Venue Profile
+ * Template: Single Local � Vibrant Venue Profile
  *
  * Canvas template (uses wp_head / wp_footer).
  * 4-level fallback: styles/base/single-local.php
@@ -31,7 +31,7 @@ global $post;
 $loc_id   = $post->ID;
 $loc_name = get_post_meta($loc_id, '_local_name', true) ?: get_the_title($loc_id);
 
-// ── Address ──────────────────────────────────────────────────────
+// -- Address ------------------------------------------------------
 $address        = get_post_meta($loc_id, '_local_address', true) ?: '';
 $city           = get_post_meta($loc_id, '_local_city', true) ?: '';
 $state          = get_post_meta($loc_id, '_local_state', true) ?: '';
@@ -39,28 +39,28 @@ $postal         = get_post_meta($loc_id, '_local_postal', true) ?: '';
 $full_address   = trim(implode(', ', array_filter(array($address, $city, $state))));
 $address_detail = trim(implode(', ', array_filter(array($city, $state, $postal))));
 
-// ── Coordinates ──────────────────────────────────────────────────
+// -- Coordinates --------------------------------------------------
 $lat        = (float) (get_post_meta($loc_id, '_local_lat', true) ?: 0);
 $lng        = (float) (get_post_meta($loc_id, '_local_lng', true) ?: 0);
 $has_coords = $lat && $lng;
 
-// ── Description ──────────────────────────────────────────────────
+// -- Description --------------------------------------------------
 $loc_desc_raw   = get_post_meta($loc_id, '_local_description', true) ?: '';
 $loc_content    = ! empty($loc_desc_raw) ? $loc_desc_raw : get_the_content();
 $loc_paragraphs = array_filter(array_map('trim', preg_split('/\n{2,}/', $loc_content)));
 
-// ── Taxonomy ─────────────────────────────────────────────────────
+// -- Taxonomy -----------------------------------------------------
 $type_terms = wp_get_post_terms($loc_id, APOLLO_LOCAL_TAX_TYPE, array('fields' => 'names'));
 $area_terms = wp_get_post_terms($loc_id, APOLLO_LOCAL_TAX_AREA, array('fields' => 'names'));
 $type_label = (! is_wp_error($type_terms) && ! empty($type_terms)) ? implode(' / ', $type_terms) : '';
 $area_label = (! is_wp_error($area_terms) && ! empty($area_terms)) ? $area_terms[0] : '';
 
-// ── Meta ─────────────────────────────────────────────────────────
+// -- Meta ---------------------------------------------------------
 $capacity    = get_post_meta($loc_id, '_local_capacity', true) ?: '';
 $phone       = get_post_meta($loc_id, '_local_phone', true) ?: '';
 $price_range = get_post_meta($loc_id, '_local_price_range', true) ?: '';
 
-// ── Social Links ─────────────────────────────────────────────────
+// -- Social Links -------------------------------------------------
 $social_map   = array(
     'website'   => array('_local_website', 'ri-global-line', 'Website'),
     'instagram' => array('_local_instagram', 'ri-instagram-line', 'Instagram'),
@@ -92,7 +92,7 @@ foreach ($social_map as $key => $def) {
     );
 }
 
-// ── Gallery ──────────────────────────────────────────────────────
+// -- Gallery ------------------------------------------------------
 $gallery = array();
 for ($i = 1; $i <= 5; $i++) {
     $img = get_post_meta($loc_id, "_local_image_{$i}", true);
@@ -109,7 +109,7 @@ if (has_post_thumbnail($loc_id)) {
 $hero_image    = $gallery[0] ?? 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1400&h=900&fit=crop';
 $gallery_count = count($gallery);
 
-// ── Music Tags (from event sounds taxonomy) ──────────────────────
+// -- Music Tags (from event sounds taxonomy) ----------------------
 $sound_terms = array();
 if (taxonomy_exists('sound')) {
     // Aggregate sounds from events at this loc
@@ -133,7 +133,7 @@ if (taxonomy_exists('sound')) {
     sort($sound_terms);
 }
 
-// ── Upcoming Events ──────────────────────────────────────────────
+// -- Upcoming Events ----------------------------------------------
 $upcoming_events = array();
 if (post_type_exists('event')) {
     $ev_query = new WP_Query(
@@ -182,7 +182,7 @@ if (post_type_exists('event')) {
 }
 $total_events = apollo_local_count_upcoming_events($loc_id);
 
-// ── Resident DJs ─────────────────────────────────────────────────
+// -- Resident DJs -------------------------------------------------
 $resident_djs = array();
 if (post_type_exists('dj')) {
     // DJs linked to events at this loc
@@ -227,7 +227,7 @@ if (post_type_exists('dj')) {
     }
 }
 
-// ── Depoimentos (apollo-comment) ─────────────────────────────────
+// -- Depoimentos (apollo-comment) ---------------------------------
 $testimonials_raw = get_post_meta($loc_id, '_local_testimonials', true);
 $testimonials     = array();
 if (! empty($testimonials_raw)) {
@@ -261,7 +261,7 @@ foreach ($wp_reviews as $review) {
 }
 $total_reviews = count($testimonials);
 
-// ── Stats ────────────────────────────────────────────────────────
+// -- Stats --------------------------------------------------------
 $fav_count  = function_exists('apollo_fav_get_count') ? apollo_fav_get_count($loc_id) : 0;
 $wow_count  = function_exists('apollo_wow_get_count') ? apollo_wow_get_count($loc_id) : 0;
 $avg_rating = 0;
@@ -270,17 +270,17 @@ if ($total_reviews > 0) {
     $avg_rating   = round($total_rating / $total_reviews, 1);
 }
 
-// ── User state ───────────────────────────────────────────────────
+// -- User state ---------------------------------------------------
 $is_logged_in = is_user_logged_in();
 $user_id      = get_current_user_id();
 $is_favorited = ($is_logged_in && function_exists('apollo_fav_is_favorited'))
     ? apollo_fav_is_favorited($user_id, $loc_id)
     : false;
 
-// ── Google Maps route URL ────────────────────────────────────────
+// -- Google Maps route URL ----------------------------------------
 $route_url = $has_coords ? sprintf('https://www.google.com/maps/dir/?api=1&destination=%s,%s', $lat, $lng) : '';
 
-// ── Hours (stored as JSON meta or hardcoded placeholder) ─────────
+// -- Hours (stored as JSON meta or hardcoded placeholder) ---------
 $hours_raw = get_post_meta($loc_id, '_local_hours', true);
 $hours     = array();
 if (! empty($hours_raw) && is_string($hours_raw)) {
@@ -288,10 +288,10 @@ if (! empty($hours_raw) && is_string($hours_raw)) {
 } elseif (is_array($hours_raw)) {
     $hours = $hours_raw;
 }
-$day_names = array('Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo');
+$day_names = array('Segunda', 'Ter�a', 'Quarta', 'Quinta', 'Sexta', 'S�bado', 'Domingo');
 $today_idx = (int) current_time('N') - 1; // 0=Mon .. 6=Sun
 
-// ── Amenities (from meta JSON or taxonomy) ───────────────────────
+// -- Amenities (from meta JSON or taxonomy) -----------------------
 $amenities_raw = get_post_meta($loc_id, '_local_amenities', true);
 $amenities     = array();
 if (! empty($amenities_raw) && is_string($amenities_raw)) {
@@ -303,11 +303,11 @@ if (! empty($amenities_raw) && is_string($amenities_raw)) {
 $amenity_icons = array(
     'estacionamento'  => 'ri-parking-box-line',
     'vip'             => 'ri-vip-crown-line',
-    'fumódromo'       => 'ri-cloudy-line',
+    'fum�dromo'       => 'ri-cloudy-line',
     'ar condicionado' => 'ri-temp-cold-line',
     'acessibilidade'  => 'ri-wheelchair-line',
     'wifi'            => 'ri-wifi-line',
-    'segurança'       => 'ri-shield-check-line',
+    'seguran�a'       => 'ri-shield-check-line',
     'rooftop'         => 'ri-building-4-line',
     'piscina'         => 'ri-water-flash-line',
     'palco'           => 'ri-mic-line',
@@ -322,9 +322,9 @@ $amenity_icons = array(
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0">
-    <title><?php echo esc_html($loc_name); ?> · Apollo</title>
+    <title><?php echo esc_html($loc_name); ?> � Apollo</title>
 
-    <!-- Apollo CDN — core.min.js bundles: CSS vars, GSAP 3.14.2, jQuery, Icons, page-layout -->
+    <!-- Apollo CDN � core.min.js bundles: CSS vars, GSAP 3.14.2, jQuery, Icons, page-layout -->
     <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
 
     <!-- Fonts: Shrikhand only (Space Grotesk + Space Mono already loaded by CDN) -->
@@ -339,9 +339,9 @@ $amenity_icons = array(
     <!-- GSAP already loaded by CDN core.min.js (v3.14.2) -->
 
     <style>
-        /* ═══════════════════════════════════════════════════════
+        /* -------------------------------------------------------
 		TOKENS & THEME
-		═══════════════════════════════════════════════════════ */
+		------------------------------------------------------- */
         :root {
             --ff-fun: "Syne", sans-serif;
             --ff-mono: "Space Mono", monospace;
@@ -374,7 +374,7 @@ $amenity_icons = array(
             --gray-2: #71717a;
         }
 
-        /* ═══ RESET ═══ */
+        /* --- RESET --- */
         *,
         *::before,
         *::after {
@@ -424,7 +424,7 @@ $amenity_icons = array(
             transform-origin: bottom;
         }
 
-        /* ═══ HERO ═══ */
+        /* --- HERO --- */
         .venue-hero {
             position: relative;
             height: 70vh;
@@ -571,7 +571,7 @@ $amenity_icons = array(
             background: rgba(0, 0, 0, 0.8);
         }
 
-        /* ═══ MAIN GRID ═══ */
+        /* --- MAIN GRID --- */
         .venue-main {
             padding: 48px 0;
         }
@@ -582,7 +582,7 @@ $amenity_icons = array(
             gap: 40px;
         }
 
-        /* ═══ SECTIONS ═══ */
+        /* --- SECTIONS --- */
         .section-title {
             font-size: 13px;
             font-weight: 800;
@@ -624,7 +624,7 @@ $amenity_icons = array(
             color: var(--gray-1);
         }
 
-        /* ═══ QUICK STATS ═══ */
+        /* --- QUICK STATS --- */
         .venue-quick-stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -657,7 +657,7 @@ $amenity_icons = array(
             color: var(--gray-2);
         }
 
-        /* ═══ AMENITIES ═══ */
+        /* --- AMENITIES --- */
         .amenities-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -681,7 +681,7 @@ $amenity_icons = array(
             color: var(--ap-orange);
         }
 
-        /* ═══ EVENT CARDS ═══ */
+        /* --- EVENT CARDS --- */
         .venue-events-list {
             margin-bottom: 40px;
         }
@@ -763,7 +763,7 @@ $amenity_icons = array(
             transform: scale(1.05);
         }
 
-        /* ═══ REVIEWS ═══ */
+        /* --- REVIEWS --- */
         .review-card {
             padding: 20px;
             border: 1px solid var(--border);
@@ -812,7 +812,7 @@ $amenity_icons = array(
             color: var(--gray-1);
         }
 
-        /* ═══ SIDEBAR ═══ */
+        /* --- SIDEBAR --- */
         .venue-sidebar {
             position: sticky;
             top: 80px;
@@ -909,7 +909,7 @@ $amenity_icons = array(
             font-weight: 700;
         }
 
-        /* ═══ RESIDENT DJS ═══ */
+        /* --- RESIDENT DJS --- */
         .resident-dj {
             display: flex;
             align-items: center;
@@ -954,7 +954,7 @@ $amenity_icons = array(
             font-size: 16px;
         }
 
-        /* ═══ PHOTO GALLERY ═══ */
+        /* --- PHOTO GALLERY --- */
         .photo-gallery {
             padding: 48px 0;
             border-top: 1px solid var(--border);
@@ -987,7 +987,7 @@ $amenity_icons = array(
             transform: scale(1.08);
         }
 
-        /* ═══ FOOTER ═══ */
+        /* --- FOOTER --- */
         .site-footer {
             border-top: 1px solid var(--border);
             padding: 32px 0;
@@ -1020,7 +1020,7 @@ $amenity_icons = array(
             color: var(--black-1);
         }
 
-        /* ═══ RESPONSIVE ═══ */
+        /* --- RESPONSIVE --- */
         @media (max-width: 900px) {
             .venue-grid {
                 grid-template-columns: 1fr;
@@ -1071,7 +1071,7 @@ $amenity_icons = array(
 
     <div class="page-loader"></div>
 
-    <!-- ═══════════ HERO ═══════════ -->
+    <!-- ----------- HERO ----------- -->
     <section class="venue-hero">
         <div class="venue-hero-bg">
             <img src="<?php echo esc_url($hero_image); ?>" alt="<?php echo esc_attr($loc_name); ?>">
@@ -1113,7 +1113,7 @@ $amenity_icons = array(
                         <i class="ri-share-forward-line"></i>
                     </button>
                     <?php if ($route_url) : ?>
-                        <a href="<?php echo esc_url($route_url); ?>" class="venue-action-btn" target="_blank" rel="noopener" title="<?php esc_attr_e('Direções', 'apollo-local'); ?>">
+                        <a href="<?php echo esc_url($route_url); ?>" class="venue-action-btn" target="_blank" rel="noopener" title="<?php esc_attr_e('Dire��es', 'apollo-local'); ?>">
                             <i class="ri-route-line"></i>
                         </a>
                     <?php endif; ?>
@@ -1125,12 +1125,12 @@ $amenity_icons = array(
         <?php endif; ?>
     </section>
 
-    <!-- ═══════════ MAIN ═══════════ -->
+    <!-- ----------- MAIN ----------- -->
     <main class="venue-main">
         <div class="container">
             <div class="venue-grid">
 
-                <!-- ─── LEFT COLUMN ─── -->
+                <!-- --- LEFT COLUMN --- -->
                 <div class="venue-details">
 
                     <!-- Quick Stats -->
@@ -1203,7 +1203,7 @@ $amenity_icons = array(
                     <!-- Upcoming Events -->
                     <?php if (! empty($upcoming_events)) : ?>
                         <div class="venue-events-list reveal-up">
-                            <div class="section-title"><i class="ri-calendar-event-fill"></i> <?php esc_html_e('Próximos Eventos', 'apollo-local'); ?></div>
+                            <div class="section-title"><i class="ri-calendar-event-fill"></i> <?php esc_html_e('Pr�ximos Eventos', 'apollo-local'); ?></div>
                             <?php
                             foreach ($upcoming_events as $ev) :
                                 $ev_ts    = $ev['date'] ? strtotime($ev['date']) : 0;
@@ -1256,7 +1256,7 @@ $amenity_icons = array(
                                             <img src="<?php echo esc_url($review['avatar']); ?>" alt="" class="review-avatar" loading="lazy">
                                         <?php endif; ?>
                                         <div>
-                                            <div class="review-name"><?php echo esc_html($review['name'] ?? __('Anônimo', 'apollo-local')); ?></div>
+                                            <div class="review-name"><?php echo esc_html($review['name'] ?? __('An�nimo', 'apollo-local')); ?></div>
                                             <?php if (! empty($review['date'])) : ?>
                                                 <div class="review-date"><?php echo wp_kses_post(apollo_time_ago_html($review['date'])); ?></div>
                                             <?php endif; ?>
@@ -1279,7 +1279,7 @@ $amenity_icons = array(
                     <?php endif; ?>
                 </div>
 
-                <!-- ─── RIGHT COLUMN — SIDEBAR ─── -->
+                <!-- --- RIGHT COLUMN � SIDEBAR --- -->
                 <div class="venue-sidebar">
 
                     <!-- Map -->
@@ -1311,7 +1311,7 @@ $amenity_icons = array(
                     <!-- Hours -->
                     <?php if (! empty($hours)) : ?>
                         <div class="venue-hours-card reveal-up">
-                            <div class="section-title" style="margin-bottom:12px;"><i class="ri-time-line"></i> <?php esc_html_e('Horários', 'apollo-local'); ?></div>
+                            <div class="section-title" style="margin-bottom:12px;"><i class="ri-time-line"></i> <?php esc_html_e('Hor�rios', 'apollo-local'); ?></div>
                             <?php
                             foreach ($day_names as $idx => $day_name) :
                                 $h        = $hours[$idx] ?? ($hours[$day_name] ?? '');
@@ -1351,7 +1351,7 @@ $amenity_icons = array(
         </div>
     </main>
 
-    <!-- ═══════════ PHOTO GALLERY ═══════════ -->
+    <!-- ----------- PHOTO GALLERY ----------- -->
     <?php if (count($gallery) > 1) : ?>
         <section class="photo-gallery" id="photo-gallery">
             <div class="container">
@@ -1367,13 +1367,13 @@ $amenity_icons = array(
         </section>
     <?php endif; ?>
 
-    <!-- ═══════════ FOOTER ═══════════ -->
+    <!-- ----------- FOOTER ----------- -->
     <footer class="site-footer">
         <div class="container">
             <div class="footer-inner">
-                <div class="footer-copy">Apollo::rio · <?php echo esc_html(date('Y')); ?></div>
+                <div class="footer-copy">Apollo::rio � <?php echo esc_html(date('Y')); ?></div>
                 <div class="footer-links">
-                    <a href="<?php echo esc_url(home_url('/')); ?>"><?php esc_html_e('Início', 'apollo-local'); ?></a>
+                    <a href="<?php echo esc_url(home_url('/')); ?>"><?php esc_html_e('In�cio', 'apollo-local'); ?></a>
                     <a href="<?php echo esc_url(home_url('/eventos')); ?>"><?php esc_html_e('Eventos', 'apollo-local'); ?></a>
                     <a href="<?php echo esc_url(home_url('/radar')); ?>"><?php esc_html_e('Radar', 'apollo-local'); ?></a>
                 </div>
@@ -1381,7 +1381,7 @@ $amenity_icons = array(
         </div>
     </footer>
 
-    <!-- ═══════════ SCRIPTS ═══════════ -->
+    <!-- ----------- SCRIPTS ----------- -->
     <script>
         (function() {
             'use strict';
@@ -1390,7 +1390,7 @@ $amenity_icons = array(
             var NONCE = '<?php echo wp_create_nonce('wp_rest'); ?>';
             var LOC_ID = <?php echo (int) $loc_id; ?>;
 
-            // ── Page Loader ──
+            // -- Page Loader --
             window.addEventListener('load', function() {
                 gsap.to('.page-loader', {
                     scaleY: 0,
@@ -1400,7 +1400,7 @@ $amenity_icons = array(
                 });
             });
 
-            // ── Scroll Reveal ──
+            // -- Scroll Reveal --
             gsap.registerPlugin(ScrollTrigger);
             document.querySelectorAll('.reveal-up').forEach(function(el) {
                 gsap.to(el, {
@@ -1416,7 +1416,7 @@ $amenity_icons = array(
                 });
             });
 
-            // ── Parallax hero ──
+            // -- Parallax hero --
             gsap.to('.venue-hero-bg img', {
                 y: '15%',
                 ease: 'none',
@@ -1429,7 +1429,7 @@ $amenity_icons = array(
             });
 
             <?php if ($has_coords) : ?>
-                // ── Leaflet Map ──
+                // -- Leaflet Map --
                 var map = L.map('venueMap', {
                     zoomControl: false,
                     scrollWheelZoom: false,
@@ -1444,7 +1444,7 @@ $amenity_icons = array(
                     .bindPopup('<strong><?php echo esc_js($loc_name); ?></strong><?php echo $address ? '<br>' . esc_js($address) : ''; ?>');
             <?php endif; ?>
 
-            // ── Favorite toggle (apollo-fav) ──
+            // -- Favorite toggle (apollo-fav) --
             var favBtn = document.getElementById('loc-fav-btn');
             if (favBtn) {
                 favBtn.addEventListener('click', function() {
@@ -1468,21 +1468,21 @@ $amenity_icons = array(
                         .then(function(data) {
                             if (data.success || data.status) {
                                 favBtn.classList.toggle('is-favorited');
-                                icon.className = favBtn.classList.contains('is-favorited') ? 'ri-heart-fill' : 'ri-heart-line';
+                                icon.className = favBtn.classList.contains('is-favorited') ? 'ri-fire-fill' : 'ri-fire-line';
                             }
                         })
                         .catch(console.error);
                 });
             }
 
-            // ── Share ──
+            // -- Share --
             var shareBtn = document.getElementById('loc-share-btn');
             if (shareBtn) {
                 shareBtn.addEventListener('click', function() {
                     if (navigator.share) {
                         navigator.share({
                             title: '<?php echo esc_js($loc_name); ?>',
-                            text: '<?php echo esc_js($loc_name . ' — ' . $full_address); ?>',
+                            text: '<?php echo esc_js($loc_name . ' � ' . $full_address); ?>',
                             url: '<?php echo esc_js(get_permalink($loc_id)); ?>'
                         }).catch(function() {});
                     } else {
@@ -1492,7 +1492,7 @@ $amenity_icons = array(
                 });
             }
 
-            // ── Gallery scroll-to ──
+            // -- Gallery scroll-to --
             var galleryBtn = document.getElementById('scroll-to-gallery');
             if (galleryBtn) {
                 galleryBtn.addEventListener('click', function() {

@@ -1,18 +1,19 @@
 <?php
+
 /**
  * Plugin Constants
  *
- * @package Apollo\Shortcode
+ * @package Apollo\Shortcodes
  */
 
 declare(strict_types=1);
 
-namespace Apollo\Shortcode;
+namespace Apollo\Shortcodes;
 
 // Prevent direct access.
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+if (! defined('ABSPATH')) {
+    exit;
 }
 
 // REST API namespace
-define( 'APOLLO_SHORTCODE_REST_NAMESPACE', 'apollo/v1' );
+define('APOLLO_SHORTCODE_REST_NAMESPACE', 'apollo/v1');
