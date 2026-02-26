@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<title><?php echo 'Perfil Privado - ' . get_bloginfo( 'name' ); ?></title>
 
 	<!-- Apollo CDN - Canvas Mode (NO wp_head to prevent theme interference) -->
-	<script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+	<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
 	<!-- Navbar CSS/JS -->
 	<?php if ( defined( 'APOLLO_TEMPLATES_URL' ) && defined( 'APOLLO_TEMPLATES_VERSION' ) ) : ?>

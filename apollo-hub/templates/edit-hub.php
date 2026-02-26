@@ -46,9 +46,9 @@ wp_enqueue_script('apollo-hub-builder');
     <meta name="robots" content="noindex, nofollow">
     <title><?php esc_html_e('Editar Hub', 'apollo-hub'); ?> — <?php echo esc_html($current_user->display_name); ?></title>
     <!-- Apollo CDN — core.js: base CSS + GSAP + jQuery + icon.min.js -->
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
     <?php wp_head(); ?>
-    <!-- icon.min.js already loaded by CDN core.min.js high-priority chain -->
+    <!-- icon.min.js already loaded by CDN core.js high-priority chain -->
 </head>
 
 <body class="apollo-hub-builder-page">

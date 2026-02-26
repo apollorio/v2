@@ -324,8 +324,8 @@ $amenity_icons = array(
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0">
     <title><?php echo esc_html($loc_name); ?> � Apollo</title>
 
-    <!-- Apollo CDN � core.min.js bundles: CSS vars, GSAP 3.14.2, jQuery, Icons, page-layout -->
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <!-- Apollo CDN � core.js bundles: CSS vars, GSAP 3.14.2, jQuery, Icons, page-layout -->
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
     <!-- Fonts: Shrikhand only (Space Grotesk + Space Mono already loaded by CDN) -->
     <link href="https://fonts.googleapis.com/css2?family=Shrikhand&display=swap" rel="stylesheet">
@@ -336,7 +336,7 @@ $amenity_icons = array(
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <?php endif; ?>
 
-    <!-- GSAP already loaded by CDN core.min.js (v3.14.2) -->
+    <!-- GSAP already loaded by CDN core.js (v3.14.2) -->
 
     <style>
         /* -------------------------------------------------------

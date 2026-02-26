@@ -31,7 +31,7 @@ Template Name: Marketplace Custom
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Marketplace - Apollo::Rio</title>
-	<script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+	<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 </head>
 
 <body>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Apollo CDN
@@ -73,7 +73,7 @@ class CDN
         }
         self::$injected = true;
 
-        $url = self::CDN_BASE . 'core.min.js?v=1.0.0';
+        $url = self::CDN_BASE . 'core.js';
         // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
         echo '<script src="' . esc_url($url) . '" fetchpriority="high"></script>' . "\n";
     }
@@ -103,7 +103,7 @@ class CDN
         $cdn_version = defined('APOLLO_CDN_VERSION') ? APOLLO_CDN_VERSION : '1.0.0';
         wp_register_script(
             'apollo-cdn',
-            self::CDN_BASE . 'core.min.js?v=1.0.0',
+            self::CDN_BASE . 'core.js',
             array(),
             $cdn_version,
             false

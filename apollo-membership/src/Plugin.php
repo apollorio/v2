@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Main Plugin Class (Singleton)
@@ -191,10 +191,10 @@ final class Plugin
         wp_dequeue_style('wp-fonts');
         wp_dequeue_style('wp-fonts-css');
 
-        // Load Apollo CDN for RemixIcon + Apollo icons (core.min.js bundles jQuery v4)
+        // Load Apollo CDN for RemixIcon + Apollo icons (core.js bundles jQuery v4)
         $cdn_url = defined('APOLLO_CDN_CORE_JS')
             ? APOLLO_CDN_CORE_JS
-            : 'https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0';
+            : 'https://cdn.apollo.rio.br/v1.0.0/core.js';
         wp_enqueue_script('apollo-cdn', $cdn_url, array(), '1.0.0', false);
 
         wp_enqueue_script('jquery');

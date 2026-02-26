@@ -180,7 +180,7 @@ if ( $has_coords ) {
 	<link rel="icon" href="<?php echo esc_url( $cdn_base . 'img/neon-green.webp' ); ?>" type="image/webp">
 
 	<!-- Apollo CDN — Canvas Mode -->
-	<script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+	<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
 	<!-- Local-specific stylesheet -->
 	<link rel="stylesheet" href="<?php echo esc_url( $plugin_url . 'assets/css/local-single.css' ); ?>">

@@ -53,7 +53,7 @@ $tpl_parts = __DIR__ . '/template-parts/chat/';
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#f45f00">
     <title>Chat::Rio &bull; Apollo</title>
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
     <script>
         window.ApolloChat =
             <?php

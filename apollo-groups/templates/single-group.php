@@ -50,7 +50,7 @@ if (! $group) {
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <title>Apollo · 404</title>
-        <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+        <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
     </head>
 
     <body style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Space Grotesk',sans-serif;">

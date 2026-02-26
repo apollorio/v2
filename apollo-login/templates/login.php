@@ -171,7 +171,7 @@ $js_config = array(
     <title><?php echo esc_html__('Apollo::Rio - Terminal de Acesso', 'apollo-login'); ?></title>
 
     <!-- DIRECT ASSETS - NO wp_head() TO PREVENT apollo-templates INTERFERENCE -->
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
     <link rel="stylesheet"
         href="<?php echo esc_url(APOLLO_LOGIN_URL . 'assets/css/apollo-auth-complete.css?v=' . APOLLO_LOGIN_VERSION); ?>">
 </head>

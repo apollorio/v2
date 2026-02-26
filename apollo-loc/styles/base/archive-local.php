@@ -140,7 +140,7 @@ $parts = __DIR__ . '/template-parts/archive-local/';
     <div class="page-loader"></div>
 
     <!-- Apollo CDN -->
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
     <!-- Navbar -->
     <?php
@@ -189,7 +189,7 @@ $parts = __DIR__ . '/template-parts/archive-local/';
 
     </main>
 
-    <!-- GSAP already loaded by CDN core.min.js (v3.14.2) -->
+    <!-- GSAP already loaded by CDN core.js (v3.14.2) -->
 
     <!-- Scripts -->
     <?php require $parts . 'scripts.php'; ?>

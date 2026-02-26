@@ -30,9 +30,9 @@ $has_seo = has_action('apollo/seo/head');
     ?>
 
     <!-- Apollo CDN (base styles, GSAP 3.14.2, RemixIcon, jQuery, dark theme, translate, page-layout) -->
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
-    <!-- GSAP already loaded by CDN core.min.js (v3.14.2) -->
+    <!-- GSAP already loaded by CDN core.js (v3.14.2) -->
 
     <!-- Navbar (apollo-templates) -->
     <?php if (defined('APOLLO_TEMPLATES_URL') && defined('APOLLO_TEMPLATES_VERSION')) : ?>

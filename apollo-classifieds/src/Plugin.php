@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Main Plugin Class
@@ -42,7 +42,7 @@ class Plugin
             return;
         }
 
-        // Apollo CDN — core.min.js bundles: CSS, GSAP 3.14.2, jQuery, Icons, page-layout
+        // Apollo CDN — core.js bundles: CSS, GSAP 3.14.2, jQuery, Icons, page-layout
         // Registered by apollo-core CDN.php; relying on dependency graph via 'apollo-cdn' handle.
         // No separate GSAP enqueue needed — CDN already provides it.
 

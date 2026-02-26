@@ -470,7 +470,7 @@ $landmarks = array(
     <meta name="theme-color" content="#0A0A0A">
     <title><?php echo esc_html(get_bloginfo('name')); ?> — Mapa</title>
 
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
     <link rel="stylesheet" href="https://cdn.apollo.rio.br/v1.0.0/css/99-osm-map.min.css">
 
     <style id="apollo-mapa">

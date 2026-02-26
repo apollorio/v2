@@ -31,7 +31,7 @@ do_action('apollo_before_home_content');
         <?php esc_html_e('A mão extra da cena', 'apollo-core'); ?></title>
 
     <!-- Apollo CDN — Canvas Mode (loads Space Grotesk, Space Mono, Shrikhand, RemixIcon, GSAP, Dark Theme) -->
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
     <!-- Home-specific fonts (not in CDN) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

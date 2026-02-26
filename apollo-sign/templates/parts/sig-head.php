@@ -38,12 +38,12 @@ $doc_title = $doc_title ?? 'Apollo Docs — Assinatura Digital';
     <title><?php echo esc_html($doc_title); ?></title>
 
     <!-- Apollo CDN: base CSS, GSAP 3.13, jQuery, RemixIcon, dark theme, i18n, analytics -->
-    <script src="<?php echo esc_url(APOLLO_CDN_URL); ?>core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <script src="<?php echo esc_url(APOLLO_CDN_URL); ?>core.js" fetchpriority="high"></script>
 
-    <!-- GSAP already loaded by CDN core.min.js (v3.14.2) -->
+    <!-- GSAP already loaded by CDN core.js (v3.14.2) -->
 
     <!-- Interact.js — drag/resize for signature placement -->
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 
-    <!-- Fonts: Space Grotesk + Space Mono already loaded by CDN core.min.js -->
+    <!-- Fonts: Space Grotesk + Space Mono already loaded by CDN core.js -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -1613,7 +1613,7 @@ $row_index = 0;
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Apollo — Routes Spreadsheet</title>
-	<script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+	<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 	<style>
 		/* ═══════════════════════════════════════════════
 			APOLLO ROUTES SPREADSHEET — CDN-ALIGNED CSS

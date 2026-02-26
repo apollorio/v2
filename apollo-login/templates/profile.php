@@ -64,7 +64,7 @@
 	<meta property="og:image" content="<?php echo esc_url( $avatar_url ); ?>">
 
 	<!-- Apollo CDN - Canvas Mode (NO wp_head to prevent theme interference) -->
-	<script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+	<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
 	<!-- Profile Styles -->
 	<link rel="stylesheet"

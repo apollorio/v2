@@ -120,7 +120,7 @@ $ajax_nonce = wp_create_nonce( 'apollo_profile_nonce' );
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Editar Perfil | Apollo</title>
 
-	<script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+	<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 
 	<?php if ( defined( 'APOLLO_TEMPLATES_URL' ) && defined( 'APOLLO_TEMPLATES_VERSION' ) ) : ?>

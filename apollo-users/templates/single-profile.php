@@ -186,7 +186,7 @@ $depoimentos = get_comments(
 	<title><?php echo esc_html( $display_name ); ?> apollo clubber rio bra</title>
 
 	<!-- Apollo CDN: Base Stylesheet + GSAP + RemixIcon + jQuery -->
-	<script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+	<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
 	<!-- Material Symbols for Player Icons -->
 	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">

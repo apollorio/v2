@@ -22,7 +22,7 @@ get_header();
 ?>
 
 <!-- Apollo CDN -->
-<script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
 <style id="aj-archive-inline">
     /* ── Archive Layout ── */

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Apollo Docs — Frontend File Manager (Canvas Template)
@@ -23,7 +23,7 @@ $cdn_url = defined('APOLLO_CDN_URL') ? APOLLO_CDN_URL : 'https://cdn.apollo.rio.
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Documentos — Apollo</title>
-    <script src="<?php echo esc_url($cdn_url . 'core.min.js?v=1.0.0'); ?>" fetchpriority="high"></script>
+    <script src="<?php echo esc_url($cdn_url . 'core.js'); ?>" fetchpriority="high"></script>
     <?php wp_head(); ?>
     <style>
         html,

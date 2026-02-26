@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Apollo Persistent UI — Universal loader for navbar, FAB, and shared panels.
@@ -177,7 +177,7 @@ class PersistentUI
     /**
      * Render the CDN <head> block for canvas templates.
      *
-     * Outputs: Apollo CDN core.min.js + SEO hook.
+     * Outputs: Apollo CDN core.js + SEO hook.
      * Call inside <head> of canvas templates.
      *
      * @param array $options {
@@ -197,7 +197,7 @@ class PersistentUI
 
         $cdn_url = defined('APOLLO_CDN_CORE_JS')
             ? APOLLO_CDN_CORE_JS
-            : 'https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0';
+            : 'https://cdn.apollo.rio.br/v1.0.0/core.js';
 ?>
         <meta charset="<?php bloginfo('charset'); ?>" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -206,7 +206,7 @@ class PersistentUI
 
         <?php do_action('apollo/seo/head'); ?>
 
-        <!-- Apollo CDN — core.min.js auto-loads: CSS vars, GSAP, jQuery, Icons, page-layout, translate, tracker -->
+        <!-- Apollo CDN — core.js auto-loads: CSS vars, GSAP, jQuery, Icons, page-layout, translate, tracker -->
         <script src="<?php echo esc_url($cdn_url); ?>" fetchpriority="high"></script>
 
         <?php if (! empty($opts['extra_css'])) : ?>

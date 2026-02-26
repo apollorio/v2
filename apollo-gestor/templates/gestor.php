@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Gestor Apollo — Main admin template
@@ -68,7 +68,7 @@ $status_icons = array(
     'cancelled' => '✕',
 );
 ?>
-<script src="<?php echo esc_url($cdn_url . 'core.min.js?v=1.0.0'); ?>" fetchpriority="high"></script>
+<script src="<?php echo esc_url($cdn_url . 'core.js'); ?>" fetchpriority="high"></script>
 
 <div class="gestor-wrap" id="gestorApp">
 

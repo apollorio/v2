@@ -214,7 +214,7 @@ $parts_dir = APOLLO_TEMPLATES_DIR . 'templates/template-parts/mural/';
     <title><?php echo esc_html(get_bloginfo('name')); ?> — Mural</title>
 
     <!-- Apollo CDN - Canvas Mode (NO wp_head to prevent theme interference) -->
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
     <!-- Mural CSS -->
     <link rel="stylesheet" href="<?php echo esc_url($css_url); ?>?v=<?php echo esc_attr($ver); ?>">

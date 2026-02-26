@@ -1,7 +1,7 @@
-<?php
+ï»¿<?php
 
 /**
- * Notifications Page — /notificacoes
+ * Notifications Page ï¿½ /notificacoes
  * Blank Canvas Template - No Theme Interference
  *
  * Features: severity colors, icon per notif, CTA action buttons,
@@ -32,10 +32,10 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 	<meta name="theme-color" content="#ffffff">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="default">
-	<title><?php esc_html_e( 'Notificações - Apollo::Rio', 'apollo-notif' ); ?></title>
+	<title><?php esc_html_e( 'Notificaï¿½ï¿½es - Apollo::Rio', 'apollo-notif' ); ?></title>
 
 	<!-- Apollo CDN - Mandatory for all pages -->
-	<script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+	<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
 	<!-- Navbar CSS -->
 	<?php if ( defined( 'APOLLO_TEMPLATES_URL' ) && defined( 'APOLLO_TEMPLATES_VERSION' ) ) : ?>
@@ -402,7 +402,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 
 		<!-- Toolbar -->
 		<div class="notif-toolbar">
-			<h1><?php esc_html_e( 'Notificações', 'apollo-notif' ); ?></h1>
+			<h1><?php esc_html_e( 'Notificaï¿½ï¿½es', 'apollo-notif' ); ?></h1>
 			<div class="notif-actions">
 				<button id="mark-all-read" class="apollo-btn-ghost">
 					<i class="ri-check-double-line"></i> Todas lidas
@@ -416,7 +416,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 		<!-- Filters -->
 		<div class="notif-filters-row">
 			<button class="notif-pill active" data-filter="all">Todas</button>
-			<button class="notif-pill" data-filter="unread">Não lidas</button>
+			<button class="notif-pill" data-filter="unread">Nï¿½o lidas</button>
 			<button class="notif-pill" data-filter="read">Lidas</button>
 			<select id="type-filter" class="notif-type-filter">
 				<option value="">Todos os tipos</option>
@@ -424,14 +424,14 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 				<option value="follow">?? Follow</option>
 				<option value="wow">?? Wow</option>
 				<option value="group_join">?? Comuna</option>
-				<option value="mention">@ Menção</option>
+				<option value="mention">@ Menï¿½ï¿½o</option>
 				<option value="new_event">?? Evento</option>
 				<option value="fav_saved">?? Fav</option>
 				<option value="depoimento">?? Depoimento</option>
 				<option value="membership_upgrade">?? Membership</option>
 				<option value="coauthor_invite">?? Coautoria</option>
 				<option value="profile_visit">??? Visita</option>
-				<option value="new_user">?? Novo usuário</option>
+				<option value="new_user">?? Novo usuï¿½rio</option>
 			</select>
 		</div>
 
@@ -574,7 +574,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 					if (!append) container.innerHTML = '';
 
 					if (!data.length && page === 1) {
-						container.innerHTML = '<div class="notif-empty"><i class="ri-notification-off-line"></i>Sem notificações</div>';
+						container.innerHTML = '<div class="notif-empty"><i class="ri-notification-off-line"></i>Sem notificaï¿½ï¿½es</div>';
 						loadMoreEl.style.display = 'none';
 						return;
 					}
@@ -672,7 +672,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 			};
 
 			document.getElementById('delete-read-btn').onclick = async () => {
-				if (!confirm('Remover todas as notificações lidas?')) return;
+				if (!confirm('Remover todas as notificaï¿½ï¿½es lidas?')) return;
 				await fetch(REST + '/read', {
 					method: 'DELETE',
 					headers: hdrs(),
@@ -680,7 +680,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 				});
 				document.querySelectorAll('.notif-item.read').forEach(el => el.remove());
 				if (!container.querySelector('.notif-item'))
-					container.innerHTML = '<div class="notif-empty"><i class="ri-notification-off-line"></i>Sem notificações</div>';
+					container.innerHTML = '<div class="notif-empty"><i class="ri-notification-off-line"></i>Sem notificaï¿½ï¿½es</div>';
 			};
 
 			document.querySelectorAll('.notif-pill').forEach(btn => {
@@ -704,7 +704,7 @@ $nonce      = wp_create_nonce( 'wp_rest' );
 				loadNotifs(currentPage, true);
 			};
 
-			// Polling — every 60s fetch notifs created since last poll
+			// Polling ï¿½ every 60s fetch notifs created since last poll
 			let lastPoll = new Date().toISOString().replace('T', ' ').slice(0, 19);
 			setInterval(async () => {
 				try {

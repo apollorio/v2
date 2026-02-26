@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Plugin — Singleton orquestrador
@@ -49,7 +49,7 @@ class Plugin
      */
     public function register_assets(): void
     {
-        // RemixIcon: loaded by CDN core.min.js — no separate registration needed
+        // RemixIcon: loaded by CDN core.js — no separate registration needed
 
         // CSS principal
         wp_register_style(

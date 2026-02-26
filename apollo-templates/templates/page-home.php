@@ -153,8 +153,8 @@ $js  = defined('APOLLO_TEMPLATES_URL') ? APOLLO_TEMPLATES_URL . 'assets/js/new-h
     <meta name="theme-color" content="#0A0A0A">
     <title><?php echo esc_html(get_bloginfo('name')); ?> — Underground Culture Guide</title>
 
-    <!-- Apollo CDN — core.min.js auto-loads: CSS vars, GSAP, jQuery, Icons -->
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <!-- Apollo CDN — core.js auto-loads: CSS vars, GSAP, jQuery, Icons -->
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
     <!-- Panel Engine — required for [data-panel] slide/tab navigation -->
     <script src="https://cdn.apollo.rio.br/v1.0.0/js/page-layout.js" defer></script>
 

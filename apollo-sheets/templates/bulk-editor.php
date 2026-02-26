@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Load Apollo CDN for icons and base styles
-echo '<script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>';
+echo '<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>';
 
 $nonce = wp_create_nonce( 'apollo_bulk_nonce' );
 ?>

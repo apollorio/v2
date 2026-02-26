@@ -84,7 +84,7 @@ $description = $hub_data['bio'] ?: sprintf(esc_html__('Hub de %s no Apollo.', 'a
     <meta name="twitter:title" content="<?php echo esc_attr($display_name); ?> — Apollo Hub">
     <title><?php echo esc_html($display_name); ?> — Apollo Hub</title>
     <!-- Apollo CDN — Carrega PRIMEIRO: base CSS, icon runtime (SVG mask), GSAP, jQuery -->
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
     <?php wp_head(); ?>
     <?php if ($hub_data['custom_css'] && current_user_can('edit_post', $post->ID)) : ?>
         <style id="hub-custom-css">
@@ -93,7 +93,7 @@ $description = $hub_data['bio'] ?: sprintf(esc_html__('Hub de %s no Apollo.', 'a
             ?>
         </style>
     <?php endif; ?>
-    <!-- icon.min.js already loaded by CDN core.min.js high-priority chain -->
+    <!-- icon.min.js already loaded by CDN core.js high-priority chain -->
 </head>
 
 <body class="apollo-hub-page apollo-hub-theme-<?php echo esc_attr($theme); ?>">

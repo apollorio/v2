@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * BlankCanvasTrait — Unified blank canvas rendering for Apollo ecosystem.
@@ -111,13 +111,13 @@ trait BlankCanvasTrait
     /**
      * Get Apollo CDN core.js URL.
      *
-     * @return string Full URL to core.min.js.
+     * @return string Full URL to core.js.
      */
     protected function get_apollo_cdn_core_js(): string
     {
         return defined('APOLLO_CDN_CORE_JS')
             ? APOLLO_CDN_CORE_JS
-            : 'https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0';
+            : 'https://cdn.apollo.rio.br/v1.0.0/core.js';
     }
 
     /**

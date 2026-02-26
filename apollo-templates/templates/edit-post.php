@@ -54,7 +54,7 @@ $fields_renderer = \Apollo\Templates\FrontendFields::get_instance();
     <title><?php echo esc_html($page_title . ' — ' . $post->post_title . ' — ' . get_bloginfo('name')); ?></title>
 
     <!-- Apollo CDN — Design Tokens (loads fonts + RemixIcon) -->
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
     <!-- Navbar v2 (from apollo-templates) -->
     <?php if (defined('APOLLO_TEMPLATES_URL')) : ?>

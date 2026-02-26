@@ -35,7 +35,7 @@ $preselect = sanitize_text_field($_GET['tipo'] ?? '');
     <title>Apollo · Criar Comuna ou Núcleo</title>
 
     <!-- Apollo CDN -->
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
     <!-- Navbar -->
     <?php if (defined('APOLLO_TEMPLATES_URL') && defined('APOLLO_TEMPLATES_VERSION')) : ?>
@@ -43,7 +43,7 @@ $preselect = sanitize_text_field($_GET['tipo'] ?? '');
         <script src="<?php echo esc_url(APOLLO_TEMPLATES_URL . 'assets/js/navbar.js'); ?>?v=<?php echo esc_attr(APOLLO_TEMPLATES_VERSION); ?>" defer></script>
     <?php endif; ?>
 
-    <!-- Google Fonts: Space Grotesk + Space Mono already loaded by CDN core.min.js -->
+    <!-- Google Fonts: Space Grotesk + Space Mono already loaded by CDN core.js -->
 
     <style>
         :root {

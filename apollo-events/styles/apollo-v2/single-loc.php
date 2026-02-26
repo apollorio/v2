@@ -59,7 +59,7 @@ if (! defined('ABSPATH')) {
     <title><?php the_title(); ?> - Apollo::Rio</title>
 
     <!-- Apollo CDN - Mandatory for all pages -->
-    <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+    <script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
     <!-- Page styles -->
     <style>
@@ -418,7 +418,7 @@ if (! defined('ABSPATH')) {
 
     </div>
 
-    <!-- GSAP already loaded by CDN core.min.js (v3.14.2) -->
+    <!-- GSAP already loaded by CDN core.js (v3.14.2) -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof gsap === 'undefined') return;

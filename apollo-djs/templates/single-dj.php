@@ -153,7 +153,7 @@ $parts_dir = APOLLO_DJ_DIR . 'templates/parts/dj/';
 	<?php do_action( 'apollo_dj_single_head_before', $dj_id ); ?>
 
 	<!-- Apollo CDN — Canvas Mode -->
-	<script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
+	<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 
 	<!-- DJ-specific stylesheet -->
 	<link rel="stylesheet" href="<?php echo esc_url( $plugin_url . 'assets/css/dj-single.css' ); ?>">
