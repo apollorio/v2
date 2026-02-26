@@ -237,4 +237,4 @@ final class Fav_Ranking
         return $h . '</ol></div><style>.apollo-top-sounds{max-width:400px}.apollo-ranking-list{list-style:none;margin:0;padding:0}.apollo-ranking-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #eee}.rank-pos{font-weight:700;color:#3498db;min-width:30px}.rank-name{flex:1;font-weight:500}.rank-bar{flex:1;height:8px;background:#eee;border-radius:4px;overflow:hidden}.rank-fill{height:100%;background:linear-gradient(90deg,#9b59b6,#3498db);border-radius:4px}.rank-count{font-size:12px;color:#7f8c8d;min-width:30px;text-align:right}</style>';
     }
 }
-add_action('init', array('Apollo_Core\\Fav_Ranking', 'init'));
+add_action('init', array('Apollo\Fav\Fav_Ranking', 'init'));

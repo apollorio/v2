@@ -15,6 +15,9 @@ namespace Apollo\Event;
 
 use Apollo\Core\Traits\BlankCanvasTrait;
 
+// Ensure CenaRio class is loaded
+require_once __DIR__ . '/CenaRio.php';
+
 if (! defined('ABSPATH')) {
     exit;
 }
@@ -127,7 +130,7 @@ final class Plugin
         }
 
         // CENA-RIO (migrated from apollo-shortcodes)
-        CenaRio::init();
+        Cena_Rio_Submissions::init();
     }
 
     /**

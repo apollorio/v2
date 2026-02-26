@@ -468,4 +468,4 @@ class User_Stats_Widget
 }
 
 // Initialize.
-add_action('init', array('\Apollo_Core\User_Stats_Widget', 'init'));
+add_action('init', array('\Apollo\Statistics\User_Stats_Widget', 'init'));

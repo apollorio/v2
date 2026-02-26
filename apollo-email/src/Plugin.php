@@ -21,6 +21,9 @@ use Apollo\Email\Log\Logger;
 use Apollo\Email\API\EmailController;
 use Apollo\Email\Admin\AdminPage;
 
+// Ensure Newsletter class is loaded
+require_once __DIR__ . '/Newsletter.php';
+
 final class Plugin
 {
 
@@ -110,7 +113,7 @@ final class Plugin
         $this->registerHookIntegrations();
 
         // ── Newsletter (migrated from apollo-shortcodes) ────────
-        Newsletter::init();
+        Native_Newsletter::init();
 
         /**
          * Fires after all Apollo Email services are initialized.

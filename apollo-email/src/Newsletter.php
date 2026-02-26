@@ -1038,7 +1038,7 @@ class Native_Newsletter
      */
     public static function register_widget(): void
     {
-        register_widget('Apollo_Core\Newsletter_Widget');
+        register_widget('Apollo\Email\Newsletter_Widget');
     }
 
     /**
