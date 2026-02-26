@@ -23,46 +23,8 @@ class QuizManager {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-	}
-
-	/**
-	 * Enqueue quiz assets
-	 *
-	 * @return void
-	 */
-	public function enqueue_assets(): void {
-		// Only on register page
-		if ( get_query_var( 'apollo_login_page' ) !== 'register' ) {
-			return;
-		}
-
-		wp_enqueue_style(
-			'apollo-quiz',
-			APOLLO_LOGIN_URL . 'assets/css/quiz.css',
-			array(),
-			APOLLO_LOGIN_VERSION
-		);
-
-		wp_enqueue_script(
-			'apollo-quiz',
-			APOLLO_LOGIN_URL . 'assets/js/quiz.js',
-			array( 'jquery' ),
-			APOLLO_LOGIN_VERSION,
-			true
-		);
-
-		wp_localize_script(
-			'apollo-quiz',
-			'apolloQuiz',
-			array(
-				'ajaxUrl'   => admin_url( 'admin-ajax.php' ),
-				'restUrl'   => rest_url( APOLLO_LOGIN_REST_NAMESPACE ),
-				'nonce'     => wp_create_nonce( 'apollo_quiz' ),
-				'stages'    => APOLLO_LOGIN_QUIZ_STAGES,
-				'mandatory' => true,
-			)
-		);
+		// Assets are loaded inline via apollo-auth-scripts.js (Blank Canvas pattern).
+		// No wp_enqueue_scripts needed — wp_head()/wp_footer() are not called.
 	}
 
 	/**

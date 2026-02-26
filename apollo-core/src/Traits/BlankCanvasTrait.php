@@ -141,7 +141,7 @@ trait BlankCanvasTrait
                 content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no">
             <meta name="theme-color" content="#000000">
             <title><?php echo esc_html($title); ?></title>
-            <script src="https://cdn.apollo.rio.br/v1.0.0/cdn.js" fetchpriority="high"></script>
+            <script src="<?php echo esc_url( $this->get_apollo_cdn_core_js() ); ?>" fetchpriority="high"></script>
             <?php
             // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Trusted HTML from plugin code.
             echo $extra;

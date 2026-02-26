@@ -232,93 +232,99 @@ function apollo_templates_register_page_templates(array $templates): array
 add_filter('theme_page_templates', __NAMESPACE__ . '\\apollo_templates_register_page_templates', 10);
 
 /**
- * Resolve plugin template path when WP tries to load it.
- * WP stores the template slug (e.g. "templates/page-home.php") — we need to
- * map that to our plugin directory instead of the theme.
+ * Unified template_redirect handler (P10).
+ * Handles all canvas page overrides and virtual routes for apollo-templates.
+ * Fires AFTER apollo-login (P1) and before theme-level fallbacks.
  */
-function apollo_templates_resolve_page_template(string $template): string
+function apollo_templates_template_redirect(): void
 {
-    // CRITICAL: Skip if apollo-login is handling this page (virtual pages)
-    $apollo_login_page = get_query_var('apollo_login_page', '');
-    if (! empty($apollo_login_page)) {
-        return $template;
+    global $wp_query;
+
+    // Guard: apollo-login is already handling this virtual page.
+    if (! empty(get_query_var('apollo_login_page', ''))) {
+        return;
     }
 
-    $page_template_slug = get_page_template_slug();
-
-    if (empty($page_template_slug)) {
-        return $template;
+    // Virtual pages set by rewrite rules / parse_request fallback.
+    if (get_query_var('apollo_about_redirect')) {
+        wp_safe_redirect(home_url('/sobre'), 301);
+        exit;
     }
 
-    // Check if this slug belongs to our registered templates.
-    $our_templates = array(
-        'templates/page-home.php',
-        'templates/page-sobre.php',
-        'templates/page-mural.php',
-        'templates/page-mapa.php',
-    );
+    if (get_query_var('apollo_home_page')) {
+        $wp_query->is_404  = false;
+        $wp_query->is_home = false;
+        status_header(200);
+        $tpl = is_user_logged_in()
+            ? APOLLO_TEMPLATES_DIR . 'templates/page-mural.php'
+            : APOLLO_TEMPLATES_DIR . 'templates/page-home.php';
+        if (file_exists($tpl)) {
+            include $tpl;
+            exit;
+        }
+        return;
+    }
 
-    if (in_array($page_template_slug, $our_templates, true)) {
-        $plugin_template = APOLLO_TEMPLATES_DIR . $page_template_slug;
-        if (file_exists($plugin_template)) {
-            return $plugin_template;
+    if (get_query_var('apollo_sobre_page')) {
+        $tpl = APOLLO_TEMPLATES_DIR . 'templates/page-sobre.php';
+        if (file_exists($tpl)) {
+            $wp_query->is_404  = false;
+            $wp_query->is_home = false;
+            status_header(200);
+            include $tpl;
+            exit;
         }
     }
 
-    return $template;
+    if (get_query_var('apollo_test_page')) {
+        $tpl = APOLLO_TEMPLATES_DIR . 'templates/page-test.php';
+        if (file_exists($tpl)) {
+            $wp_query->is_404  = false;
+            $wp_query->is_home = false;
+            status_header(200);
+            include $tpl;
+            exit;
+        }
+    }
+
+    // /mapa page.
+    if (is_page('mapa')) {
+        $tpl = APOLLO_TEMPLATES_DIR . 'templates/page-mapa.php';
+        if (file_exists($tpl)) {
+            include $tpl;
+            exit;
+        }
+    }
+
+    // Assigned WP page template (from Page Template dropdown).
+    if (is_page()) {
+        $page_template_slug = get_page_template_slug();
+        $our_templates      = array(
+            'templates/page-home.php',
+            'templates/page-sobre.php',
+            'templates/page-mural.php',
+            'templates/page-mapa.php',
+        );
+        if (! empty($page_template_slug) && in_array($page_template_slug, $our_templates, true)) {
+            $tpl = APOLLO_TEMPLATES_DIR . $page_template_slug;
+            if (file_exists($tpl)) {
+                include $tpl;
+                exit;
+            }
+        }
+    }
+
+    // Front page for non-logged-in visitors (no explicit template assigned).
+    // Logged-in users → mural-router.php handles separately at P99.
+    if ((is_front_page() || is_home() || is_page('home')) && ! is_user_logged_in()) {
+        $tpl = APOLLO_TEMPLATES_DIR . 'templates/page-home.php';
+        if (file_exists($tpl)) {
+            include $tpl;
+            exit;
+        }
+    }
 }
-add_filter('template_include', __NAMESPACE__ . '\\apollo_templates_resolve_page_template', 98);
-
-/**
- * Serve page-home.php for non-logged-in visitors on the front page,
- * even if no explicit WP page template is assigned.
- * (logged-in users get page-mural.php via mural-router.php at priority 99)
- */
-function apollo_templates_front_page_landing(string $template): string
-{
-    // CRITICAL: Skip if apollo-login is handling this page (virtual pages)
-    $apollo_login_page = get_query_var('apollo_login_page', '');
-    if (! empty($apollo_login_page)) {
-        return $template;
-    }
-
-    // Match front page, blog index, OR a WP page with slug 'home' (redundant safety net)
-    $is_home_ctx = is_front_page() || is_home() || is_page('home');
-
-    if (! $is_home_ctx) {
-        return $template;
-    }
-    if (is_user_logged_in()) {
-        return $template; // mural-router handles this at priority 99
-    }
-
-    $landing = APOLLO_TEMPLATES_DIR . 'templates/page-home.php';
-    if (file_exists($landing)) {
-        return $landing;
-    }
-
-    return $template;
-}
-add_filter('template_include', __NAMESPACE__ . '\\apollo_templates_front_page_landing', 97);
-
-/**
- * Serve page-mapa.php for the /mapa page (created by apollo-loc activation).
- * Overrides the [apollo_map] shortcode with the full Canvas v2 map template.
- */
-function apollo_templates_mapa_router(string $template): string
-{
-    if (! is_page('mapa')) {
-        return $template;
-    }
-
-    $mapa = APOLLO_TEMPLATES_DIR . 'templates/page-mapa.php';
-    if (file_exists($mapa)) {
-        return $mapa;
-    }
-
-    return $template;
-}
-add_filter('template_include', __NAMESPACE__ . '\\apollo_templates_mapa_router', 96);
+add_action('template_redirect', __NAMESPACE__ . '\\apollo_templates_template_redirect', 10);
 
 /**
  * Hide WordPress Admin Bar on frontend (show only in wp-admin)

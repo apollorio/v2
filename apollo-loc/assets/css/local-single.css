@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Local Single Page Styles
  * ========================
  * Standalone design for /local/{slug} pages
@@ -123,7 +123,7 @@ img { display: block; max-width: 100%; }
 }
 
 /* VENUE BODY */
-.venue-body {
+.loc-body {
   position: relative;
   margin-top: -24px;
   border-radius: 24px 24px 0 0;
@@ -132,11 +132,11 @@ img { display: block; max-width: 100%; }
   z-index: 1;
 }
 
-.venue-header {
+.loc-header {
   margin-bottom: 1.25rem;
 }
 
-.venue-type-label {
+.loc-type-label {
   display: inline-block;
   font-size: 0.65rem;
   text-transform: uppercase;
@@ -148,7 +148,7 @@ img { display: block; max-width: 100%; }
   margin-bottom: 0.5rem;
 }
 
-.venue-title {
+.loc-title {
   font-size: 2.2rem;
   font-weight: 700;
   line-height: 1.15;
@@ -157,8 +157,8 @@ img { display: block; max-width: 100%; }
   margin-bottom: 0.35rem;
 }
 
-.venue-address,
-.venue-capacity {
+.loc-address,
+.loc-capacity {
   font-size: 0.8rem;
   color: var(--local-muted);
   display: flex;
@@ -167,8 +167,8 @@ img { display: block; max-width: 100%; }
   margin-top: 0.25rem;
 }
 
-.venue-address i,
-.venue-capacity i {
+.loc-address i,
+.loc-capacity i {
   font-size: 0.9rem;
   color: #9ca3af;
 }
@@ -216,7 +216,7 @@ img { display: block; max-width: 100%; }
 }
 
 /* SECTIONS */
-.venue-section {
+.loc-section {
   margin-bottom: 2rem;
 }
 
@@ -238,13 +238,13 @@ img { display: block; max-width: 100%; }
   color: #9ca3af;
 }
 
-.venue-bio {
+.loc-bio {
   font-size: 0.85rem;
   line-height: 1.7;
   color: #4b5563;
 }
 
-.venue-bio p + p {
+.loc-bio p + p {
   margin-top: 0.75rem;
 }
 
@@ -633,7 +633,7 @@ img { display: block; max-width: 100%; }
 }
 
 /* VENUE FOOTER */
-.venue-footer {
+.loc-footer {
   margin-top: 2rem;
   padding-top: 1rem;
   border-top: 1px solid rgba(148, 163, 184, 0.15);
@@ -660,17 +660,17 @@ img { display: block; max-width: 100%; }
   color: #94a3b8;
 }
 
-.dark-mode .venue-body,
+.dark-mode .loc-body,
 .dark-mode .mobile-container,
-[data-theme="dark"] .venue-body,
+[data-theme="dark"] .loc-body,
 [data-theme="dark"] .mobile-container {
   background: #1e293b;
 }
 
-.dark-mode .venue-title,
+.dark-mode .loc-title,
 .dark-mode .local-name,
 .dark-mode .event-card__info h3,
-[data-theme="dark"] .venue-title,
+[data-theme="dark"] .loc-title,
 [data-theme="dark"] .local-name,
 [data-theme="dark"] .event-card__info h3 {
   color: #f8fafc;
@@ -698,4 +698,4 @@ img { display: block; max-width: 100%; }
 
 /* mobile-container as soft vertical snap host */
 .mobile-container { scroll-snap-type: y proximity; }
-.venue-section    { scroll-snap-align: start; }
+.loc-section    { scroll-snap-align: start; }

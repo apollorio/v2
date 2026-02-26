@@ -82,70 +82,12 @@ function apollo_templates_parse_request(\WP $wp): void
 add_action('parse_request', 'apollo_templates_parse_request', 1);
 
 /**
- * Template loader for custom pages
+ * apollo_templates_load_template: logic migrated to apollo_templates_template_redirect()
+ * in apollo-templates.php (template_redirect P10). Kept as no-op to avoid deprecated errors
+ * if any external hook references it.
+ *
+ * @deprecated Removed in Wave 2.2 unification.
  */
-function apollo_templates_load_template($template): string
-{
-    global $wp_query;
-
-    // /home → page-home.php (guest) | page-mural.php (logged-in)
-    if (get_query_var('apollo_home_page')) {
-        $wp_query->is_404  = false;
-        $wp_query->is_home = false;
-        status_header(200);
-
-        if (is_user_logged_in()) {
-            $mural = APOLLO_TEMPLATES_DIR . 'templates/page-mural.php';
-            if (file_exists($mural)) {
-                return $mural;
-            }
-        }
-
-        $home = APOLLO_TEMPLATES_DIR . 'templates/page-home.php';
-        if (file_exists($home)) {
-            return $home;
-        }
-    }
-
-    // /about-us → 301 redirect to /sobre
-    if (get_query_var('apollo_about_redirect')) {
-        wp_safe_redirect(home_url('/sobre'), 301);
-        exit;
-    }
-
-    // /sobre → page-sobre.php (institutional / old home)
-    if (get_query_var('apollo_sobre_page')) {
-        $sobre_template = APOLLO_TEMPLATES_DIR . 'templates/page-sobre.php';
-        if (file_exists($sobre_template)) {
-            $wp_query->is_404  = false;
-            $wp_query->is_home = false;
-            status_header(200);
-            return $sobre_template;
-        }
-    }
-
-    // /test → page-test.php (admin spreadsheet)
-    if (get_query_var('apollo_test_page')) {
-        $test_template = APOLLO_TEMPLATES_DIR . 'templates/page-test.php';
-        if (file_exists($test_template)) {
-            // Prevent 404
-            $wp_query->is_404  = false;
-            $wp_query->is_home = false;
-            status_header(200);
-            return $test_template;
-        }
-    }
-
-    // Check if page exists
-    if (is_page()) {
-        $page_template = get_page_template_slug();
-
-        // Classificados — handled by apollo-classifieds plugin.
-    }
-
-    return $template;
-}
-add_filter('template_include', 'apollo_templates_load_template', 99);
 
 /**
  * AJAX: Save test spreadsheet state

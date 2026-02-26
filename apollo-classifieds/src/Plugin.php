@@ -29,7 +29,7 @@ class Plugin
         // This plugin is a frontend complement only — no CPT registration needed.
 
         // Template redirect
-        add_filter('template_include', array($this, 'template_redirect'));
+        add_action('template_redirect', array($this, 'handle_template_redirect'));
     }
 
     /**
@@ -75,17 +75,18 @@ class Plugin
     }
 
     /**
-     * Redirect to custom template
+     * Serve custom template via template_redirect.
      */
-    public function template_redirect($template)
+    public function handle_template_redirect(): void
     {
-        if (is_page('marketplace') || is_post_type_archive('classified')) {
-            $custom_template = APOLLO_CLASSIFIEDS_PATH . 'templates/classifieds-page.php';
-            if (file_exists($custom_template)) {
-                return $custom_template;
-            }
+        if (! is_page('marketplace') && ! is_post_type_archive('classified')) {
+            return;
         }
-        return $template;
+        $tpl = APOLLO_CLASSIFIEDS_PATH . 'templates/classifieds-page.php';
+        if (file_exists($tpl)) {
+            include $tpl;
+            exit;
+        }
     }
 
     /**

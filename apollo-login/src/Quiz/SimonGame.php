@@ -23,45 +23,8 @@ class SimonGame {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-	}
-
-	/**
-	 * Enqueue Simon game assets
-	 *
-	 * @return void
-	 */
-	public function enqueue_assets(): void {
-		// Only on register page
-		if ( get_query_var( 'apollo_login_page' ) !== 'register' ) {
-			return;
-		}
-
-		wp_enqueue_style(
-			'apollo-simon',
-			APOLLO_LOGIN_URL . 'assets/css/simon.css',
-			array(),
-			APOLLO_LOGIN_VERSION
-		);
-
-		wp_enqueue_script(
-			'apollo-simon',
-			APOLLO_LOGIN_URL . 'assets/js/simon.js',
-			array( 'jquery' ),
-			APOLLO_LOGIN_VERSION,
-			true
-		);
-
-		wp_localize_script(
-			'apollo-simon',
-			'apolloSimon',
-			array(
-				'levels'  => APOLLO_LOGIN_SIMON_LEVELS,
-				'colors'  => array( 'red', 'green', 'blue', 'yellow' ),
-				'restUrl' => rest_url( APOLLO_LOGIN_REST_NAMESPACE ),
-				'nonce'   => wp_create_nonce( 'apollo_simon' ),
-			)
-		);
+		// Assets are loaded inline via apollo-auth-scripts.js (Blank Canvas pattern).
+		// No wp_enqueue_scripts needed — wp_head()/wp_footer() are not called.
 	}
 
 	/**

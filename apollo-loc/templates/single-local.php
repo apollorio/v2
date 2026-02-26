@@ -77,10 +77,10 @@ if ( empty( $gallery ) && has_post_thumbnail( $local_id ) ) {
 }
 
 // Venue type from taxonomy
-$venue_types = get_the_terms( $local_id, 'local_type' );
-$venue_label = '';
-if ( ! is_wp_error( $venue_types ) && ! empty( $venue_types ) ) {
-	$venue_label = $venue_types[0]->name;
+$loc_types = get_the_terms( $local_id, 'local_type' );
+$loc_label = '';
+if ( ! is_wp_error( $loc_types ) && ! empty( $loc_types ) ) {
+	$loc_label = $loc_types[0]->name;
 }
 
 // Capacity
@@ -219,17 +219,17 @@ if ( $has_coords ) {
 		<?php
 		// VENUE HEADER
 		?>
-		<div class="venue-body">
-			<header class="venue-header">
-				<?php if ( $venue_label ) : ?>
-					<span class="venue-type-label"><?php echo esc_html( $venue_label ); ?></span>
+		<div class="loc-body">
+			<header class="loc-header">
+				<?php if ( $loc_label ) : ?>
+					<span class="loc-type-label"><?php echo esc_html( $loc_label ); ?></span>
 				<?php endif; ?>
-				<h1 class="venue-title"><?php echo esc_html( $local_name ); ?></h1>
+				<h1 class="loc-title"><?php echo esc_html( $local_name ); ?></h1>
 				<?php if ( $full_address ) : ?>
-					<p class="venue-address"><i class="ri-map-pin-2-line"></i> <?php echo esc_html( $full_address ); ?></p>
+					<p class="loc-address"><i class="ri-map-pin-2-line"></i> <?php echo esc_html( $full_address ); ?></p>
 				<?php endif; ?>
 				<?php if ( $capacity ) : ?>
-					<p class="venue-capacity"><i class="ri-group-line"></i> <?php printf( esc_html__( 'Capacidade: %s', 'apollo-local' ), esc_html( $capacity ) ); ?></p>
+					<p class="loc-capacity"><i class="ri-group-line"></i> <?php printf( esc_html__( 'Capacidade: %s', 'apollo-local' ), esc_html( $capacity ) ); ?></p>
 				<?php endif; ?>
 			</header>
 
@@ -251,9 +251,9 @@ if ( $has_coords ) {
 			// BIO SECTION
 			?>
 			<?php if ( ! empty( $local_bio ) ) : ?>
-				<section class="venue-section">
+				<section class="loc-section">
 					<h2 class="section-title"><i class="ri-information-line"></i> <?php esc_html_e( 'Sobre o local', 'apollo-local' ); ?></h2>
-					<div class="venue-bio"><?php echo $local_bio; ?></div>
+					<div class="loc-bio"><?php echo $local_bio; ?></div>
 				</section>
 			<?php endif; ?>
 
@@ -261,7 +261,7 @@ if ( $has_coords ) {
 			// MAP SECTION
 			?>
 			<?php if ( $has_coords ) : ?>
-				<section class="venue-section map-section">
+				<section class="loc-section map-section">
 					<h2 class="section-title"><i class="ri-map-pin-line"></i> <?php esc_html_e( 'Localização', 'apollo-local' ); ?></h2>
 					<?php if ( ! empty( $map_url ) ) : ?>
 						<div class="map-wrapper">
@@ -286,7 +286,7 @@ if ( $has_coords ) {
 			// UPCOMING EVENTS
 			?>
 			<?php if ( ! empty( $upcoming_events ) ) : ?>
-				<section class="venue-section events-section">
+				<section class="loc-section events-section">
 					<h2 class="section-title"><i class="ri-calendar-event-line"></i> <?php esc_html_e( 'Próximos eventos', 'apollo-local' ); ?></h2>
 					<div class="events-grid">
 						<?php
@@ -325,7 +325,7 @@ if ( $has_coords ) {
 			// TESTIMONIALS
 			?>
 			<?php if ( ! empty( $testimonials ) ) : ?>
-				<section class="venue-section testimonials-section">
+				<section class="loc-section testimonials-section">
 					<h2 class="section-title"><i class="ri-chat-quote-line"></i> <?php esc_html_e( 'Depoimentos', 'apollo-local' ); ?></h2>
 					<div class="testimonials-scroller">
 						<?php foreach ( $testimonials as $review ) : ?>
@@ -351,10 +351,10 @@ if ( $has_coords ) {
 			<?php
 			// FOOTER
 			?>
-			<footer class="venue-footer">
+			<footer class="loc-footer">
 				<span>Apollo::rio · GPS</span>
 			</footer>
-		</div><!-- .venue-body -->
+		</div><!-- .loc-body -->
 	</main>
 
 	<script src="<?php echo esc_url( $plugin_url . 'assets/js/local-single.js' ); ?>"></script>

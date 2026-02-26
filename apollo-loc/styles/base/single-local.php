@@ -1,7 +1,7 @@
-<?php
+ï»¿<?php
 
 /**
- * Template: Single Local — Vibrant Venue Profile
+ * Template: Single Local ï¿½ Vibrant Venue Profile
  *
  * Canvas template (uses wp_head / wp_footer).
  * 4-level fallback: styles/base/single-local.php
@@ -288,7 +288,7 @@ if (! empty($hours_raw) && is_string($hours_raw)) {
 } elseif (is_array($hours_raw)) {
     $hours = $hours_raw;
 }
-$day_names = array('Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo');
+$day_names = array('Segunda', 'Terï¿½a', 'Quarta', 'Quinta', 'Sexta', 'Sï¿½bado', 'Domingo');
 $today_idx = (int) current_time('N') - 1; // 0=Mon .. 6=Sun
 
 // -- Amenities (from meta JSON or taxonomy) -----------------------
@@ -303,11 +303,11 @@ if (! empty($amenities_raw) && is_string($amenities_raw)) {
 $amenity_icons = array(
     'estacionamento'  => 'ri-parking-box-line',
     'vip'             => 'ri-vip-crown-line',
-    'fumódromo'       => 'ri-cloudy-line',
+    'fumï¿½dromo'       => 'ri-cloudy-line',
     'ar condicionado' => 'ri-temp-cold-line',
     'acessibilidade'  => 'ri-wheelchair-line',
     'wifi'            => 'ri-wifi-line',
-    'segurança'       => 'ri-shield-check-line',
+    'seguranï¿½a'       => 'ri-shield-check-line',
     'rooftop'         => 'ri-building-4-line',
     'piscina'         => 'ri-water-flash-line',
     'palco'           => 'ri-mic-line',
@@ -322,9 +322,9 @@ $amenity_icons = array(
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0">
-    <title><?php echo esc_html($loc_name); ?> · Apollo</title>
+    <title><?php echo esc_html($loc_name); ?> ï¿½ Apollo</title>
 
-    <!-- Apollo CDN — core.min.js bundles: CSS vars, GSAP 3.14.2, jQuery, Icons, page-layout -->
+    <!-- Apollo CDN ï¿½ core.min.js bundles: CSS vars, GSAP 3.14.2, jQuery, Icons, page-layout -->
     <script src="https://cdn.apollo.rio.br/v1.0.0/core.min.js?v=1.0.0" fetchpriority="high"></script>
 
     <!-- Fonts: Shrikhand only (Space Grotesk + Space Mono already loaded by CDN) -->
@@ -425,19 +425,19 @@ $amenity_icons = array(
         }
 
         /* --- HERO --- */
-        .venue-hero {
+        .loc-hero {
             position: relative;
             height: 70vh;
             min-height: 500px;
             overflow: hidden;
         }
 
-        .venue-hero-bg {
+        .loc-hero-bg {
             position: absolute;
             inset: 0;
         }
 
-        .venue-hero-bg img {
+        .loc-hero-bg img {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -445,13 +445,13 @@ $amenity_icons = array(
             transition: filter 1s;
         }
 
-        .venue-hero-overlay {
+        .loc-hero-overlay {
             position: absolute;
             inset: 0;
             background: linear-gradient(to top, var(--black-1) 0%, rgba(0, 0, 0, 0.3) 40%, transparent 70%);
         }
 
-        .venue-hero-content {
+        .loc-hero-content {
             position: absolute;
             bottom: 0;
             left: 0;
@@ -461,21 +461,21 @@ $amenity_icons = array(
             z-index: 2;
         }
 
-        .venue-hero-content .container {
+        .loc-hero-content .container {
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
             gap: 24px;
         }
 
-        .venue-hero-pills {
+        .loc-hero-pills {
             display: flex;
             gap: 6px;
             margin-bottom: 16px;
             flex-wrap: wrap;
         }
 
-        .venue-pill {
+        .loc-pill {
             padding: 4px 12px;
             border-radius: 100px;
             font-family: var(--ff-mono);
@@ -485,24 +485,24 @@ $amenity_icons = array(
             letter-spacing: 0.08em;
         }
 
-        .venue-pill.live {
+        .loc-pill.live {
             background: var(--ap-green);
             color: white;
         }
 
-        .venue-pill.type {
+        .loc-pill.type {
             background: rgba(255, 255, 255, 0.15);
             color: white;
             backdrop-filter: blur(8px);
         }
 
-        .venue-pill.rating {
+        .loc-pill.rating {
             background: rgba(255, 255, 255, 0.15);
             color: white;
             backdrop-filter: blur(8px);
         }
 
-        .venue-hero-title {
+        .loc-hero-title {
             font-size: clamp(36px, 8vw, 80px);
             font-weight: 900;
             line-height: 0.9;
@@ -512,7 +512,7 @@ $amenity_icons = array(
             margin-bottom: 8px;
         }
 
-        .venue-hero-location {
+        .loc-hero-location {
             font-size: 14px;
             color: rgba(255, 255, 255, 0.7);
             display: flex;
@@ -520,13 +520,13 @@ $amenity_icons = array(
             gap: 6px;
         }
 
-        .venue-hero-actions {
+        .loc-hero-actions {
             display: flex;
             gap: 10px;
             flex-shrink: 0;
         }
 
-        .venue-action-btn {
+        .loc-action-btn {
             width: 44px;
             height: 44px;
             border-radius: 50%;
@@ -540,11 +540,11 @@ $amenity_icons = array(
             transition: all 0.3s;
         }
 
-        .venue-action-btn:hover {
+        .loc-action-btn:hover {
             background: var(--ap-orange);
         }
 
-        .venue-action-btn.is-favorited {
+        .loc-action-btn.is-favorited {
             background: var(--ap-orange);
         }
 
@@ -572,11 +572,11 @@ $amenity_icons = array(
         }
 
         /* --- MAIN GRID --- */
-        .venue-main {
+        .loc-main {
             padding: 48px 0;
         }
 
-        .venue-grid {
+        .loc-grid {
             display: grid;
             grid-template-columns: 1fr 380px;
             gap: 40px;
@@ -598,24 +598,24 @@ $amenity_icons = array(
             color: var(--ap-orange);
         }
 
-        .venue-description {
+        .loc-description {
             font-size: 15px;
             line-height: 1.7;
             color: var(--gray-1);
             margin-bottom: 16px;
         }
 
-        .venue-about {
+        .loc-about {
             margin-bottom: 40px;
         }
 
-        .venue-tags {
+        .loc-tags {
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
         }
 
-        .venue-tag {
+        .loc-tag {
             padding: 6px 14px;
             background: var(--surface);
             border-radius: 100px;
@@ -625,7 +625,7 @@ $amenity_icons = array(
         }
 
         /* --- QUICK STATS --- */
-        .venue-quick-stats {
+        .loc-quick-stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 1px;
@@ -635,13 +635,13 @@ $amenity_icons = array(
             margin-bottom: 40px;
         }
 
-        .venue-stat {
+        .loc-stat {
             background: var(--bg);
             padding: 20px;
             text-align: center;
         }
 
-        .venue-stat-number {
+        .loc-stat-number {
             font-size: 24px;
             font-weight: 900;
             letter-spacing: -0.03em;
@@ -649,7 +649,7 @@ $amenity_icons = array(
             margin-bottom: 4px;
         }
 
-        .venue-stat-label {
+        .loc-stat-label {
             font-family: var(--ff-mono);
             font-size: 9px;
             text-transform: uppercase;
@@ -682,11 +682,11 @@ $amenity_icons = array(
         }
 
         /* --- EVENT CARDS --- */
-        .venue-events-list {
+        .loc-events-list {
             margin-bottom: 40px;
         }
 
-        .venue-event-card {
+        .loc-event-card {
             display: flex;
             gap: 16px;
             padding: 16px;
@@ -697,12 +697,12 @@ $amenity_icons = array(
             align-items: center;
         }
 
-        .venue-event-card:hover {
+        .loc-event-card:hover {
             border-color: var(--ap-orange);
             transform: translateX(4px);
         }
 
-        .venue-event-date {
+        .loc-event-date {
             width: 56px;
             height: 56px;
             background: var(--surface);
@@ -714,7 +714,7 @@ $amenity_icons = array(
             flex-shrink: 0;
         }
 
-        .venue-event-date .month {
+        .loc-event-date .month {
             font-family: var(--ff-mono);
             font-size: 9px;
             font-weight: 700;
@@ -724,30 +724,30 @@ $amenity_icons = array(
             line-height: 1;
         }
 
-        .venue-event-date .day {
+        .loc-event-date .day {
             font-size: 20px;
             font-weight: 900;
             line-height: 1.1;
         }
 
-        .venue-event-info {
+        .loc-event-info {
             flex: 1;
         }
 
-        .venue-event-name {
+        .loc-event-name {
             font-size: 14px;
             font-weight: 700;
             margin-bottom: 4px;
         }
 
-        .venue-event-meta {
+        .loc-event-meta {
             font-size: 11px;
             color: var(--gray-2);
             display: flex;
             gap: 12px;
         }
 
-        .venue-event-tickets {
+        .loc-event-tickets {
             padding: 8px 16px;
             background: var(--ap-orange);
             color: white;
@@ -759,7 +759,7 @@ $amenity_icons = array(
             display: inline-block;
         }
 
-        .venue-event-tickets:hover {
+        .loc-event-tickets:hover {
             transform: scale(1.05);
         }
 
@@ -813,38 +813,38 @@ $amenity_icons = array(
         }
 
         /* --- SIDEBAR --- */
-        .venue-sidebar {
+        .loc-sidebar {
             position: sticky;
             top: 80px;
         }
 
-        .venue-map-card {
+        .loc-map-card {
             border: 1px solid var(--border);
             border-radius: var(--radius);
             overflow: hidden;
             margin-bottom: 20px;
         }
 
-        .venue-map {
+        .loc-map {
             height: 240px;
         }
 
-        .venue-map-info {
+        .loc-map-info {
             padding: 16px;
         }
 
-        .venue-address {
+        .loc-address {
             font-size: 13px;
             font-weight: 600;
             margin-bottom: 4px;
         }
 
-        .venue-address-detail {
+        .loc-address-detail {
             font-size: 11px;
             color: var(--gray-2);
         }
 
-        .venue-contact-card {
+        .loc-contact-card {
             border: 1px solid var(--border);
             border-radius: var(--radius);
             padding: 20px;
@@ -882,7 +882,7 @@ $amenity_icons = array(
             color: var(--ap-orange);
         }
 
-        .venue-hours-card {
+        .loc-hours-card {
             border: 1px solid var(--border);
             border-radius: var(--radius);
             padding: 20px;
@@ -1022,31 +1022,31 @@ $amenity_icons = array(
 
         /* --- RESPONSIVE --- */
         @media (max-width: 900px) {
-            .venue-grid {
+            .loc-grid {
                 grid-template-columns: 1fr;
             }
 
-            .venue-sidebar {
+            .loc-sidebar {
                 position: static;
             }
 
-            .venue-quick-stats {
+            .loc-quick-stats {
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .venue-hero {
+            .loc-hero {
                 height: 50vh;
                 min-height: 400px;
             }
 
-            .venue-hero-content .container {
+            .loc-hero-content .container {
                 flex-direction: column;
                 align-items: flex-start;
             }
         }
 
         @media (max-width: 480px) {
-            .venue-hero-title {
+            .loc-hero-title {
                 font-size: 36px;
             }
 
@@ -1072,36 +1072,36 @@ $amenity_icons = array(
     <div class="page-loader"></div>
 
     <!-- ----------- HERO ----------- -->
-    <section class="venue-hero">
-        <div class="venue-hero-bg">
+    <section class="loc-hero">
+        <div class="loc-hero-bg">
             <img src="<?php echo esc_url($hero_image); ?>" alt="<?php echo esc_attr($loc_name); ?>">
         </div>
-        <div class="venue-hero-overlay"></div>
-        <div class="venue-hero-content">
+        <div class="loc-hero-overlay"></div>
+        <div class="loc-hero-content">
             <div class="container">
                 <div>
-                    <div class="venue-hero-pills">
+                    <div class="loc-hero-pills">
                         <?php if ($type_label) : ?>
-                            <span class="venue-pill type"><?php echo esc_html($type_label); ?></span>
+                            <span class="loc-pill type"><?php echo esc_html($type_label); ?></span>
                         <?php endif; ?>
                         <?php if ($avg_rating > 0) : ?>
-                            <span class="venue-pill rating"><i class="ri-star-fill" style="margin-right:3px;"></i> <?php echo esc_html($avg_rating); ?></span>
+                            <span class="loc-pill rating"><i class="ri-star-fill" style="margin-right:3px;"></i> <?php echo esc_html($avg_rating); ?></span>
                         <?php endif; ?>
                         <?php if ($area_label) : ?>
-                            <span class="venue-pill type"><?php echo esc_html($area_label); ?></span>
+                            <span class="loc-pill type"><?php echo esc_html($area_label); ?></span>
                         <?php endif; ?>
                     </div>
-                    <h1 class="venue-hero-title"><?php echo esc_html($loc_name); ?></h1>
+                    <h1 class="loc-hero-title"><?php echo esc_html($loc_name); ?></h1>
                     <?php if ($full_address) : ?>
-                        <div class="venue-hero-location">
+                        <div class="loc-hero-location">
                             <i class="ri-map-pin-2-fill"></i> <?php echo esc_html($full_address); ?>
                         </div>
                     <?php endif; ?>
                 </div>
-                <div class="venue-hero-actions">
+                <div class="loc-hero-actions">
                     <?php if ($is_logged_in) : ?>
                         <button
-                            class="venue-action-btn <?php echo $is_favorited ? 'is-favorited' : ''; ?>"
+                            class="loc-action-btn <?php echo $is_favorited ? 'is-favorited' : ''; ?>"
                             id="loc-fav-btn"
                             data-action="toggle-fav"
                             data-post-id="<?php echo $loc_id; ?>"
@@ -1109,11 +1109,11 @@ $amenity_icons = array(
                             <i class="ri-heart-<?php echo $is_favorited ? 'fill' : 'line'; ?>"></i>
                         </button>
                     <?php endif; ?>
-                    <button class="venue-action-btn" id="loc-share-btn" title="<?php esc_attr_e('Compartilhar', 'apollo-local'); ?>">
+                    <button class="loc-action-btn" id="loc-share-btn" title="<?php esc_attr_e('Compartilhar', 'apollo-local'); ?>">
                         <i class="ri-share-forward-line"></i>
                     </button>
                     <?php if ($route_url) : ?>
-                        <a href="<?php echo esc_url($route_url); ?>" class="venue-action-btn" target="_blank" rel="noopener" title="<?php esc_attr_e('Direções', 'apollo-local'); ?>">
+                        <a href="<?php echo esc_url($route_url); ?>" class="loc-action-btn" target="_blank" rel="noopener" title="<?php esc_attr_e('Direï¿½ï¿½es', 'apollo-local'); ?>">
                             <i class="ri-route-line"></i>
                         </a>
                     <?php endif; ?>
@@ -1126,48 +1126,48 @@ $amenity_icons = array(
     </section>
 
     <!-- ----------- MAIN ----------- -->
-    <main class="venue-main">
+    <main class="loc-main">
         <div class="container">
-            <div class="venue-grid">
+            <div class="loc-grid">
 
                 <!-- --- LEFT COLUMN --- -->
-                <div class="venue-details">
+                <div class="loc-details">
 
                     <!-- Quick Stats -->
-                    <div class="venue-quick-stats reveal-up">
+                    <div class="loc-quick-stats reveal-up">
                         <?php if ($avg_rating > 0) : ?>
-                            <div class="venue-stat">
-                                <div class="venue-stat-number"><?php echo esc_html($avg_rating); ?></div>
-                                <div class="venue-stat-label">Rating</div>
+                            <div class="loc-stat">
+                                <div class="loc-stat-number"><?php echo esc_html($avg_rating); ?></div>
+                                <div class="loc-stat-label">Rating</div>
                             </div>
                         <?php endif; ?>
                         <?php if ($total_reviews > 0) : ?>
-                            <div class="venue-stat">
-                                <div class="venue-stat-number"><?php echo esc_html($total_reviews); ?></div>
-                                <div class="venue-stat-label">Depoimentos</div>
+                            <div class="loc-stat">
+                                <div class="loc-stat-number"><?php echo esc_html($total_reviews); ?></div>
+                                <div class="loc-stat-label">Depoimentos</div>
                             </div>
                         <?php endif; ?>
-                        <div class="venue-stat">
-                            <div class="venue-stat-number"><?php echo esc_html($total_events); ?></div>
-                            <div class="venue-stat-label">Eventos</div>
+                        <div class="loc-stat">
+                            <div class="loc-stat-number"><?php echo esc_html($total_events); ?></div>
+                            <div class="loc-stat-label">Eventos</div>
                         </div>
-                        <div class="venue-stat">
-                            <div class="venue-stat-number"><?php echo $fav_count >= 1000 ? esc_html(number_format($fav_count / 1000, 1) . 'k') : esc_html($fav_count); ?></div>
-                            <div class="venue-stat-label">Favs</div>
+                        <div class="loc-stat">
+                            <div class="loc-stat-number"><?php echo $fav_count >= 1000 ? esc_html(number_format($fav_count / 1000, 1) . 'k') : esc_html($fav_count); ?></div>
+                            <div class="loc-stat-label">Favs</div>
                         </div>
                     </div>
 
                     <!-- About -->
                     <?php if (! empty($loc_paragraphs)) : ?>
-                        <div class="venue-about reveal-up">
+                        <div class="loc-about reveal-up">
                             <div class="section-title"><i class="ri-information-line"></i> <?php esc_html_e('Sobre', 'apollo-local'); ?></div>
                             <?php foreach ($loc_paragraphs as $para) : ?>
-                                <p class="venue-description"><?php echo wp_kses_post($para); ?></p>
+                                <p class="loc-description"><?php echo wp_kses_post($para); ?></p>
                             <?php endforeach; ?>
                             <?php if (! empty($sound_terms)) : ?>
-                                <div class="venue-tags">
+                                <div class="loc-tags">
                                     <?php foreach ($sound_terms as $tag) : ?>
-                                        <span class="venue-tag"><?php echo esc_html($tag); ?></span>
+                                        <span class="loc-tag"><?php echo esc_html($tag); ?></span>
                                     <?php endforeach; ?>
                                 </div>
                             <?php endif; ?>
@@ -1202,8 +1202,8 @@ $amenity_icons = array(
 
                     <!-- Upcoming Events -->
                     <?php if (! empty($upcoming_events)) : ?>
-                        <div class="venue-events-list reveal-up">
-                            <div class="section-title"><i class="ri-calendar-event-fill"></i> <?php esc_html_e('Próximos Eventos', 'apollo-local'); ?></div>
+                        <div class="loc-events-list reveal-up">
+                            <div class="section-title"><i class="ri-calendar-event-fill"></i> <?php esc_html_e('Prï¿½ximos Eventos', 'apollo-local'); ?></div>
                             <?php
                             foreach ($upcoming_events as $ev) :
                                 $ev_ts    = $ev['date'] ? strtotime($ev['date']) : 0;
@@ -1217,14 +1217,14 @@ $amenity_icons = array(
                                     }
                                 }
                             ?>
-                                <a href="<?php echo esc_url($ev['url']); ?>" class="venue-event-card">
-                                    <div class="venue-event-date">
+                                <a href="<?php echo esc_url($ev['url']); ?>" class="loc-event-card">
+                                    <div class="loc-event-date">
                                         <span class="month"><?php echo esc_html($ev_month); ?></span>
                                         <span class="day"><?php echo esc_html($ev_day); ?></span>
                                     </div>
-                                    <div class="venue-event-info">
-                                        <div class="venue-event-name"><?php echo esc_html($ev['title']); ?></div>
-                                        <div class="venue-event-meta">
+                                    <div class="loc-event-info">
+                                        <div class="loc-event-name"><?php echo esc_html($ev['title']); ?></div>
+                                        <div class="loc-event-meta">
                                             <?php if ($ev_time) : ?>
                                                 <span><i class="ri-time-line"></i> <?php echo esc_html($ev_time); ?></span>
                                             <?php endif; ?>
@@ -1234,7 +1234,7 @@ $amenity_icons = array(
                                         </div>
                                     </div>
                                     <?php if ($ev['ticket_url']) : ?>
-                                        <span class="venue-event-tickets"><?php esc_html_e('Ingressos', 'apollo-local'); ?></span>
+                                        <span class="loc-event-tickets"><?php esc_html_e('Ingressos', 'apollo-local'); ?></span>
                                     <?php endif; ?>
                                 </a>
                             <?php endforeach; ?>
@@ -1256,7 +1256,7 @@ $amenity_icons = array(
                                             <img src="<?php echo esc_url($review['avatar']); ?>" alt="" class="review-avatar" loading="lazy">
                                         <?php endif; ?>
                                         <div>
-                                            <div class="review-name"><?php echo esc_html($review['name'] ?? __('Anônimo', 'apollo-local')); ?></div>
+                                            <div class="review-name"><?php echo esc_html($review['name'] ?? __('Anï¿½nimo', 'apollo-local')); ?></div>
                                             <?php if (! empty($review['date'])) : ?>
                                                 <div class="review-date"><?php echo wp_kses_post(apollo_time_ago_html($review['date'])); ?></div>
                                             <?php endif; ?>
@@ -1279,17 +1279,17 @@ $amenity_icons = array(
                     <?php endif; ?>
                 </div>
 
-                <!-- --- RIGHT COLUMN — SIDEBAR --- -->
-                <div class="venue-sidebar">
+                <!-- --- RIGHT COLUMN ï¿½ SIDEBAR --- -->
+                <div class="loc-sidebar">
 
                     <!-- Map -->
                     <?php if ($has_coords) : ?>
-                        <div class="venue-map-card reveal-up">
-                            <div class="venue-map" id="venueMap"></div>
-                            <div class="venue-map-info">
-                                <div class="venue-address"><?php echo esc_html($address ?: $loc_name); ?></div>
+                        <div class="loc-map-card reveal-up">
+                            <div class="loc-map" id="locMap"></div>
+                            <div class="loc-map-info">
+                                <div class="loc-address"><?php echo esc_html($address ?: $loc_name); ?></div>
                                 <?php if ($address_detail) : ?>
-                                    <div class="venue-address-detail"><?php echo esc_html($address_detail); ?></div>
+                                    <div class="loc-address-detail"><?php echo esc_html($address_detail); ?></div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -1297,7 +1297,7 @@ $amenity_icons = array(
 
                     <!-- Contact -->
                     <?php if (! empty($social_links)) : ?>
-                        <div class="venue-contact-card reveal-up">
+                        <div class="loc-contact-card reveal-up">
                             <div class="section-title" style="margin-bottom:12px;"><i class="ri-phone-line"></i> <?php esc_html_e('Contato', 'apollo-local'); ?></div>
                             <?php foreach ($social_links as $key => $link) : ?>
                                 <div class="contact-row">
@@ -1310,8 +1310,8 @@ $amenity_icons = array(
 
                     <!-- Hours -->
                     <?php if (! empty($hours)) : ?>
-                        <div class="venue-hours-card reveal-up">
-                            <div class="section-title" style="margin-bottom:12px;"><i class="ri-time-line"></i> <?php esc_html_e('Horários', 'apollo-local'); ?></div>
+                        <div class="loc-hours-card reveal-up">
+                            <div class="section-title" style="margin-bottom:12px;"><i class="ri-time-line"></i> <?php esc_html_e('Horï¿½rios', 'apollo-local'); ?></div>
                             <?php
                             foreach ($day_names as $idx => $day_name) :
                                 $h        = $hours[$idx] ?? ($hours[$day_name] ?? '');
@@ -1371,9 +1371,9 @@ $amenity_icons = array(
     <footer class="site-footer">
         <div class="container">
             <div class="footer-inner">
-                <div class="footer-copy">Apollo::rio · <?php echo esc_html(date('Y')); ?></div>
+                <div class="footer-copy">Apollo::rio ï¿½ <?php echo esc_html(date('Y')); ?></div>
                 <div class="footer-links">
-                    <a href="<?php echo esc_url(home_url('/')); ?>"><?php esc_html_e('Início', 'apollo-local'); ?></a>
+                    <a href="<?php echo esc_url(home_url('/')); ?>"><?php esc_html_e('Inï¿½cio', 'apollo-local'); ?></a>
                     <a href="<?php echo esc_url(home_url('/eventos')); ?>"><?php esc_html_e('Eventos', 'apollo-local'); ?></a>
                     <a href="<?php echo esc_url(home_url('/radar')); ?>"><?php esc_html_e('Radar', 'apollo-local'); ?></a>
                 </div>
@@ -1417,11 +1417,11 @@ $amenity_icons = array(
             });
 
             // -- Parallax hero --
-            gsap.to('.venue-hero-bg img', {
+            gsap.to('.loc-hero-bg img', {
                 y: '15%',
                 ease: 'none',
                 scrollTrigger: {
-                    trigger: '.venue-hero',
+                    trigger: '.loc-hero',
                     start: 'top top',
                     end: 'bottom top',
                     scrub: 1
@@ -1482,7 +1482,7 @@ $amenity_icons = array(
                     if (navigator.share) {
                         navigator.share({
                             title: '<?php echo esc_js($loc_name); ?>',
-                            text: '<?php echo esc_js($loc_name . ' — ' . $full_address); ?>',
+                            text: '<?php echo esc_js($loc_name . ' ï¿½ ' . $full_address); ?>',
                             url: '<?php echo esc_js(get_permalink($loc_id)); ?>'
                         }).catch(function() {});
                     } else {

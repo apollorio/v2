@@ -18,6 +18,24 @@ if (is_user_logged_in()) {
     exit;
 }
 
+// Get configuration (mirrored from login.php — required for apolloAuthConfig).
+$auth_config = apply_filters(
+    'apollo_auth_config',
+    array(
+        'ajax_url'             => admin_url('admin-ajax.php'),
+        'nonce'                => wp_create_nonce('apollo_auth_nonce'),
+        'max_failed_attempts'  => 3,
+        'lockout_duration'     => 60,
+        'simon_levels'         => 4,
+        'reaction_targets'     => 4,
+        'redirect_after_login' => home_url('/explore'),
+        'terms_url'            => 'https://apollo.rio.br/politica',
+        'bug_report_url'       => 'https://apollo.rio.br/bug/',
+        'show_instagram'       => true,
+        'require_cpf'          => true,
+    )
+);
+
 // Get available sounds/genres for registration from apollo-core GLOBAL BRIDGE taxonomy
 $available_sounds = array();
 if (taxonomy_exists('sound')) {
@@ -116,6 +134,28 @@ if (empty($available_sounds)) {
         )
     );
 }
+
+// Localize script configuration (required for apolloAuthConfig nonce injection).
+$js_config = array(
+    'ajaxUrl'            => $auth_config['ajax_url'],
+    'nonce'              => $auth_config['nonce'],
+    'maxFailedAttempts'  => $auth_config['max_failed_attempts'],
+    'lockoutDuration'    => $auth_config['lockout_duration'],
+    'simonLevels'        => $auth_config['simon_levels'],
+    'reactionTargets'    => $auth_config['reaction_targets'],
+    'redirectAfterLogin' => $auth_config['redirect_after_login'],
+    'strings'            => array(
+        'loginSuccess'   => __('Acesso autorizado. Redirecionando...', 'apollo-login'),
+        'loginFailed'    => __('Credenciais incorretas. Tente novamente.', 'apollo-login'),
+        'warningState'   => __('Atenção: última tentativa antes do bloqueio.', 'apollo-login'),
+        'lockedOut'      => __('Sistema bloqueado por segurança.', 'apollo-login'),
+        'quizComplete'   => __('Teste de aptidão concluído com sucesso!', 'apollo-login'),
+        'quizFailed'     => __('Resposta incorreta. Reiniciando pergunta...', 'apollo-login'),
+        'patternCorrect' => '♫♫♫',
+        'ethicsCorrect'  => __('É trabalho, renda, a sonoridade e arte favorita de alguem.', 'apollo-login'),
+    ),
+);
+
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -141,8 +181,8 @@ if (empty($available_sounds)) {
     <!-- YouTube Background Video -->
     <div class="youtube-bg">
         <iframe
-            src="https://www.youtube.com/embed/wQVrPHKww4Y?autoplay=1&mute=1&loop=1&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3"
-            title="Apollo Background" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+            src="https://www.youtube.com/embed/wQVrPHKww4Y?autoplay=1&mute=1&loop=1&playlist=wQVrPHKww4Y&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&enablejsapi=1"
+            title="Apollo Background" frameborder="0" allow="autoplay; encrypted-media; fullscreen" allowfullscreen loading="eager">
         </iframe>
     </div>
     <!-- <div class="bg-layer"></div>
@@ -172,7 +212,10 @@ if (empty($available_sounds)) {
     }
     ?>
 
-    <!-- SELF-CONTAINED - NO do_action() OR wp_footer() -->
+    <!-- SELF-CONTAINED CONFIGURATION - NO wp_footer() TO PREVENT INTERFERENCE -->
+    <script>
+        window.apolloAuthConfig = <?php echo wp_json_encode($js_config); ?>;
+    </script>
     <script
         src="<?php echo esc_url(APOLLO_LOGIN_URL . 'assets/js/apollo-auth-scripts.js?v=' . APOLLO_LOGIN_VERSION); ?>">
     </script>

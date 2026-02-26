@@ -992,6 +992,7 @@ video::-webkit-media-controls { display: none !important; opacity: 0 !important;
 }
 
 .nh-track-card {
+  display: block;
   flex: 0 0 110px;
   width: 110px;
   height: 175px;
@@ -1096,7 +1097,7 @@ video::-webkit-media-controls { display: none !important; opacity: 0 !important;
   background: #0F0F0F !important;
   border: 1px solid rgba(255,255,255,0.07) !important;
   color: #fff !important;
-  display: flex !important;
+  display: flex!important;
   align-items: center; justify-content: center;
   overflow-x: hidden;
   overflow-y: clip;
@@ -1838,13 +1839,14 @@ section[data-panel].is-active {
    "EM BREVE.." EMPTY STATE — shown when CPT has 0 published posts
    ═══════════════════════════════════════════════════════════════════ */
 .nh-empty-state {
-  display: flex;
+  display: block!important; ;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 48px 24px;
+  padding: 48px 24px; 
   text-align: center;
+  min-width: 100%;
 }
 .nh-empty-state i {
   font-size: 2rem;

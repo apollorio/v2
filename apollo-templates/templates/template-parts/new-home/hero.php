@@ -28,3 +28,20 @@ if (! defined('ABSPATH')) {
         <i class="ri-arrow-down-wide-line"></i>
     </div>
 </div>
+
+<!-- Force-play fallback: some browsers block autoplay even with muted attr -->
+<script>
+(function(){
+    var v = document.getElementById('nhHeroVid');
+    if (!v) return;
+    var tryPlay = function(){
+        var p = v.play();
+        if (p && p.catch) p.catch(function(){});
+    };
+    if (v.paused) tryPlay();
+    v.addEventListener('suspend', tryPlay);
+    document.addEventListener('visibilitychange', function(){
+        if (!document.hidden && v.paused) tryPlay();
+    });
+})();
+</script>

@@ -80,7 +80,6 @@ $days_pt = array(
     'Sun' => 'Dom',
 );
 ?>
-<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>
 <section class="section" id="events" aria-labelledby="events-title">
     <div class="container">
         <div class="nh-section-head ai">
@@ -184,7 +183,7 @@ $days_pt = array(
                         ?> data-to="event-page" data-dir="right" data-id="<?php echo esc_attr($event_id); ?>" href="#"
                         <?php
                         else :
-                        ?> href="<?php echo esc_url($permalink); ?>" <?php endif; ?> class="a-v2-eve-C ai">
+                        ?> href="<?php echo esc_url($permalink); ?>" <?php endif; ?> class="a-v2-eve-C reveal-up ai">
                         <div class="a-v2-eve-C__media">
                             <img src="<?php echo esc_url($image); ?>" alt="<?php echo esc_attr(get_the_title()); ?>"
                                 loading="lazy" />
@@ -228,7 +227,7 @@ $days_pt = array(
             <?php endif; ?>
 
             <!-- Explore CTA card (always shown) -->
-            <a href="<?php echo esc_url(home_url('/eventos')); ?>" class="a-v2-eve-C a-v2-eve-C--explore ai"
+            <a href="<?php echo esc_url(home_url('/eventos')); ?>" class="a-v2-eve-C reveal-up a-v2-eve-C--explore ai"
                 aria-label="<?php esc_attr_e('Ver todos os eventos', 'apollo-templates'); ?>">
                 <div class="xp-inner">
                     <i class="ri-arrow-right-up-line xp-icon" aria-hidden="true"></i>
