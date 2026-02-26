@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "generated": "2026-02-18",
-    "registry_version": "6.3.0",
+    "generated": "2026-02-25",
+    "registry_version": "6.4.0",
     "rest_namespace": "apollo/v1",
     "rest_base_url": "/?rest_route=/apollo/v1",
     "cdn_url": "https://cdn.apollo.rio.br/v1.0.0/core.min.js",
@@ -17,8 +17,6 @@
     "status": "IMPLEMENTED",
     "pages": [
       { "slug": "/",            "title": "Home / Mural router",  "template": null,               "type": "virtual",  "auth": false,  "note": "Routes to explore.php or home template" },
-      { "slug": "classificados","title": "Classificados",         "template": null,               "type": "virtual",  "auth": false  },
-      { "slug": "classificados/novo", "title": "Novo Classificado", "template": null,            "type": "virtual",  "auth": true   },
       { "slug": "editar/{cpt}", "title": "Editar CPT",            "template": null,               "type": "virtual",  "auth": true   },
       { "slug": "editar/{cpt}/{id}", "title": "Editar Item",      "template": null,               "type": "virtual",  "auth": true   }
     ],
@@ -33,7 +31,15 @@
       { "route": "/sounds/tree",                 "methods": ["GET"],         "auth": false,    "description": "Sound taxonomy as tree" },
       { "route": "/sounds/{id}",                 "methods": ["GET"],         "auth": false,    "description": "Single sound term" },
       { "route": "/sounds/user",                 "methods": ["GET"],         "auth": true,     "description": "User's saved sound preferences" },
-      { "route": "/sounds/popular",              "methods": ["GET"],         "auth": false,    "description": "Most popular sounds" }
+      { "route": "/sounds/popular",              "methods": ["GET"],         "auth": false,    "description": "Most popular sounds" },
+      { "route": "/search",                        "methods": ["GET"],         "auth": false,    "description": "Global search across all content types (migrated from apollo-shortcodes v6.4.0)" },
+      { "route": "/search/events",                  "methods": ["GET"],         "auth": false,    "description": "Search events" },
+      { "route": "/search/users",                   "methods": ["GET"],         "auth": false,    "description": "Search users" },
+      { "route": "/search/classifieds",             "methods": ["GET"],         "auth": false,    "description": "Search classifieds" },
+      { "route": "/search/djs",                     "methods": ["GET"],         "auth": false,    "description": "Search DJs" },
+      { "route": "/search/locs",                    "methods": ["GET"],         "auth": false,    "description": "Search locations" },
+      { "route": "/search/posts",                   "methods": ["GET"],         "auth": false,    "description": "Search blog posts" },
+      { "route": "/search/pages",                   "methods": ["GET"],         "auth": false,    "description": "Search pages" }
     ],
     "templates": [],
     "template_parts": [],
@@ -218,7 +224,12 @@
       { "route": "/events/{id}/clone",                   "methods": ["POST"],            "auth": true,      "description": "Duplicate event as draft" },
       { "route": "/events/{id}/stats",                   "methods": ["GET"],             "auth": false,     "description": "Event stats: views, fav, wow, RSVP counts" },
       { "route": "/events/{id}/attendees",               "methods": ["GET","POST","DELETE"],"auth": "POST+DELETE=auth","description": "Get attendees / RSVP / cancel RSVP" },
-      { "route": "/events/{id}/attendees/{user_id}/check-in","methods": ["POST"],        "auth": "editor",  "description": "Check-in attendee at door" }
+      { "route": "/events/{id}/attendees/{user_id}/check-in","methods": ["POST"],        "auth": "editor",  "description": "Check-in attendee at door" },
+      { "route": "/cena-rio",                      "methods": ["GET"],             "auth": "industry","description": "Cena-rio feed (migrated from apollo-shortcodes v6.4.0)" },
+      { "route": "/cena-rio/agenda",                "methods": ["GET"],             "auth": "industry","description": "Industry calendar" },
+      { "route": "/cena-rio/enviar",                "methods": ["POST"],            "auth": "industry","description": "Submit expected event" },
+      { "route": "/cena-rio/confirmar/{id}",        "methods": ["POST"],            "auth": "industry","description": "Confirm event" },
+      { "route": "/cena-rio/cancelar/{id}",         "methods": ["POST"],            "auth": "industry","description": "Unconfirm event" }
     ],
     "templates": [
       { "file": "styles/base/archive-event.php", "type": "canvas",  "description": "Event listing / archive" },
@@ -260,14 +271,14 @@
     "status": "IMPLEMENTED",
     "note": "FORBIDDEN: venue, local, location — use 'loc'",
     "pages": [
-      { "slug": "gps",         "title": "GPS",    "template": "styles/base/archive-local.php", "type": "archive", "auth": false },
-      { "slug": "gps/{slug}",  "title": "Local",  "template": "styles/base/single-local.php",  "type": "single",  "auth": false },
+      { "slug": "local",        "title": "Locais", "template": "styles/base/archive-local.php", "type": "archive", "auth": false },
+      { "slug": "local/{slug}", "title": "Local",  "template": "styles/base/single-local.php",  "type": "single",  "auth": false },
       { "slug": "mapa",        "title": "Mapa",   "template": "shortcode:[apollo_map]",          "type": "virtual", "auth": false,  "description": "Created on activation, renders [apollo_map]" }
     ],
     "rest_routes": [
-      { "route": "/locals",              "methods": ["GET","POST"],      "auth": "POST=auth",  "description": "List/Create locations" },
-      { "route": "/locals/{id}",         "methods": ["GET","PUT","DELETE"],"auth": "owner",    "description": "CRUD location" },
-      { "route": "/locals/nearby",       "methods": ["GET"],             "auth": false,        "description": "Locations near coords", "params": ["lat","lng","radius","per_page"] }
+      { "route": "/local",               "methods": ["GET","POST"],      "auth": "POST=auth",  "description": "List/Create locations" },
+      { "route": "/local/{id}",          "methods": ["GET","PUT","DELETE"],"auth": "owner",    "description": "CRUD location" },
+      { "route": "/local/nearby",        "methods": ["GET"],             "auth": false,        "description": "Locations near coords", "params": ["lat","lng","radius","per_page"] }
     ],
     "templates": [
       { "file": "styles/base/archive-local.php", "type": "canvas",  "description": "Location listing / archive" },
@@ -276,7 +287,7 @@
     "template_parts": [],
     "db_tables": [],
     "cpt": "local",
-    "cpt_rewrite": "gps"
+    "cpt_rewrite": "local"
   },
 
   "apollo-adverts": {
@@ -597,7 +608,9 @@
       { "route": "/email/templates/{id}",    "methods": ["GET","PUT","DELETE"],"auth": "admin","description": "CRUD email template" },
       { "route": "/email/log",               "methods": ["GET"],         "auth": "admin",  "description": "View email log" },
       { "route": "/email/log/purge",         "methods": ["POST"],        "auth": "admin",  "description": "Purge email log", "params": ["days"] },
-      { "route": "/email/preferences",       "methods": ["GET","PUT"],   "auth": true,     "description": "User email preferences" }
+      { "route": "/email/preferences",       "methods": ["GET","PUT"],   "auth": true,     "description": "User email preferences" },
+      { "route": "/newsletter/subscribe",    "methods": ["POST"],        "auth": false,    "description": "Subscribe to newsletter (migrated from apollo-shortcodes v6.4.0)" },
+      { "route": "/newsletter/subscribers",  "methods": ["GET"],         "auth": "admin",  "description": "List newsletter subscribers" }
     ],
     "templates": [],
     "template_parts": [],
@@ -782,26 +795,12 @@
   "apollo-shortcodes": {
     "layer": "L6",
     "status": "IMPLEMENTED",
-    "note": "Registers ALL shortcodes from all Apollo plugins. Also handles global search + newsletter + cult calendar.",
+    "note": "Registers ALL shortcodes from all Apollo plugins. Search routes migrated to apollo-core, cena-rio to apollo-events, newsletter to apollo-email (v6.4.0).",
     "pages": [],
     "rest_routes": [
       { "route": "/shortcodes",              "methods": ["GET"],     "auth": false,    "description": "List all shortcodes" },
       { "route": "/shortcodes/{tag}",        "methods": ["GET"],     "auth": false,    "description": "Get shortcode info" },
-      { "route": "/shortcodes/render",       "methods": ["POST"],    "auth": false,    "description": "Render shortcode" },
-      { "route": "/search",                  "methods": ["GET"],     "auth": false,    "description": "Global search across all content types" },
-      { "route": "/search/events",           "methods": ["GET"],     "auth": false,    "description": "Search events" },
-      { "route": "/search/users",            "methods": ["GET"],     "auth": false,    "description": "Search users" },
-      { "route": "/search/classifieds",      "methods": ["GET"],     "auth": false,    "description": "Search classifieds" },
-      { "route": "/search/djs",              "methods": ["GET"],     "auth": false,    "description": "Search DJs" },
-      { "route": "/search/locs",             "methods": ["GET"],     "auth": false,    "description": "Search locations" },
-      { "route": "/search/posts",            "methods": ["GET"],     "auth": false,    "description": "Search blog posts" },
-      { "route": "/search/pages",            "methods": ["GET"],     "auth": false,    "description": "Search pages" },
-      { "route": "/cena-rio/agenda",         "methods": ["GET"],     "auth": "industry","description": "Industry calendar (CENA-RIO / cult)" },
-      { "route": "/cena-rio/enviar",         "methods": ["POST"],    "auth": "industry","description": "Submit expected event" },
-      { "route": "/cena-rio/confirmar/{id}", "methods": ["POST"],    "auth": "industry","description": "Confirm event" },
-      { "route": "/cena-rio/cancelar/{id}",  "methods": ["POST"],    "auth": "industry","description": "Unconfirm event" },
-      { "route": "/newsletter/subscribe",    "methods": ["POST"],    "auth": false,    "description": "Newsletter email subscription" },
-      { "route": "/newsletter/subscribers",  "methods": ["GET"],     "auth": "admin",  "description": "List newsletter subscribers" }
+      { "route": "/shortcodes/render",       "methods": ["POST"],    "auth": false,    "description": "Render shortcode" }
     ],
     "templates": [],
     "template_parts": []
@@ -825,7 +824,7 @@
     "templates": [
       { "file": "templates/page-home.php",         "type": "canvas",  "description": "Home page template" },
       { "file": "templates/page-mural.php",        "type": "canvas",  "description": "Mural / social feed page template" },
-      { "file": "templates/page-classificados.php","type": "canvas",  "description": "Classifieds page template" },
+
       { "file": "templates/edit-post.php",         "type": "canvas",  "description": "Post editor page" },
       { "file": "templates/page-test.php",         "type": "canvas",  "description": "Test template" },
       { "file": "templates/event/listing.php",     "type": "canvas",  "description": "Event listing template variant" },

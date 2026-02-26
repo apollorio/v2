@@ -3,7 +3,7 @@
 /**
  * Fired during plugin activation.
  *
- * @package Apollo\Shortcode
+ * @package Apollo\Shortcodes
  * @since   1.0.0
  */
 
@@ -60,20 +60,20 @@ final class Activation
     private static function check_requirements(): void
     {
         // PHP version check
-        if (version_compare(PHP_VERSION, '7.4', '<')) {
+        if (version_compare(PHP_VERSION, '8.1', '<')) {
             deactivate_plugins(plugin_basename(APOLLO_SHORTCODE_FILE));
             wp_die(
-                esc_html__('Apollo Shortcodes requires PHP 7.4 or higher.', 'apollo-shortcodes'),
+                esc_html__('Apollo Shortcodes requires PHP 8.1 or higher.', 'apollo-shortcodes'),
                 esc_html__('Plugin Activation Error', 'apollo-shortcodes'),
                 array('back_link' => true)
             );
         }
 
         // WordPress version check
-        if (version_compare(get_bloginfo('version'), '5.8', '<')) {
+        if (version_compare(get_bloginfo('version'), '6.4', '<')) {
             deactivate_plugins(plugin_basename(APOLLO_SHORTCODE_FILE));
             wp_die(
-                esc_html__('Apollo Shortcodes requires WordPress 5.8 or higher.', 'apollo-shortcodes'),
+                esc_html__('Apollo Shortcodes requires WordPress 6.4 or higher.', 'apollo-shortcodes'),
                 esc_html__('Plugin Activation Error', 'apollo-shortcodes'),
                 array('back_link' => true)
             );

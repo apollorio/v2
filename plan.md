@@ -115,32 +115,32 @@ Critério: nenhum código vai pro ar sem estas 7 ações completas.
 
 ---
 
-## - [ ] WAVE 8 — CDN STANDARDIZATION (2h)
+## - [x] WAVE 8 — CDN STANDARDIZATION (2h) ✅ CLEAN PASS
 
-- [ ] **8.1** GREP `<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>` em todos templates PHP
-- [ ] **8.2** SUBSTITUIR hardcoded CDN por `<?php echo esc_url(APOLLO_CDN_CORE_JS); ?>`
-- [ ] **8.3** Decidir `core.min.js` (produção) — constante `APOLLO_CDN_CORE_JS` já aponta correto
-- [ ] **8.4** Avaliar desabilitação de `CDN.php` para frontend (todos blank canvas, sem `wp_head`)
-
----
-
-## - [ ] WAVE 9 — FIX REMAINING CONFLICTS (3h)
-
-- [ ] **9.1** Version checks — `PHP 7.4→8.1`, `WP 5.8→6.4` em `ActivationHandler.php` e `apollo-shortcodes/Activation.php`
-- [ ] **9.2** Remove admin menu duplicado em apollo-shortcodes
-- [ ] **9.3** Ativar audit log — remover `return;` de `apollo_log_audit()`, implementar write
-- [ ] **9.4** Guard `WPINC→ABSPATH` em `apollo-core.php`
-- [ ] **9.5** Remover `eval()` de `apollo-users.php` — converter para funções reais
-- [ ] **9.6** Limpar redirect concorrente `/mural` e `/feed` — manter APENAS `parse_request`
+- [x] **8.1** GREP `<script src="https://cdn.apollo.rio.br/v1.0.0/core.js" fetchpriority="high"></script>` em todos templates PHP — **ZERO hardcoded CDN encontrado em plugins ativos**
+- [x] **8.2** Já usa `APOLLO_CDN_CORE_JS` constante em `BlankCanvasTrait` e `CDN.php` — nenhuma substituição necessária
+- [x] **8.3** `APOLLO_CDN_CORE_JS` já aponta para `core.min.js` (produção)
+- [x] **8.4** `CDN.php` injeta via `wp_head` priority 1 para Canvas pages; `BlankCanvasTrait` injeta direto — padrões complementares, ambos corretos
 
 ---
 
-## - [ ] WAVE 10 — ATUALIZAR TODOS OS ARQUIVOS `_inventory/` (4h)
+## - [x] WAVE 9 — FIX REMAINING CONFLICTS (3h) ✅ 6 FIXES
 
-- [ ] **10.1** `apollo-registry.json` — CPT local slugs, shortcodes, rotas REST faltantes, rotas migradas, bump version
-- [ ] **10.2** `pages-rest.json` — corrigir owners, mover rotas migradas, atualizar URLs local
-- [ ] **10.3** `APOLLO_ALL_ROUTES.json` — `/gps→/local`, rotas REST faltantes, marcar deprecated
-- [ ] **10.4** `pages-layout.json` — Tier 2 `/gps→/local`, detail types
+- [x] **9.1** Version checks — `PHP 7.4→8.1`, `WP 5.8→6.4` em `apollo-shortcodes/Activation.php` + `@package` fix
+- [x] **9.2** Removido admin menu duplicado em apollo-shortcodes (`add_menu_page` + 3 métodos mortos, ~70 linhas)
+- [x] **9.3** Audit log ATIVADO — removido `return;` de `apollo_log_audit()` + SQL injection fix com `$wpdb->prepare()`
+- [x] **9.4** Guard `WPINC→ABSPATH` em `apollo-core.php` (linha 33)
+- [x] **9.5** Removidos 2 blocos `eval()` de `apollo-users.php` (~120 linhas) — funções já existiam em `includes/functions.php`
+- [x] **9.6** Removido hook `template_redirect` no-op de `mural-router.php` — `template_include` priority 99 é o mecanismo real
+
+---
+
+## - [x] WAVE 10 — ATUALIZAR TODOS OS ARQUIVOS `_inventory/` (4h) ✅ 4 FILES UPDATED
+
+- [x] **10.1** `apollo-registry.json` — version 6.3.0→6.4.0, namespace fix, rotas migradas (search→core, cena-rio→events, newsletter→email), classificados removido de pages
+- [x] **10.2** `pages-rest.json` — version/date bump, classificados removidos, gps→local em loc, rotas migradas movidas, shortcodes note atualizado, page-classificados.php removido
+- [x] **10.3** `APOLLO_ALL_ROUTES.json` — /locs→/local (frontend+REST), /classificados removido, 14 rotas reatribuídas de apollo-shortcodes para apollo-core/events/email
+- [x] **10.4** `pages-layout.json` — Tier 2 `/gps→/local`
 
 ---
 

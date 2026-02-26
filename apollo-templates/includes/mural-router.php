@@ -44,28 +44,3 @@ add_filter(
     },
     99
 );
-
-/**
- * Also handle the case where page-home.php is assigned as a WordPress
- * page template via the Template Name header. If someone visits that
- * specific page while logged in, redirect to mural.
- */
-add_action(
-    'template_redirect',
-    function (): void {
-
-        if (! is_user_logged_in()) {
-            return;
-        }
-
-        // Check if this is a page using the "Apollo Home" template.
-        if (is_page()) {
-            $page_template = get_page_template_slug();
-            if ($page_template && str_contains($page_template, 'page-home')) {
-                // Let template_include handle it — it will load page-mural.php.
-                return;
-            }
-        }
-    },
-    5
-);

@@ -1,7 +1,7 @@
 {
   "$schema": "https://apollo.rio/schemas/registry-v3.json",
-  "$version": "6.3.0",
-  "$generated": "2026-02-18",
+  "$version": "6.4.0",
+  "$generated": "2026-02-25",
   "$description": "Apollo Ecosystem - ULTRA MODULAR ARCHITECTURE - 32 Plugins (26 active + 6 planned) - COMPLETE REGISTRY",
   "$header": {
     "skeleton_structure_file": "plugins/_inventory/SKELETON.md",
@@ -237,12 +237,18 @@
         { "endpoint": "/sounds/tree", "methods": ["GET"], "description": "Get hierarchical sounds (TODO: IMPLEMENT)" },
         { "endpoint": "/sounds/{id}", "methods": ["GET"], "description": "Get single sound term" },
         { "endpoint": "/sounds/user", "methods": ["GET", "POST"], "description": "Get/Update user sound preferences" },
-        { "endpoint": "/sounds/popular", "methods": ["GET"], "description": "Get popular sound terms" }
+        { "endpoint": "/sounds/popular", "methods": ["GET"], "description": "Get popular sound terms" },
+        { "endpoint": "/search", "methods": ["GET"], "description": "Global search across all content types (migrated from apollo-shortcodes v6.4.0)" },
+        { "endpoint": "/search/events", "methods": ["GET"], "description": "Search events" },
+        { "endpoint": "/search/users", "methods": ["GET"], "description": "Search users" },
+        { "endpoint": "/search/classifieds", "methods": ["GET"], "description": "Search classifieds" },
+        { "endpoint": "/search/djs", "methods": ["GET"], "description": "Search DJs" },
+        { "endpoint": "/search/locs", "methods": ["GET"], "description": "Search locations" },
+        { "endpoint": "/search/posts", "methods": ["GET"], "description": "Search blog posts" },
+        { "endpoint": "/search/pages", "methods": ["GET"], "description": "Search pages" }
       ],
       "pages": [
         { "slug": "/", "title": "Home/Mural", "template": "page-home.php | page-mural.php", "type": "dynamic", "description": "mural-router.php routes guests to page-home.php and logged users to page-mural.php" },
-        { "slug": "classificados", "title": "Classificados", "template": "page-classificados.php", "type": "page" },
-        { "slug": "classificados/novo", "title": "Novo Classificado", "template": "page-classificados.php", "type": "virtual", "description": "rewrite registered for future creator" },
         { "slug": "editar/{cpt}", "title": "Criar Conteúdo", "template": "edit-post.php", "type": "virtual", "auth": true, "description": "Universal frontend creator" },
         { "slug": "editar/{cpt}/{id}", "title": "Editar Conteúdo", "template": "edit-post.php", "type": "virtual", "auth": true, "description": "Universal frontend editor" }
       ],
@@ -785,7 +791,11 @@
         { "endpoint": "/events/{id}/clone", "methods": ["POST"], "description": "Duplicate event as draft", "auth": true },
         { "endpoint": "/events/{id}/stats", "methods": ["GET"], "description": "Event stats: views, fav, wow, RSVP counts" },
         { "endpoint": "/events/{id}/attendees", "methods": ["GET", "POST", "DELETE"], "description": "Get attendees / RSVP / cancel RSVP", "auth": "POST+DELETE" },
-        { "endpoint": "/events/{id}/attendees/{user_id}/check-in", "methods": ["POST"], "description": "Check-in attendee at door", "auth": "editor" }
+        { "endpoint": "/events/{id}/attendees/{user_id}/check-in", "methods": ["POST"], "description": "Check-in attendee at door", "auth": "editor" },
+        { "endpoint": "/cena-rio", "methods": ["GET"], "description": "Cena-rio feed (migrated from apollo-shortcodes v6.4.0)" },
+        { "endpoint": "/cena-rio/destaques", "methods": ["GET"], "description": "Cena-rio highlights" },
+        { "endpoint": "/cena-rio/agenda", "methods": ["GET"], "description": "Cena-rio agenda" },
+        { "endpoint": "/cena-rio/mapa", "methods": ["GET"], "description": "Cena-rio map" }
       ],
       "pages": [
         { "slug": "eventos", "title": "Eventos", "template": "styles/base/archive-event.php", "type": "archive" },
@@ -1376,7 +1386,9 @@
         { "endpoint": "/email/templates/{id}", "methods": ["GET", "PUT", "DELETE"], "description": "CRUD template", "auth": "admin" },
         { "endpoint": "/email/log", "methods": ["GET"], "description": "View log", "auth": "admin" },
         { "endpoint": "/email/log/purge", "methods": ["POST"], "description": "Purge email log", "auth": "admin", "params": ["days"] },
-        { "endpoint": "/email/preferences", "methods": ["GET", "PUT"], "description": "User email prefs", "auth": true }
+        { "endpoint": "/email/preferences", "methods": ["GET", "PUT"], "description": "User email prefs", "auth": true },
+        { "endpoint": "/newsletter/subscribe", "methods": ["POST"], "description": "Subscribe to newsletter (migrated from apollo-shortcodes v6.4.0)" },
+        { "endpoint": "/newsletter/unsubscribe", "methods": ["POST"], "description": "Unsubscribe from newsletter" }
       ],
       "pages": [],
       "shortcodes": [
@@ -1725,10 +1737,10 @@
 
     "apollo-shortcodes": {
       "slug": "apollo-shortcodes",
-      "namespace": "Apollo\\Shortcode",
+      "namespace": "Apollo\\Shortcodes",
       "priority": 4,
       "status": "IMPLEMENTED",
-      "description": "Shortcodes: ALL frontend shortcodes registry organized here",
+      "description": "Shortcodes: Registry + rendering. Search/Newsletter/CenaRio migrated to apollo-core/apollo-email/apollo-events (v6.4.0)",
       "dependencies": ["apollo-core"],
       "provides": ["shortcode-registry", "shortcode-rendering", "frontend-components"],
       "cpts": [],
@@ -1738,22 +1750,13 @@
       "rest": [
         { "endpoint": "/shortcodes", "methods": ["GET"], "description": "List all shortcodes" },
         { "endpoint": "/shortcodes/{tag}", "methods": ["GET"], "description": "Get shortcode info" },
-        { "endpoint": "/shortcodes/render", "methods": ["POST"], "description": "Render shortcode" },
-        { "endpoint": "/search", "methods": ["GET"], "description": "Global search across all content types" },
-        { "endpoint": "/search/events", "methods": ["GET"], "description": "Search events" },
-        { "endpoint": "/search/users", "methods": ["GET"], "description": "Search users" },
-        { "endpoint": "/search/classifieds", "methods": ["GET"], "description": "Search classifieds" },
-        { "endpoint": "/search/djs", "methods": ["GET"], "description": "Search DJs" },
-        { "endpoint": "/search/locs", "methods": ["GET"], "description": "Search locations" },
-        { "endpoint": "/search/posts", "methods": ["GET"], "description": "Search blog posts" },
-        { "endpoint": "/search/pages", "methods": ["GET"], "description": "Search pages" },
-        { "endpoint": "/cena-rio/agenda", "methods": ["GET"], "description": "Industry calendar (CENA-RIO)" },
-        { "endpoint": "/cena-rio/enviar", "methods": ["POST"], "description": "Submit expected event (industry)" },
-        { "endpoint": "/cena-rio/confirmar/{id}", "methods": ["POST"], "description": "Confirm event (industry)" },
-        { "endpoint": "/cena-rio/cancelar/{id}", "methods": ["POST"], "description": "Unconfirm event (industry)" },
-        { "endpoint": "/newsletter/subscribe", "methods": ["POST"], "description": "Newsletter email subscription" },
-        { "endpoint": "/newsletter/subscribers", "methods": ["GET"], "description": "List newsletter subscribers (admin only)" }
+        { "endpoint": "/shortcodes/render", "methods": ["POST"], "description": "Render shortcode" }
       ],
+      "_migrated_routes_v6.4.0": {
+        "/search/*": "→ apollo-core (SearchController.php)",
+        "/cena-rio/*": "→ apollo-events (CenaRio.php)",
+        "/newsletter/*": "→ apollo-email (Newsletter.php)"
+      },
       "pages": [],
       "shortcodes": "ALL - This plugin REGISTERS all shortcodes from other plugins"
     },
@@ -2395,7 +2398,7 @@
     {
       "item": "apollo-loc route naming",
       "status": "resolved",
-      "details": "Rest base is /locals and rewrite slug is /gps; APOLLO_ALL_ROUTES listed /locs. Registry updated to match code."
+      "details": "Rest base changed to /local, rewrite slug changed from /gps to /local (Wave 3, v6.4.0). Routes and registry updated."
     }
   ]
 }

@@ -62,7 +62,6 @@ final class Plugin
         // Register hooks
         add_action('init', array($this, 'load_shortcodes'));
         add_action('rest_api_init', array($this, 'register_rest_routes'));
-        add_action('admin_menu', array($this, 'add_admin_menu'));
 
         // Search assets — controller migrated to apollo-core
         add_action('wp_enqueue_scripts', array($this, 'enqueue_search_assets'));
@@ -290,18 +289,6 @@ final class Plugin
     }
 
     /**
-     * Register Apollo Search REST API routes
-     *
-     * @return void
-     */
-    public function register_search_routes(): void
-    {
-        require_once APOLLO_SHORTCODE_DIR . 'includes/class-apollo-search-controller.php';
-        $controller = new \Apollo_Search_Controller();
-        $controller->register_routes();
-    }
-
-    /**
      * Enqueue Apollo Search assets globally (frontend + admin).
      *
      * @return void
@@ -341,77 +328,5 @@ final class Plugin
     public function check_edit_permission(): bool
     {
         return current_user_can('edit_posts');
-    }
-
-    /**
-     * Add admin menu
-     *
-     * @return void
-     */
-    public function add_admin_menu(): void
-    {
-        add_menu_page(
-            __('Apollo Shortcodes', 'apollo-shortcodes'),
-            __('Shortcodes', 'apollo-shortcodes'),
-            'manage_options',
-            'apollo-shortcodes',
-            array($this, 'admin_page'),
-            'dashicons-shortcode',
-            31
-        );
-    }
-
-    /**
-     * Admin page callback
-     *
-     * @return void
-     */
-    public function admin_page(): void
-    {
-?>
-        <div class="wrap">
-            <h1><?php esc_html_e('Apollo Shortcodes', 'apollo-shortcodes'); ?></h1>
-            <p><?php esc_html_e('ALL frontend shortcodes registry organized here.', 'apollo-shortcodes'); ?></p>
-            <div class="apollo-shortcodes-dashboard">
-                <?php $this->render_shortcode_list(); ?>
-            </div>
-        </div>
-<?php
-    }
-
-    /**
-     * Render shortcode list in admin
-     *
-     * @return void
-     */
-    private function render_shortcode_list(): void
-    {
-        global $shortcode_tags;
-
-        $apollo_shortcodes = array();
-        foreach ($shortcode_tags as $tag => $callback) {
-            if (\strpos($tag, 'apollo_') === 0) {
-                $apollo_shortcodes[$tag] = $callback;
-            }
-        }
-
-        if (empty($apollo_shortcodes)) {
-            echo '<p>' . esc_html__('No Apollo shortcodes registered.', 'apollo-shortcodes') . '</p>';
-            return;
-        }
-
-        echo '<table class="wp-list-table widefat fixed striped">';
-        echo '<thead><tr><th>Shortcode</th><th>Callback</th></tr></thead>';
-        echo '<tbody>';
-        foreach ($apollo_shortcodes as $tag => $callback) {
-            $callback_name = \is_array($callback)
-                ? (\is_object($callback[0]) ? \get_class($callback[0]) : $callback[0]) . '::' . $callback[1]
-                : $callback;
-            echo '<tr>';
-            echo '<td><code>[' . esc_html($tag) . ']</code></td>';
-            echo '<td><code>' . esc_html($callback_name) . '</code></td>';
-            echo '</tr>';
-        }
-        echo '</tbody></table>';
     }
 }

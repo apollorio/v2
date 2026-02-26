@@ -176,7 +176,7 @@
     },
     "tier2_single_panel_navbar": {
       "description": "Single panel + persistent navbar + FAB",
-      "pages": ["/id/{username}", "/mensagens", "/notificacoes", "/documentos", "/djs", "/gps", "/grupos", "/sobre", "/radar", "/conquistas", "/placar", "/mapa"]
+      "pages": ["/id/{username}", "/mensagens", "/notificacoes", "/documentos", "/djs", "/local", "/grupos", "/sobre", "/radar", "/conquistas", "/placar", "/mapa"]
     },
     "tier3_blank_canvas": {
       "description": "Zero theme — no navbar, no FAB, isolated",
