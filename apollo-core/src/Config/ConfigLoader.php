@@ -183,11 +183,20 @@ final class ConfigLoader {
 	 *
 	 * Called by includes/constants.php during bootstrap.
 	 * Uses ! defined() guard for backward compatibility.
+	 *
+	 * NOTE: WP core constants (WP_DEBUG, WP_DEBUG_DISPLAY, WP_DEBUG_LOG, etc.)
+	 * must be defined in wp-config.php BEFORE wp-settings.php loads.
+	 * This method explicitly skips WP_* constants to prevent redefinition warnings.
 	 */
 	public static function define_constants(): void {
 		$constants = self::load( 'constants' );
 
 		foreach ( $constants as $name => $value ) {
+			// Skip WP_ prefixed constants — must come from wp-config.php only
+			if ( strpos( $name, 'WP_' ) === 0 ) {
+				continue;
+			}
+
 			if ( ! defined( $name ) ) {
 				define( $name, $value );
 			}
